@@ -1,0 +1,230 @@
+<script setup>
+import AppLayout from '@/Layouts/AppLayout.vue';
+import Modal from '@/Components/Modal.vue';
+import { Head, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
+
+const props = defineProps({
+    academicYears: { type: Array, required: true },
+});
+
+// ── Confirm Approve Modal ─────────────────────────────────────────────────────
+const showConfirm = ref(false);
+const selected   = ref(null);
+
+const form = useForm({});
+
+const openConfirm = (year) => {
+    selected.value = year;
+    showConfirm.value = true;
+};
+
+const confirmApprove = () => {
+    form.patch(route('kamad.academic-years.approve', selected.value.id), {
+        onSuccess: () => {
+            showConfirm.value = false;
+            selected.value    = null;
+        },
+    });
+};
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+const statusConfig = {
+    pending: { label: 'Menunggu Persetujuan', badge: 'bg-amber-100 text-amber-700 ring-amber-200' },
+    active:  { label: 'Aktif',                badge: 'bg-emerald-100 text-emerald-700 ring-emerald-200' },
+    closed:  { label: 'Ditutup',              badge: 'bg-slate-100 text-slate-500 ring-slate-200' },
+};
+
+const formatDate = (dateStr) => {
+    if (!dateStr) return '—';
+    return new Date(dateStr).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+};
+</script>
+
+<template>
+    <AppLayout>
+        <Head title="Tahun Ajaran" />
+
+        <template #title>
+            <div class="flex items-center gap-2 text-sm text-slate-500">
+                <span>Kamad</span>
+                <span>/</span>
+                <span class="font-semibold text-slate-700">Tahun Ajaran</span>
+            </div>
+        </template>
+
+        <div class="space-y-4">
+
+            <!-- Page heading -->
+            <div>
+                <h2 class="text-balance text-lg font-bold text-slate-900">Tahun Ajaran</h2>
+                <p class="text-pretty text-sm text-slate-500">
+                    Setujui tahun ajaran yang dibuat oleh operator untuk mengaktifkannya.
+                </p>
+            </div>
+
+            <!-- Empty state -->
+            <div
+                v-if="academicYears.length === 0"
+                class="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white py-16 text-center"
+            >
+                <svg class="mb-3 size-10 text-slate-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                </svg>
+                <p class="text-sm font-semibold text-slate-700">Belum ada tahun ajaran</p>
+                <p class="mt-1 text-xs text-slate-400">Operator belum membuat tahun ajaran.</p>
+            </div>
+
+            <template v-else>
+
+            <!-- Mobile cards -->
+            <div class="space-y-3 sm:hidden">
+                <div
+                    v-for="year in academicYears"
+                    :key="year.id"
+                    class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+                >
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="truncate text-sm font-semibold text-slate-800">{{ year.name }}</p>
+                            <p class="mt-0.5 text-xs text-slate-400">
+                                {{ formatDate(year.start_date) }} — {{ formatDate(year.end_date) }}
+                            </p>
+                        </div>
+                        <span
+                            class="shrink-0 inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1"
+                            :class="statusConfig[year.status]?.badge ?? 'bg-slate-100 text-slate-500 ring-slate-200'"
+                        >
+                            {{ statusConfig[year.status]?.label ?? year.status }}
+                        </span>
+                    </div>
+                    <div v-if="year.status === 'pending'" class="mt-3 border-t border-slate-100 pt-3">
+                        <button
+                            @click="openConfirm(year)"
+                            class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600"
+                        >
+                            <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                            </svg>
+                            Setujui
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Desktop table -->
+            <div class="hidden sm:block overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                <table class="min-w-full divide-y divide-slate-100">
+                    <thead>
+                        <tr class="bg-slate-50">
+                            <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Nama</th>
+                            <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Mulai</th>
+                            <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Selesai</th>
+                            <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Status</th>
+                            <th class="px-5 py-3.5 text-right text-xs font-semibold text-slate-500">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr
+                            v-for="year in academicYears"
+                            :key="year.id"
+                            class="transition-[background-color] duration-150 hover:bg-slate-50"
+                        >
+                            <td class="px-5 py-4">
+                                <span class="text-sm font-semibold text-slate-800">{{ year.name }}</span>
+                            </td>
+                            <td class="px-5 py-4">
+                                <span class="tabular-nums text-sm text-slate-600">{{ formatDate(year.start_date) }}</span>
+                            </td>
+                            <td class="px-5 py-4">
+                                <span class="tabular-nums text-sm text-slate-600">{{ formatDate(year.end_date) }}</span>
+                            </td>
+                            <td class="px-5 py-4">
+                                <span
+                                    class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1"
+                                    :class="statusConfig[year.status]?.badge ?? 'bg-slate-100 text-slate-500 ring-slate-200'"
+                                >
+                                    {{ statusConfig[year.status]?.label ?? year.status }}
+                                </span>
+                            </td>
+                            <td class="px-5 py-4 text-right">
+                                <button
+                                    v-if="year.status === 'pending'"
+                                    @click="openConfirm(year)"
+                                    class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600"
+                                >
+                                    <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                    Setujui
+                                </button>
+                                <span v-else class="text-xs text-slate-400">—</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            </template>
+
+        </div>
+
+        <!-- ── Confirm Approve Modal ──────────────────────────────────────────── -->
+        <Modal :show="showConfirm" max-width="sm" @close="showConfirm = false">
+            <div class="px-6 py-5">
+
+                <!-- Icon + title -->
+                <div class="mb-4 flex items-start gap-4">
+                    <div class="flex size-10 shrink-0 items-center justify-center rounded-full bg-amber-100">
+                        <svg class="size-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">Setujui Tahun Ajaran?</h3>
+                        <p class="mt-1 text-pretty text-sm text-slate-500">
+                            Tahun ajaran <strong class="text-slate-700">{{ selected?.name }}</strong> akan diaktifkan.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Warning -->
+                <div class="mb-5 flex items-start gap-2 rounded-lg bg-amber-50 px-3.5 py-3">
+                    <svg class="mt-0.5 size-4 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                    </svg>
+                    <p class="text-pretty text-xs text-amber-700">
+                        Tindakan ini akan <strong>menaikkan kelas semua siswa aktif</strong> secara otomatis dan meluluskan siswa kelas 6. Proses ini tidak dapat dibatalkan.
+                    </p>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center justify-end gap-3">
+                    <button
+                        type="button"
+                        @click="showConfirm = false"
+                        class="rounded-lg px-4 py-2 text-sm font-semibold text-slate-600 transition-[background-color] duration-150 hover:bg-slate-100"
+                    >
+                        Batal
+                    </button>
+                    <button
+                        type="button"
+                        :disabled="form.processing"
+                        @click="confirmApprove"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60"
+                    >
+                        <svg
+                            v-if="form.processing"
+                            class="size-4 animate-spin"
+                            fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                        </svg>
+                        {{ form.processing ? 'Memproses...' : 'Ya, Setujui' }}
+                    </button>
+                </div>
+            </div>
+        </Modal>
+
+    </AppLayout>
+</template>

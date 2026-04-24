@@ -1,0 +1,42 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class UpdateStudentRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return $this->user()->hasRole('operator');
+    }
+
+    public function rules(): array
+    {
+        $studentId = $this->route('student')->id;
+
+        return [
+            'nis'         => ['required', 'string', 'max:20', "unique:students,nis,{$studentId}"],
+            'name'        => ['required', 'string', 'max:100'],
+            'gender'      => ['required', 'in:L,P'],
+            'grade'       => ['required', 'integer', 'between:1,6'],
+            'birth_date'  => ['nullable', 'date'],
+            'address'     => ['nullable', 'string'],
+            'parent_name' => ['nullable', 'string', 'max:100'],
+            'password'    => ['nullable', 'string', 'min:8'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'nis.required'    => 'NIS wajib diisi.',
+            'nis.unique'      => 'NIS sudah terdaftar.',
+            'name.required'   => 'Nama siswa wajib diisi.',
+            'gender.required' => 'Jenis kelamin wajib diisi.',
+            'gender.in'       => 'Jenis kelamin tidak valid.',
+            'grade.required'  => 'Tingkat kelas wajib diisi.',
+            'grade.between'   => 'Tingkat kelas harus antara 1-6.',
+        ];
+    }
+}

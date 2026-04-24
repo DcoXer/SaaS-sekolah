@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan:*)",
+      "Bash(ls:*)",
+      "Bash(npm run:*)",
+      "Bash(xargs grep:*)",
+      "Bash(composer require:*)",
+      "Bash(composer show:*)",
+      "Bash(where magick:*)",
+      "Bash(where convert:*)",
+      "Bash(where pdftoppm:*)",
+      "Bash(where gs:*)",
+      "Bash(where mupdf:*)",
+      "Bash(where mutool:*)",
+      "Bash(php -r \"require 'vendor/autoload.php'; echo class_exists\\('SimpleSoftwareIO\\\\QrCode\\\\Facades\\\\QrCode'\\) ? 'OK' : 'NOT FOUND';\")",
+      "Bash(php -r \"echo extension_loaded\\('gd'\\) ? 'GD OK' : 'GD NOT FOUND'; echo PHP_EOL; echo extension_loaded\\('imagick'\\) ? 'Imagick OK' : 'Imagick NOT FOUND';\")",
+      "Bash(php -r ':*)",
+      "Bash(powershell:*)",
+      "Bash(grep -n \"avatar\" C:/laragon/www/school-management/database/migrations/*.php)",
+      "Bash(composer dump-autoload:*)",
+      "Bash(php -l \"C:/laragon/www/school-management/app/Services/PaymentService.php\")",
+      "Bash(php -l \"C:/laragon/www/school-management/app/Http/Requests/BulkInputScoreRequest.php\")",
+      "Bash(php -l \"C:/laragon/www/school-management/app/Services/LetterService.php\")",
+      "Bash(php -l \"C:/laragon/www/school-management/app/Http/Controllers/Kamad/ReportCardController.php\")",
+      "Bash(php -l \"C:/laragon/www/school-management/app/Http/Controllers/Operator/LetterController.php\")",
+      "Bash(php -l \"C:/laragon/www/school-management/app/Http/Controllers/Siswa/PaymentController.php\")",
+      "Bash(php -l \"C:/laragon/www/school-management/app/Http/Controllers/Keuangan/PaymentController.php\")",
+      "Bash(php -l \"C:/laragon/www/school-management/app/Http/Controllers/Guru/AssessmentController.php\")",
+      "Bash(php -l bootstrap/app.php)",
+      "Bash(php -l app/Services/PaymentService.php)",
+      "Bash(php -l routes/auth.php)",
+      "Bash(php -l app/Http/Controllers/WelcomeController.php)",
+      "Bash(php -l app/Http/Controllers/Siswa/PaymentController.php)",
+      "Bash(php -l routes/web.php)",
+      "Bash(node -e ':*)",
+      "Bash(node replace_hero.js)",
+      "Bash(node replace_hero.cjs)",
+      "Bash(node \"C:/laragon/www/school-management/replace_hero.cjs\")"
+    ]
+  }
+}
