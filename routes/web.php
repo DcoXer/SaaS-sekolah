@@ -9,6 +9,9 @@ use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\GalleryPageController;
 use App\Http\Controllers\ExtracurricularPageController;
 use App\Http\Controllers\AboutPageController;
+use App\Http\Controllers\PublicPpdbController;
+use App\Http\Controllers\Operator\PpdbController as OperatorPpdb;
+use App\Http\Controllers\Kamad\PpdbController as KamadPpdb;
 
 // Profile
 use App\Http\Controllers\ProfileController;
@@ -65,6 +68,11 @@ Route::get('/tentang', AboutPageController::class)->name('tentang');
 Route::get('/galeri', GalleryPageController::class)->name('galeri');
 Route::get('/ekskul', ExtracurricularPageController::class)->name('ekskul');
 
+// PPDB public — rate limit: 10 submit/menit per IP
+Route::get('/ppdb', [PublicPpdbController::class, 'index'])->name('ppdb.index');
+Route::post('/ppdb/daftar', [PublicPpdbController::class, 'store'])->middleware('throttle:10,1')->name('ppdb.store');
+Route::get('/ppdb/cek', [PublicPpdbController::class, 'check'])->name('ppdb.check');
+
 // Verify barcode letters — rate limit: 30 req/menit per IP
 Route::get('verify/{barcodeCode}', [KamadLetter::class, 'verify'])
     ->middleware('throttle:30,1')
@@ -111,6 +119,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Honor Guru (view only)
         Route::get('honorariums', [KamadHonorarium::class, 'index'])->name('honorariums.index');
+
+        // PPDB (view only)
+        Route::get('ppdb', [KamadPpdb::class, 'index'])->name('ppdb.index');
     });
 
     // Operator Routes
@@ -172,6 +183,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('teaching-hours', [TeachingHourController::class, 'index'])->name('teaching-hours.index');
         Route::post('teaching-hours', [TeachingHourController::class, 'store'])->name('teaching-hours.store');
         Route::delete('teaching-hours/{teachingHour}', [TeachingHourController::class, 'destroy'])->name('teaching-hours.destroy');
+
+        // PPDB
+        Route::get('ppdb', [OperatorPpdb::class, 'index'])->name('ppdb.index');
+        Route::post('ppdb/settings', [OperatorPpdb::class, 'saveSetting'])->name('ppdb.save-setting');
+        Route::patch('ppdb/registrations/{registration}/accept', [OperatorPpdb::class, 'accept'])->name('ppdb.accept');
+        Route::patch('ppdb/registrations/{registration}/reject', [OperatorPpdb::class, 'reject'])->name('ppdb.reject');
+        Route::patch('ppdb/registrations/{registration}/waitlist', [OperatorPpdb::class, 'waitlist'])->name('ppdb.waitlist');
     });
 
     // TU Keuangan Routes

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Extracurricular;
 use App\Models\SchoolGallery;
 use App\Models\SchoolSetting;
+use App\Models\PpdbSetting;
 use App\Models\Student;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
@@ -59,6 +60,8 @@ class WelcomeController extends Controller
             'caption'   => $g->caption,
         ]);
 
+        $ppdb = PpdbSetting::latest()->first();
+
         return inertia('Welcome', [
             'canLogin'         => Route::has('login'),
             'isLoggedIn'       => $user !== null,
@@ -66,6 +69,7 @@ class WelcomeController extends Controller
             'school'           => $school,
             'extracurriculars' => $extracurriculars,
             'galleries'        => $galleries,
+            'ppdbActive'       => $ppdb?->isRegistrationOpen() ?? false,
             'stats'            => [
                 'students'         => Student::where('status', 'active')->count(),
                 'teachers'         => Teacher::count(),

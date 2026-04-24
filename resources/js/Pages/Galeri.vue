@@ -9,6 +9,7 @@ const props = defineProps({
     canLogin:       { type: Boolean, default: true },
     isLoggedIn:     { type: Boolean, default: false },
     dashboardRoute: { type: String,  default: null },
+    ppdbActive:     { type: Boolean, default: false },
 });
 
 const activeTab = ref('all');
@@ -57,6 +58,7 @@ const lbNext = () => {
             :can-login="canLogin"
             :is-logged-in="isLoggedIn"
             :dashboard-route="dashboardRoute"
+            :ppdb-active="ppdbActive"
             active-page="galeri"
         />
 

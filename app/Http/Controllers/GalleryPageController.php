@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PpdbSetting;
 use App\Models\SchoolGallery;
 use App\Models\SchoolSetting;
 use Illuminate\Http\Request;
@@ -33,12 +34,15 @@ class GalleryPageController extends Controller
             'caption'   => $g->caption,
         ]);
 
+        $ppdb = PpdbSetting::latest()->first();
+
         return inertia('Galeri', [
             'school'         => $school,
             'galleries'      => $galleries,
             'canLogin'       => Route::has('login'),
             'isLoggedIn'     => $user !== null,
             'dashboardRoute' => $role ? $this->resolveDashboardRoute($role) : null,
+            'ppdbActive'     => $ppdb?->isRegistrationOpen() ?? false,
         ]);
     }
 

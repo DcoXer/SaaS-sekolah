@@ -10,14 +10,15 @@ const props = defineProps({
     extracurriculars: { type: Array,   default: () => [] },
     galleries:        { type: Array,   default: () => [] },
     stats:            { type: Object,  default: () => ({}) },
+    ppdbActive:       { type: Boolean, default: false },
 });
 
-// ── navbar scroll state ───────────────────────────────────────────────────────
+// ── navbar scroll state 
 const scrolled   = ref(false);
 const mobileOpen = ref(false);
 const onScroll   = () => { scrolled.value = window.scrollY > 60; };
 
-// ── hero slideshow ────────────────────────────────────────────────────────────
+// ── hero slideshow
 const PLACEHOLDER_SLIDES = [
     { url: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1600&q=80', caption: 'Lingkungan Belajar Kondusif' },
     { url: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1600&q=80', caption: 'Pendidikan Berkualitas' },
@@ -55,18 +56,18 @@ const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
-// ── lightbox ──────────────────────────────────────────────────────────────────
+// ── lightbox state
 const lightbox = ref(null);
 
-// ── youtube helpers ───────────────────────────────────────────────────────────
+// ── youtube helpers 
 const ytId    = (url) => { if (!url) return null; const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^&\n?#]+)/); return m?.[1] ?? null; };
 const ytThumb = (url) => { const id = ytId(url); return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null; };
 const ytEmbed = (url) => { const id = ytId(url); return id ? `https://www.youtube.com/embed/${id}` : null; };
 
-// ── misi split ────────────────────────────────────────────────────────────────
+// ── misi split
 const missionLines = computed(() => (props.school?.mission ?? '').split('\n').filter(l => l.trim()));
 
-// ── ekskul color map ──────────────────────────────────────────────────────────
+// ── ekskul color map
 const ekskulColors = [
     'bg-green-100 text-green-700',
     'bg-amber-100 text-amber-700',
@@ -93,9 +94,7 @@ onUnmounted(() => {
 
     <div class="min-h-screen overflow-x-hidden bg-white font-sans antialiased" style="font-family:'Plus Jakarta Sans',sans-serif">
 
-        <!-- ══════════════════════════════════════════════════════════════
-             TOP INFO BAR
-        ══════════════════════════════════════════════════════════════ -->
+        <!-- Top Info Bar -->
         <div class="hidden bg-green-900 md:block">
             <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-2 text-xs text-green-200">
                 <div class="flex items-center gap-5">
@@ -112,9 +111,7 @@ onUnmounted(() => {
             </div>
         </div>
 
-        <!-- ══════════════════════════════════════════════════════════════
-             HEADER / NAVBAR
-        ══════════════════════════════════════════════════════════════ -->
+        <!-- Header / Navbar -->
         <header
             class="sticky top-0 z-50 border-b transition-shadow duration-300"
             :class="scrolled ? 'border-slate-200 bg-white shadow-md' : 'border-slate-100 bg-white'"
@@ -141,6 +138,10 @@ onUnmounted(() => {
                     <Link :href="route('ekskul')"  class="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-green-50 hover:text-green-700">Ekskul</Link>
                     <Link :href="route('galeri')"  class="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-green-50 hover:text-green-700">Galeri</Link>
                     <button @click="scrollTo('kontak')" class="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-green-50 hover:text-green-700">Kontak</button>
+                    <Link v-if="ppdbActive" :href="route('ppdb.index')"
+                        class="ml-1 inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-400">
+                        PPDB
+                    </Link>
                 </nav>
 
                 <!-- CTA + Mobile toggle -->
@@ -175,13 +176,15 @@ onUnmounted(() => {
                     <Link :href="route('ekskul')"  class="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-green-700">Ekskul</Link>
                     <Link :href="route('galeri')"  class="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-green-700">Galeri</Link>
                     <button @click="scrollTo('kontak')" class="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-green-700">Kontak</button>
+                    <Link v-if="ppdbActive" :href="route('ppdb.index')"
+                        class="rounded-lg bg-amber-500 px-3 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-amber-400">
+                        PPDB — Daftar Sekarang
+                    </Link>
                 </div>
             </div>
         </header>
 
-        <!-- ══════════════════════════════════════════════════════════════
-             HERO — full-screen slideshow
-        ══════════════════════════════════════════════════════════════ -->
+        <!-- Hero Section -->
         <section id="beranda" class="relative flex h-screen min-h-[600px] flex-col overflow-hidden">
 
             <!-- Slide backgrounds (cross-fade) -->
@@ -200,7 +203,7 @@ onUnmounted(() => {
             <div class="relative z-10 flex flex-1 flex-col items-center justify-center px-6 text-center">
 
                 <!-- Logo -->
-                <div class="mb-6">
+                <div v-reveal="{ from: 'scale', delay: 0 }" class="mb-6">
                     <img
                         v-if="school && school.logo"
                         :src="school.logo"
@@ -215,18 +218,18 @@ onUnmounted(() => {
                 </div>
 
                 <!-- Badge -->
-                <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-amber-400/50 bg-amber-400/10 px-4 py-1.5 backdrop-blur-sm">
+                <div v-reveal="{ delay: 100 }" class="mb-4 inline-flex items-center gap-2 rounded-full border border-amber-400/50 bg-amber-400/10 px-4 py-1.5 backdrop-blur-sm">
                     <span class="size-1.5 animate-pulse rounded-full bg-amber-400"/>
                     <span class="text-xs font-semibold tracking-wide text-amber-300">Madrasah Ibtidaiyah · Terakreditasi A</span>
                 </div>
 
                 <!-- School name -->
-                <h1 class="text-balance text-4xl font-extrabold leading-tight text-white drop-shadow-lg lg:text-6xl xl:text-7xl">
+                <h1 v-reveal="{ delay: 200 }" class="text-balance text-4xl font-extrabold leading-tight text-white drop-shadow-lg lg:text-6xl xl:text-7xl">
                     {{ school ? school.name : 'Nama Sekolah' }}
                 </h1>
 
                 <!-- Tagline -->
-                <p v-if="school && school.tagline" class="mt-4 text-base font-medium italic text-white/80 lg:text-xl">
+                <p v-if="school && school.tagline" v-reveal="{ delay: 300 }" class="mt-4 text-base font-medium italic text-white/80 lg:text-xl">
                     "{{ school.tagline }}"
                 </p>
 
@@ -236,7 +239,7 @@ onUnmounted(() => {
                 </p>
 
                 <!-- CTA buttons -->
-                <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
+                <div v-reveal="{ delay: 400 }" class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
                     <button
                         @click="scrollTo('tentang')"
                         class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-7 py-3.5 text-sm font-bold text-green-800 shadow-xl transition-all active:scale-95 hover:bg-green-50 sm:w-auto"
@@ -261,7 +264,7 @@ onUnmounted(() => {
                 </div>
 
                 <!-- Dots + arrows -->
-                <div class="mt-10 flex items-center gap-4">
+                <div v-reveal="{ delay: 500 }" class="mt-10 flex items-center gap-4">
                     <button @click="prev" class="flex size-8 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/25">
                         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
                     </button>
@@ -296,15 +299,37 @@ onUnmounted(() => {
         </section>
 
 
-        <!-- ════════════════════════════════════════════════════════════════
-             TENTANG
-        ══════════════════════════════════════════════════════════════ -->
+        <!-- PPDB Banner -->
+        <section v-if="ppdbActive" class="bg-gradient-to-r from-amber-600 to-yellow-500 py-10">
+            <div class="mx-auto max-w-6xl px-6">
+                <div v-reveal class="flex flex-col items-center justify-between gap-6 text-center sm:flex-row sm:text-left">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-widest text-amber-100">Penerimaan Peserta Didik Baru</p>
+                        <h2 class="mt-1 text-2xl font-extrabold text-white">PPDB Sekarang Dibuka!</h2>
+                        <p class="mt-1 text-sm text-amber-100">Daftarkan putra-putri Anda sekarang. Tempat terbatas.</p>
+                    </div>
+                    <div class="flex shrink-0 flex-col gap-2 sm:flex-row">
+                        <Link :href="route('ppdb.index')"
+                            class="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-amber-700 shadow transition-all hover:bg-amber-50 active:scale-95">
+                            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                            Daftar PPDB
+                        </Link>
+                        <Link :href="route('ppdb.check')"
+                            class="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20 active:scale-95">
+                            Cek Status
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tentang Sekolah -->
         <section id="tentang" class="bg-white py-20">
             <div class="mx-auto max-w-6xl px-6">
                 <div class="flex flex-col gap-12 lg:flex-row lg:items-center lg:gap-16">
 
                     <!-- Kolom kiri: teks -->
-                    <div class="flex-1">
+                    <div v-reveal="{ from: 'left' }" class="flex-1">
                         <p class="text-xs font-bold uppercase tracking-widest text-green-600">Tentang Kami</p>
                         <h2 class="mt-2 text-3xl font-extrabold leading-tight text-slate-900 lg:text-4xl">
                             Mengenal<br class="hidden lg:block"/>
@@ -354,7 +379,7 @@ onUnmounted(() => {
                     </div>
 
                     <!-- Kolom kanan: identity card -->
-                    <div class="flex shrink-0 justify-center lg:w-80">
+                    <div v-reveal="{ from: 'right', delay: 150 }" class="flex shrink-0 justify-center lg:w-80">
                         <div class="relative w-full max-w-sm">
                             <!-- Card utama -->
                             <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-green-800 to-green-600 p-8 text-center shadow-2xl">
@@ -409,13 +434,11 @@ onUnmounted(() => {
             </div>
         </section>
 
-        <!-- ══════════════════════════════════════════════════════════════
-             EKSKUL
-        ══════════════════════════════════════════════════════════════ -->
+        <!-- Ekskul -->
         <section id="ekskul" class="bg-slate-50 py-20">
             <div class="mx-auto max-w-6xl px-6">
 
-                <div class="mb-12 flex items-center justify-between gap-4">
+                <div v-reveal class="mb-12 flex items-center justify-between gap-4">
                     <div class="flex items-center gap-4">
                         <div class="h-1 w-10 rounded-full bg-green-600"/>
                         <div>
@@ -434,6 +457,7 @@ onUnmounted(() => {
                 <div v-if="extracurriculars.length" class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                     <div
                         v-for="(ekskul, i) in extracurriculars.slice(0, 4)" :key="ekskul.id"
+                        v-reveal="{ delay: i * 80 }"
                         class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
                     >
                         <div class="aspect-[4/3] overflow-hidden">
@@ -474,13 +498,11 @@ onUnmounted(() => {
             </div>
         </section>
 
-        <!-- ══════════════════════════════════════════════════════════════
-             GALERI
-        ══════════════════════════════════════════════════════════════ -->
+        <!-- Galeri -->
         <section id="galeri" class="bg-white py-20">
             <div class="mx-auto max-w-6xl px-6">
 
-                <div class="mb-12 flex items-center justify-between gap-4">
+                <div v-reveal class="mb-12 flex items-center justify-between gap-4">
                     <div class="flex items-center gap-4">
                         <div class="h-1 w-10 rounded-full bg-green-600"/>
                         <div>
@@ -498,7 +520,8 @@ onUnmounted(() => {
                 <!-- Masonry grid (preview: 6 item) -->
                 <div v-if="galleries.length" class="columns-2 gap-4 sm:columns-3">
                     <div
-                        v-for="item in galleries.slice(0, 6)" :key="item.id"
+                        v-for="(item, i) in galleries.slice(0, 6)" :key="item.id"
+                        v-reveal="{ delay: (i % 3) * 70 }"
                         class="group mb-4 cursor-pointer break-inside-avoid overflow-hidden rounded-2xl border border-slate-100 bg-slate-50 shadow-sm transition-shadow hover:shadow-md"
                         @click="lightbox = item"
                     >
@@ -544,13 +567,11 @@ onUnmounted(() => {
             </div>
         </section>
 
-        <!-- ══════════════════════════════════════════════════════════════
-             KONTAK
-        ══════════════════════════════════════════════════════════════ -->
+        <!-- Kontak -->
         <section id="kontak" class="bg-green-900 py-20">
             <div class="mx-auto max-w-6xl px-6">
 
-                <div class="mb-12 flex items-center gap-4">
+                <div v-reveal class="mb-12 flex items-center gap-4">
                     <div class="h-1 w-10 rounded-full bg-amber-400"/>
                     <div>
                         <p class="text-xs font-bold uppercase tracking-widest text-amber-400">Hubungi Kami</p>
@@ -562,7 +583,7 @@ onUnmounted(() => {
                     <!-- Info kontak -->
                     <div class="lg:col-span-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
 
-                        <div v-if="school?.principal_name" class="flex items-start gap-4 rounded-2xl bg-white/5 p-5">
+                        <div v-if="school?.principal_name" v-reveal="{ delay: 80 }" class="flex items-start gap-4 rounded-2xl bg-white/5 p-5">
                             <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber-400/20">
                                 <svg class="size-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
                             </div>
@@ -573,7 +594,7 @@ onUnmounted(() => {
                             </div>
                         </div>
 
-                        <div v-if="school?.address" class="flex items-start gap-4 rounded-2xl bg-white/5 p-5">
+                        <div v-if="school?.address" v-reveal="{ delay: 160 }" class="flex items-start gap-4 rounded-2xl bg-white/5 p-5">
                             <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-green-500/20">
                                 <svg class="size-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
                             </div>
@@ -583,7 +604,7 @@ onUnmounted(() => {
                             </div>
                         </div>
 
-                        <div v-if="school?.phone" class="flex items-start gap-4 rounded-2xl bg-white/5 p-5">
+                        <div v-if="school?.phone" v-reveal="{ delay: 240 }" class="flex items-start gap-4 rounded-2xl bg-white/5 p-5">
                             <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sky-500/20">
                                 <svg class="size-5 text-sky-400" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
                             </div>
@@ -593,7 +614,7 @@ onUnmounted(() => {
                             </div>
                         </div>
 
-                        <div v-if="school?.email" class="flex items-start gap-4 rounded-2xl bg-white/5 p-5">
+                        <div v-if="school?.email" v-reveal="{ delay: 320 }" class="flex items-start gap-4 rounded-2xl bg-white/5 p-5">
                             <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/20">
                                 <svg class="size-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
                             </div>
@@ -603,7 +624,7 @@ onUnmounted(() => {
                             </div>
                         </div>
 
-                        <div v-if="school?.website" class="flex items-start gap-4 rounded-2xl bg-white/5 p-5 sm:col-span-2">
+                        <div v-if="school?.website" v-reveal="{ delay: 400 }" class="flex items-start gap-4 rounded-2xl bg-white/5 p-5 sm:col-span-2">
                             <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-violet-500/20">
                                 <svg class="size-5 text-violet-400" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"/></svg>
                             </div>
@@ -615,7 +636,7 @@ onUnmounted(() => {
                     </div>
 
                     <!-- Login card -->
-                    <div>
+                    <div v-reveal="{ from: 'right', delay: 200 }">
                         <div class="rounded-2xl border border-white/10 bg-white/5 p-6 text-center backdrop-blur-sm">
                             <div class="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-green-700">
                                 <svg class="size-7 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
@@ -641,9 +662,7 @@ onUnmounted(() => {
             </div>
         </section>
 
-        <!-- ══════════════════════════════════════════════════════════════
-             FOOTER
-        ══════════════════════════════════════════════════════════════ -->
+        <!-- Footer -->
         <footer class="bg-green-950 py-6">
             <div class="mx-auto max-w-6xl px-6 text-center">
                 <p class="text-xs text-green-500">
@@ -654,9 +673,7 @@ onUnmounted(() => {
             </div>
         </footer>
 
-        <!-- ══════════════════════════════════════════════════════════════
-             LIGHTBOX
-        ══════════════════════════════════════════════════════════════ -->
+        <!-- Lightbox -->
         <Teleport to="body">
             <div
                 v-if="lightbox"

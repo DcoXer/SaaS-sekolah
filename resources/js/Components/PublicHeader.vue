@@ -3,11 +3,12 @@ import { Link, usePage } from '@inertiajs/vue3';
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 
 const props = defineProps({
-    school:       { type: Object,  default: null },
-    canLogin:     { type: Boolean, default: true },
-    isLoggedIn:   { type: Boolean, default: false },
-    dashboardRoute: { type: String, default: null },
-    activePage:   { type: String,  default: '' }, // 'tentang' | 'ekskul' | 'galeri'
+    school:         { type: Object,  default: null },
+    canLogin:       { type: Boolean, default: true },
+    isLoggedIn:     { type: Boolean, default: false },
+    dashboardRoute: { type: String,  default: null },
+    activePage:     { type: String,  default: '' },
+    ppdbActive:     { type: Boolean, default: false },
 });
 
 const scrolled    = ref(false);
@@ -75,6 +76,11 @@ const mobileNavClass = (page) => [
                 <Link :href="route('ekskul')"  :class="navClass('ekskul')">Ekskul</Link>
                 <Link :href="route('galeri')"  :class="navClass('galeri')">Galeri</Link>
                 <a href="/#kontak" :class="navClass('kontak')">Kontak</a>
+                <Link v-if="ppdbActive" :href="route('ppdb.index')"
+                    class="ml-1 inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-400"
+                    :class="activePage === 'ppdb' ? 'bg-amber-600' : ''">
+                    PPDB
+                </Link>
             </nav>
 
             <!-- CTA + Hamburger -->
@@ -104,6 +110,10 @@ const mobileNavClass = (page) => [
                 <Link :href="route('ekskul')"  :class="mobileNavClass('ekskul')">Ekskul</Link>
                 <Link :href="route('galeri')"  :class="mobileNavClass('galeri')">Galeri</Link>
                 <a href="/#kontak" :class="mobileNavClass('kontak')">Kontak</a>
+                <Link v-if="ppdbActive" :href="route('ppdb.index')"
+                    class="rounded-lg bg-amber-500 px-3 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-amber-400">
+                    Daftar PPDB Sekarang
+                </Link>
                 <div class="mt-2 border-t border-slate-100 pt-2">
                     <Link v-if="isLoggedIn && dashboardRoute" :href="dashboardRoute"
                         class="block rounded-lg bg-green-700 px-3 py-2.5 text-center text-sm font-semibold text-white">

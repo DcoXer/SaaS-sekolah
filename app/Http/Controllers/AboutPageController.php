@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Extracurricular;
+use App\Models\PpdbSetting;
 use App\Models\SchoolSetting;
 use App\Models\Student;
 use App\Models\Teacher;
@@ -59,11 +60,14 @@ class AboutPageController extends Controller
         $tuKeuangan = User::role('tu_keuangan')->get()->map($mapUser);
         $operators  = User::role('operator')->get()->map($mapUser);
 
+        $ppdb = PpdbSetting::latest()->first();
+
         return inertia('Tentang', [
             'school'         => $school,
             'canLogin'       => Route::has('login'),
             'isLoggedIn'     => $user !== null,
             'dashboardRoute' => $role ? $this->resolveDashboardRoute($role) : null,
+            'ppdbActive'     => $ppdb?->isRegistrationOpen() ?? false,
             'stats'  => [
                 'students'         => Student::where('status', 'active')->count(),
                 'teachers'         => Teacher::count(),

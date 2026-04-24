@@ -9,6 +9,7 @@ const props = defineProps({
     canLogin:         { type: Boolean, default: true },
     isLoggedIn:       { type: Boolean, default: false },
     dashboardRoute:   { type: String,  default: null },
+    ppdbActive:       { type: Boolean, default: false },
 });
 
 const search   = ref('');
@@ -44,7 +45,7 @@ const color = (i) => colors[i % colors.length];
     <div class="min-h-screen overflow-x-hidden bg-white font-sans antialiased" style="font-family:'Plus Jakarta Sans',sans-serif">
 
         <PublicHeader :school="school" :can-login="canLogin" :is-logged-in="isLoggedIn"
-            :dashboard-route="dashboardRoute" active-page="ekskul"/>
+            :dashboard-route="dashboardRoute" active-page="ekskul" :ppdb-active="ppdbActive"/>
 
         <!-- ── Hero ────────────────────────────────────────────────────── -->
         <div class="relative overflow-hidden bg-gradient-to-br from-green-900 via-green-800 to-green-700 py-20">
@@ -65,9 +66,9 @@ const color = (i) => colors[i % colors.length];
                 <!-- Search -->
                 <div v-reveal="{ delay: 150 }" class="mx-auto mt-8 max-w-md">
                     <div class="relative">
-                        <svg class="pointer-events-none absolute left-4 top-1/2 size-4.5 -translate-y-1/2 text-white/40" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <!-- <svg class="pointer-events-none absolute left-4 top-1/2 size-4.5 -translate-y-1/2 text-white/40" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
-                        </svg>
+                        </svg> -->
                         <input v-model="search" type="search" placeholder="Cari ekstrakulikuler..."
                             class="w-full rounded-2xl border border-white/20 bg-white/10 py-3.5 pl-11 pr-4 text-sm text-white placeholder-white/40 outline-none backdrop-blur-sm focus:border-white/40 focus:bg-white/15 transition-colors"/>
                     </div>

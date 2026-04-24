@@ -10,6 +10,7 @@ const props = defineProps({
     canLogin:       { type: Boolean, default: true },
     isLoggedIn:     { type: Boolean, default: false },
     dashboardRoute: { type: String,  default: null },
+    ppdbActive:     { type: Boolean, default: false },
 });
 
 const initials = (name) => name?.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase() ?? '?';
@@ -29,6 +30,7 @@ const missionLines = computed(() =>
             :can-login="canLogin"
             :is-logged-in="isLoggedIn"
             :dashboard-route="dashboardRoute"
+            :ppdb-active="ppdbActive"
             active-page="tentang"
         />
 
@@ -70,12 +72,13 @@ const missionLines = computed(() =>
 
                 <!-- Stats bar -->
                 <div class="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
-                    <div v-for="s in [
+                    <div v-for="(s, i) in [
                         { value: stats.students  || '–', label: 'Siswa Aktif',        icon: 'M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z' },
                         { value: stats.teachers  || '–', label: 'Tenaga Pendidik',    icon: 'M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5' },
                         { value: stats.extracurriculars || '–', label: 'Ekstrakulikuler', icon: 'M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z' },
                         { value: stats.since     || '–', label: 'Tahun Berdiri',     icon: 'M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5' },
                     ]" :key="s.label"
+                        v-reveal="{ delay: i * 80 }"
                         class="flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-4 backdrop-blur-sm"
                     >
                         <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white/20">
@@ -96,7 +99,7 @@ const missionLines = computed(() =>
         <div class="mx-auto max-w-6xl space-y-16 px-6 py-16">
 
             <!-- Deskripsi Singkat -->
-            <div v-if="school?.description">
+            <div v-if="school?.description" v-reveal>
                 <div class="mb-6 flex items-center gap-4">
                     <div class="h-1 w-10 rounded-full bg-green-600"/>
                     <p class="text-xs font-bold uppercase tracking-widest text-green-600">Tentang Kami</p>
@@ -107,7 +110,7 @@ const missionLines = computed(() =>
             </div>
 
             <!-- Kepala Sekolah -->
-            <div v-if="school?.principal_name">
+            <div v-if="school?.principal_name" v-reveal>
                 <div class="mb-6 flex items-center gap-4">
                     <div class="h-1 w-10 rounded-full bg-green-600"/>
                     <p class="text-xs font-bold uppercase tracking-widest text-green-600">Pimpinan</p>
@@ -134,7 +137,7 @@ const missionLines = computed(() =>
             </div>
 
             <!-- Sejarah -->
-            <div v-if="school?.history">
+            <div v-if="school?.history" v-reveal>
                 <div class="mb-6 flex items-center gap-4">
                     <div class="h-1 w-10 rounded-full bg-green-600"/>
                     <p class="text-xs font-bold uppercase tracking-widest text-green-600">Sejarah</p>
@@ -158,14 +161,14 @@ const missionLines = computed(() =>
 
             <!-- Visi & Misi -->
             <div v-if="school?.vision || school?.mission">
-                <div class="mb-6 flex items-center gap-4">
+                <div v-reveal class="mb-6 flex items-center gap-4">
                     <div class="h-1 w-10 rounded-full bg-green-600"/>
                     <p class="text-xs font-bold uppercase tracking-widest text-green-600">Visi & Misi</p>
                 </div>
                 <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
 
                     <!-- Visi -->
-                    <div v-if="school?.vision" class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-800 to-green-600 p-8 shadow-md">
+                    <div v-if="school?.vision" v-reveal="{ from: 'left' }" class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-800 to-green-600 p-8 shadow-md">
                         <div class="absolute -right-8 -top-8 size-40 rounded-full bg-white/5"/>
                         <div class="absolute -bottom-10 -left-6 size-32 rounded-full bg-white/5"/>
                         <div class="relative">
@@ -180,7 +183,7 @@ const missionLines = computed(() =>
                     </div>
 
                     <!-- Misi -->
-                    <div v-if="school?.mission" class="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+                    <div v-if="school?.mission" v-reveal="{ from: 'right', delay: 100 }" class="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
                         <div class="mb-5 inline-flex size-12 items-center justify-center rounded-2xl bg-amber-100">
                             <svg class="size-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z"/>
@@ -200,13 +203,13 @@ const missionLines = computed(() =>
 
             <!-- Kontak -->
             <div v-if="school?.address || school?.phone || school?.email || school?.website">
-                <div class="mb-6 flex items-center gap-4">
+                <div v-reveal class="mb-6 flex items-center gap-4">
                     <div class="h-1 w-10 rounded-full bg-green-600"/>
                     <p class="text-xs font-bold uppercase tracking-widest text-green-600">Kontak</p>
                 </div>
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 
-                    <div v-if="school?.address" class="flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div v-if="school?.address" v-reveal="{ delay: 80 }" class="flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                         <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-green-100">
                             <svg class="size-5 text-green-700" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
@@ -218,7 +221,7 @@ const missionLines = computed(() =>
                         </div>
                     </div>
 
-                    <div v-if="school?.phone" class="flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div v-if="school?.phone" v-reveal="{ delay: 160 }" class="flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                         <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sky-100">
                             <svg class="size-5 text-sky-700" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/>
@@ -230,7 +233,7 @@ const missionLines = computed(() =>
                         </div>
                     </div>
 
-                    <div v-if="school?.email" class="flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div v-if="school?.email" v-reveal="{ delay: 240 }" class="flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                         <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber-100">
                             <svg class="size-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
@@ -242,7 +245,7 @@ const missionLines = computed(() =>
                         </div>
                     </div>
 
-                    <div v-if="school?.website" class="flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div v-if="school?.website" v-reveal="{ delay: 320 }" class="flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                         <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-violet-100">
                             <svg class="size-5 text-violet-700" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"/>
@@ -276,14 +279,14 @@ const missionLines = computed(() =>
         <div class="bg-slate-50 py-16">
             <div class="mx-auto max-w-6xl px-6">
 
-                <div class="mb-12 text-center">
+                <div v-reveal class="mb-12 text-center">
                     <p class="text-xs font-bold uppercase tracking-widest text-green-600">Sumber Daya Manusia</p>
                     <h2 class="mt-2 text-2xl font-extrabold text-slate-900 lg:text-3xl">Struktur Organisasi</h2>
                     <p class="mt-2 text-sm text-slate-500">Tenaga pendidik dan kependidikan {{ school?.name }}</p>
                 </div>
 
                 <!-- Tier 1: Kepala Madrasah -->
-                <div class="mb-6 flex justify-center">
+                <div v-reveal="{ from: 'scale' }" class="mb-6 flex justify-center">
                     <div class="relative w-60">
                         <div class="flex flex-col items-center rounded-2xl bg-gradient-to-br from-amber-500 to-amber-400 px-6 py-6 text-center shadow-lg">
                             <div class="flex size-16 items-center justify-center rounded-full bg-white/25 text-xl font-extrabold text-white ring-4 ring-white/30">
@@ -304,7 +307,8 @@ const missionLines = computed(() =>
                         <div class="h-0.5 w-2/5 bg-slate-300"/>
                     </div>
                     <div class="flex flex-wrap justify-center gap-4">
-                        <div v-for="t in structure.wakamad" :key="'wk-' + t.id"
+                        <div v-for="(t, i) in structure.wakamad" :key="'wk-' + t.id"
+                            v-reveal="{ delay: i * 80 }"
                             class="relative flex w-52 flex-col items-center rounded-2xl border border-orange-200 bg-gradient-to-b from-orange-50 to-white px-5 py-5 text-center shadow-sm">
                             <div class="flex size-14 items-center justify-center rounded-full bg-orange-100 text-sm font-extrabold text-orange-700 ring-2 ring-orange-200">
                                 <img v-if="t.photo" :src="t.photo" :alt="t.name" class="size-full rounded-full object-cover"/>
@@ -329,7 +333,8 @@ const missionLines = computed(() =>
                         <div class="h-0.5 w-1/2 bg-slate-300"/>
                     </div>
                     <div class="flex flex-wrap justify-center gap-4">
-                        <div v-for="u in structure.tu_keuangan" :key="'tu-' + u.id"
+                        <div v-for="(u, i) in structure.tu_keuangan" :key="'tu-' + u.id"
+                            v-reveal="{ delay: i * 80 }"
                             class="flex w-44 flex-col items-center rounded-2xl border border-slate-200 bg-white px-4 py-5 text-center shadow-sm">
                             <div class="flex size-12 items-center justify-center rounded-full bg-emerald-100 text-sm font-extrabold text-emerald-700 ring-2 ring-emerald-200">
                                 <img v-if="u.photo" :src="u.photo" :alt="u.name" class="size-full rounded-full object-cover"/>
@@ -338,7 +343,8 @@ const missionLines = computed(() =>
                             <p class="mt-2.5 text-sm font-bold text-slate-800 leading-snug">{{ u.name }}</p>
                             <span class="mt-2 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-600">TU Keuangan</span>
                         </div>
-                        <div v-for="u in structure.operators" :key="'op-' + u.id"
+                        <div v-for="(u, i) in structure.operators" :key="'op-' + u.id"
+                            v-reveal="{ delay: i * 80 }"
                             class="flex w-44 flex-col items-center rounded-2xl border border-slate-200 bg-white px-4 py-5 text-center shadow-sm">
                             <div class="flex size-12 items-center justify-center rounded-full bg-violet-100 text-sm font-extrabold text-violet-700 ring-2 ring-violet-200">
                                 <img v-if="u.photo" :src="u.photo" :alt="u.name" class="size-full rounded-full object-cover"/>
@@ -362,6 +368,7 @@ const missionLines = computed(() =>
 
                     <!-- Guru Kelas -->
                     <div v-if="structure.guru_kelas?.length"
+                        v-reveal="{ from: 'left' }"
                         class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                         <div class="flex items-center gap-3 border-b border-slate-100 bg-sky-50 px-5 py-4">
                             <div class="flex size-9 items-center justify-center rounded-xl bg-sky-600 shadow-sm">
@@ -392,6 +399,7 @@ const missionLines = computed(() =>
 
                     <!-- Guru Bidang -->
                     <div v-if="structure.guru_bidang?.length"
+                        v-reveal="{ from: 'right', delay: 100 }"
                         class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                         <div class="flex items-center gap-3 border-b border-slate-100 bg-indigo-50 px-5 py-4">
                             <div class="flex size-9 items-center justify-center rounded-xl bg-indigo-600 shadow-sm">

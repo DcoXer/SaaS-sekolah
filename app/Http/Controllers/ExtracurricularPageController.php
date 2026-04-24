@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Extracurricular;
+use App\Models\PpdbSetting;
 use App\Models\SchoolSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -32,12 +33,15 @@ class ExtracurricularPageController extends Controller
             'image'       => $e->image ? Storage::disk('public')->url($e->image) : null,
         ]);
 
+        $ppdb = PpdbSetting::latest()->first();
+
         return inertia('Ekskul', [
             'school'           => $school,
             'extracurriculars' => $extracurriculars,
             'canLogin'         => Route::has('login'),
             'isLoggedIn'       => $user !== null,
             'dashboardRoute'   => $role ? $this->resolveDashboardRoute($role) : null,
+            'ppdbActive'       => $ppdb?->isRegistrationOpen() ?? false,
         ]);
     }
 
