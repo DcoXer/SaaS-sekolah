@@ -11,7 +11,7 @@ const props = defineProps({
     filters:       { type: Object, default: () => ({}) },
 });
 
-// ── Setting form ──────────────────────────────────────────────────────────
+// Setting form 
 const showSettingModal = ref(false);
 
 const settingForm = useForm({

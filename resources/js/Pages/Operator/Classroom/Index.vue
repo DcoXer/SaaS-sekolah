@@ -34,7 +34,7 @@ const submitCreate = () => {
     });
 };
 
-// ── Delete ────────────────────────────────────────────────────────────────────
+// ── Delete 
 const deleteTarget = ref(null);
 const deleteForm   = useForm({});
 
@@ -252,7 +252,7 @@ const activeYears = props.academicYears.filter(y => y.status === 'active' || y.s
 
         </div>
 
-        <!-- ── Create Modal ────────────────────────────────────────────────────── -->
+        <!-- Create Modal  -->
         <Modal :show="showCreate" max-width="sm" @close="showCreate = false">
             <form @submit.prevent="submitCreate">
                 <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
