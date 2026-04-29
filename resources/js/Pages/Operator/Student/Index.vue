@@ -13,6 +13,7 @@ const props = defineProps({
 const showCreate = ref(false);
 
 const createForm = useForm({
+    nisn:        '',
     nis:         '',
     name:        '',
     gender:      '',
@@ -62,7 +63,8 @@ const filtered = computed(() => {
         const q = search.value.toLowerCase();
         list = list.filter(s =>
             s.name.toLowerCase().includes(q) ||
-            s.nis.toLowerCase().includes(q) ||
+            (s.nisn ?? '').toLowerCase().includes(q) ||
+            (s.nis ?? '').toLowerCase().includes(q) ||
             (s.user?.name && s.user.name.toLowerCase().includes(q))
         );
     }
@@ -135,7 +137,7 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                     <input
                         v-model="search"
                         type="search"
-                        placeholder="Cari nama, NIS, wali murid..."
+                        placeholder="Cari nama, NISN/NIS, wali murid..."
                         class="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3.5 text-sm text-slate-800 placeholder-slate-400 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
                     />
                 </div>
@@ -204,7 +206,9 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                             </div>
                             <div class="min-w-0">
                                 <p class="truncate text-sm font-semibold text-slate-800">{{ student.name }}</p>
-                                <p class="tabular-nums text-xs text-slate-400">NIS {{ student.nis }}</p>
+                                <p class="tabular-nums text-xs text-slate-400">
+                                    NISN {{ student.nisn ?? '—' }}<span v-if="student.nis"> • NIS {{ student.nis }}</span>
+                                </p>
                             </div>
                         </div>
                         <div class="flex shrink-0 items-center gap-1 ml-2">
@@ -231,7 +235,7 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                     <thead>
                         <tr class="bg-slate-50">
                             <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Siswa</th>
-                            <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">NIS</th>
+                            <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">NISN</th>
                             <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Tingkat</th>
                             <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Kelamin</th>
                             <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Wali Murid</th>
@@ -247,7 +251,10 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                                     <span class="text-sm font-semibold text-slate-800">{{ student.name }}</span>
                                 </div>
                             </td>
-                            <td class="px-5 py-3.5"><span class="tabular-nums text-sm text-slate-600">{{ student.nis }}</span></td>
+                            <td class="px-5 py-3.5">
+                                <div class="tabular-nums text-sm text-slate-700">{{ student.nisn ?? 'â€”' }}</div>
+                                <div v-if="student.nis" class="tabular-nums text-xs text-slate-400">NIS {{ student.nis }}</div>
+                            </td>
                             <td class="px-5 py-3.5"><span class="inline-flex items-center rounded-full bg-violet-50 px-2.5 py-1 text-xs font-semibold text-violet-700 ring-1 ring-violet-200">Kelas {{ student.grade }}</span></td>
                             <td class="px-5 py-3.5"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ring-1" :class="genderConfig[student.gender]?.badge ?? 'bg-slate-100 text-slate-500 ring-slate-200'">{{ genderConfig[student.gender]?.label ?? student.gender }}</span></td>
                             <td class="px-5 py-3.5">
@@ -308,24 +315,24 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                         <p class="mb-3 text-xs font-semibold uppercase text-slate-400">Data Siswa</p>
                         <div class="space-y-3">
 
-                            <!-- NIS + Nama -->
+                            <!-- NISN + Nama -->
                             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                 <div>
-                                    <label for="c-nis" class="mb-1.5 block text-xs font-semibold text-slate-600">
-                                        NIS <span class="text-red-500">*</span>
+                                    <label for="c-nisn" class="mb-1.5 block text-xs font-semibold text-slate-600">
+                                        NISN <span class="text-red-500">*</span>
                                     </label>
                                     <input
-                                        id="c-nis"
-                                        v-model="createForm.nis"
+                                        id="c-nisn"
+                                        v-model="createForm.nisn"
                                         type="text"
-                                        placeholder="Nomor Induk Siswa"
+                                        placeholder="Nomor Induk Siswa Nasional"
                                         :class="[
                                             'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150',
                                             'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                            createForm.errors.nis ? 'border-red-400' : 'border-slate-200',
+                                            createForm.errors.nisn ? 'border-red-400' : 'border-slate-200',
                                         ]"
                                     />
-                                    <p v-if="createForm.errors.nis" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.nis }}</p>
+                                    <p v-if="createForm.errors.nisn" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.nisn }}</p>
                                 </div>
                                 <div>
                                     <label for="c-name" class="mb-1.5 block text-xs font-semibold text-slate-600">
@@ -344,6 +351,25 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                                     />
                                     <p v-if="createForm.errors.name" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.name }}</p>
                                 </div>
+                            </div>
+
+                            <!-- NIS (opsional) -->
+                            <div>
+                                <label for="c-nis" class="mb-1.5 block text-xs font-semibold text-slate-600">
+                                    NIS <span class="text-slate-400">(opsional)</span>
+                                </label>
+                                <input
+                                    id="c-nis"
+                                    v-model="createForm.nis"
+                                    type="text"
+                                    placeholder="Nomor Induk Siswa (internal)"
+                                    :class="[
+                                        'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150',
+                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                        createForm.errors.nis ? 'border-red-400' : 'border-slate-200',
+                                    ]"
+                                />
+                                <p v-if="createForm.errors.nis" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.nis }}</p>
                             </div>
 
                             <!-- Grade + Tanggal Lahir -->

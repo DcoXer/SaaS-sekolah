@@ -66,8 +66,8 @@ class StudentSeeder extends Seeder
             ['class' => '6A', 'grade' => 6, 'nis' => '2025030', 'name' => 'Nazwa Aulia Fitri',       'gender' => 'P', 'birth' => '2013-12-17', 'parent' => null],
         ];
 
-        foreach ($studentData as $data) {
-            DB::transaction(function () use ($data, $year, $classrooms) {
+        foreach ($studentData as $i => $data) {
+            DB::transaction(function () use ($data, $i, $year, $classrooms) {
                 $userId = null;
 
                 if ($data['parent']) {
@@ -82,6 +82,8 @@ class StudentSeeder extends Seeder
 
                 $student = Student::create([
                     'user_id'    => $userId,
+                    // Dummy NISN for local seed data (must be unique + not empty).
+                    'nisn'       => (string) (1000000000 + $i + 1),
                     'nis'        => $data['nis'],
                     'name'       => $data['name'],
                     'gender'     => $data['gender'],

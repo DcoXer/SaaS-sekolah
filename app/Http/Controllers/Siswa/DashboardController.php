@@ -35,7 +35,11 @@ class DashboardController extends Controller
 
         return Inertia::render('Siswa/Dashboard', [
             'activeYear' => $activeYear?->name,
-            'student'    => $student ? ['name' => $student->name, 'nis' => $student->nis] : null,
+            'student'    => $student ? [
+                'name' => $student->name,
+                'nisn' => $student->nisn,
+                'nis'  => $student->nis,
+            ] : null,
             'stats' => [
                 'unpaid'  => $unpaidInvoices->where('status', 'unpaid')->count(),
                 'partial' => $unpaidInvoices->where('status', 'partial')->count(),

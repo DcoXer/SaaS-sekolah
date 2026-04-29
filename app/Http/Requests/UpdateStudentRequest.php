@@ -16,7 +16,8 @@ class UpdateStudentRequest extends FormRequest
         $studentId = $this->route('student')->id;
 
         return [
-            'nis'         => ['required', 'string', 'max:20', "unique:students,nis,{$studentId}"],
+            'nisn'        => ['required', 'string', 'max:20', "unique:students,nisn,{$studentId}"],
+            'nis'         => ['nullable', 'string', 'max:20', "unique:students,nis,{$studentId}"],
             'name'        => ['required', 'string', 'max:100'],
             'gender'      => ['required', 'in:L,P'],
             'grade'       => ['required', 'integer', 'between:1,6'],
@@ -30,7 +31,8 @@ class UpdateStudentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'nis.required'    => 'NIS wajib diisi.',
+            'nisn.required'   => 'NISN wajib diisi.',
+            'nisn.unique'     => 'NISN sudah terdaftar.',
             'nis.unique'      => 'NIS sudah terdaftar.',
             'name.required'   => 'Nama siswa wajib diisi.',
             'gender.required' => 'Jenis kelamin wajib diisi.',

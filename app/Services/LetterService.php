@@ -179,11 +179,12 @@ class LetterService
 
         $replacements = [
             '{{student.name}}'       => $e($student->name),
+            '{{student.nisn}}'       => $e($student->nisn),
             '{{student.nis}}'        => $e($student->nis),
             '{{classroom.name}}'     => $e($classroom?->name),
             '{{academic_year.name}}' => $e($academicYear?->name),
             '{{letter.date}}'        => $e(now()->isoFormat('D MMMM YYYY')),
-            '{{letter.number}}'      => 'No. ' . $e(now()->format('Ymd') . '/' . $student->nis),
+            '{{letter.number}}'      => 'No. ' . $e(now()->format('Ymd') . '/' . ($student->nisn ?? $student->nis)),
             '{{principal.name}}'     => $e($school?->principal_name),
             '{{principal.nip}}'      => $e($school?->principal_nip),
             '{{school.name}}'        => $e($school?->name),

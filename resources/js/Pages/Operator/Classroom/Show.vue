@@ -9,6 +9,7 @@ const props = defineProps({
     classroom: { type: Object, required: true },
     teachers:  { type: Array,  required: true },
     subjects:  { type: Array,  required: true },
+    peerClassrooms: { type: Array, default: () => [] },
 });
 
 const isLower = props.classroom.grade <= 3; // guru_kelas flow
@@ -131,6 +132,62 @@ const submitAssignSiswa = () => {
     });
 };
 
+// â”€â”€ Manage existing students (bulk move / remove) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+const selectedInClass = ref([]);
+const showMoveStudents = ref(false);
+const showRemoveStudents = ref(false);
+
+const moveStudentsForm = useForm({
+    student_ids: [],
+    target_classroom_id: '',
+});
+
+const removeStudentsForm = useForm({
+    student_ids: [],
+});
+
+const toggleInClass = (studentId) => {
+    const id = Number(studentId);
+    selectedInClass.value = selectedInClass.value.includes(id)
+        ? selectedInClass.value.filter(x => x !== id)
+        : [...selectedInClass.value, id];
+};
+
+const clearInClassSelection = () => { selectedInClass.value = []; };
+
+const openMoveStudents = () => {
+    moveStudentsForm.reset();
+    moveStudentsForm.clearErrors();
+    moveStudentsForm.target_classroom_id = '';
+    showMoveStudents.value = true;
+};
+
+const submitMoveStudents = () => {
+    moveStudentsForm.student_ids = selectedInClass.value;
+    moveStudentsForm.patch(route('operator.classrooms.move-students', props.classroom.id), {
+        onSuccess: () => {
+            showMoveStudents.value = false;
+            clearInClassSelection();
+        },
+    });
+};
+
+const openRemoveStudents = () => {
+    removeStudentsForm.reset();
+    removeStudentsForm.clearErrors();
+    showRemoveStudents.value = true;
+};
+
+const submitRemoveStudents = () => {
+    removeStudentsForm.student_ids = selectedInClass.value;
+    removeStudentsForm.delete(route('operator.classrooms.remove-students', props.classroom.id), {
+        onSuccess: () => {
+            showRemoveStudents.value = false;
+            clearInClassSelection();
+        },
+    });
+};
+
 // ── Delete ────────────────────────────────────────────────────────────────────
 const showDelete = ref(false);
 const deleteForm = useForm({});
@@ -154,11 +211,13 @@ const submitDelete = () => {
             </div>
         </template>
 
-        <div class="mx-auto max-w-2xl space-y-5">
+        <div class="mx-auto max-w-6xl space-y-5">
             <BackButton href="/operator/classrooms" />
 
+            <div class="space-y-5 lg:grid lg:grid-cols-12 lg:gap-5 lg:space-y-0">
+
             <!-- Header card -->
-            <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-12">
                 <div class="flex items-center gap-4">
                     <div class="flex size-14 items-center justify-center rounded-xl bg-violet-100">
                         <svg class="size-7 text-violet-600" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
@@ -191,6 +250,84 @@ const submitDelete = () => {
                     Hapus
                 </button>
             </div>
+
+            <!-- Main: Students -->
+            <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm lg:col-span-7">
+                <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+                    <div>
+                        <h3 class="text-sm font-semibold text-slate-800">Siswa</h3>
+                        <p class="mt-0.5 text-xs text-slate-400">Daftar siswa yang terdaftar di kelas ini.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span v-if="selectedInClass.length > 0" class="hidden sm:inline text-xs text-slate-500">
+                            {{ selectedInClass.length }} dipilih
+                        </span>
+                        <button
+                            type="button"
+                            @click="openMoveStudents"
+                            :disabled="selectedInClass.length === 0 || peerClassrooms.length === 0"
+                            class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition-[background-color,border-color] duration-150 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            Pindahkan
+                        </button>
+                        <button
+                            type="button"
+                            @click="openRemoveStudents"
+                            :disabled="selectedInClass.length === 0"
+                            class="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 transition-[background-color,border-color] duration-150 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            Keluarkan
+                        </button>
+                        <button
+                            type="button"
+                            @click="openAssignSiswa"
+                            class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600"
+                        >
+                            <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            Tambah Siswa
+                        </button>
+                    </div>
+                </div>
+
+                <div v-if="classroom.students?.length > 0">
+                    <ul class="divide-y divide-slate-100">
+                        <li
+                            v-for="student in classroom.students"
+                            :key="student.id"
+                            class="flex items-center gap-3 px-5 py-3 transition-[background-color] duration-150 hover:bg-slate-50"
+                        >
+                            <button
+                                type="button"
+                                @click="toggleInClass(student.id)"
+                                class="flex size-5 shrink-0 items-center justify-center rounded border border-slate-300 bg-white"
+                                :class="selectedInClass.includes(student.id) ? 'border-emerald-500 bg-emerald-500' : ''"
+                                :aria-label="selectedInClass.includes(student.id) ? 'Batalkan pilihan' : 'Pilih siswa'"
+                            >
+                                <svg v-if="selectedInClass.includes(student.id)" class="size-3 text-white" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                            </button>
+                            <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-sky-100 text-xs font-semibold text-sky-700">
+                                {{ student.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) }}
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="truncate text-sm font-semibold text-slate-800">{{ student.name }}</p>
+                                <p class="tabular-nums truncate text-xs text-slate-400">
+                                    NISN {{ student.nisn ?? 'â€”' }}<span v-if="student.nis"> â€¢ NIS {{ student.nis }}</span>
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div v-else class="px-5 py-5 text-center">
+                    <p class="text-sm text-slate-400">Belum ada siswa di kelas ini.</p>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-5 lg:col-span-5">
 
             <!-- Edit form card (nama + tingkat saja) -->
             <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -351,47 +488,11 @@ const submitDelete = () => {
                 </div>
             </div>
 
-            <!-- ══ Daftar Siswa (semua grade) ═══════════════════════════════════ -->
-            <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-                <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-                    <div>
-                        <h3 class="text-sm font-semibold text-slate-800">Siswa</h3>
-                        <p class="mt-0.5 text-xs text-slate-400">Daftar siswa yang terdaftar di kelas ini.</p>
-                    </div>
-                    <button
-                        @click="openAssignSiswa"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600"
-                    >
-                        <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
-                        Tambah Siswa
-                    </button>
-                </div>
+            </div> <!-- /sidebar -->
 
-                <div v-if="classroom.students?.length > 0">
-                    <ul class="divide-y divide-slate-100">
-                        <li
-                            v-for="student in classroom.students"
-                            :key="student.id"
-                            class="flex items-center gap-3 px-5 py-3"
-                        >
-                            <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-sky-100 text-xs font-semibold text-sky-700">
-                                {{ student.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) }}
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-slate-800">{{ student.name }}</p>
-                                <p class="tabular-nums text-xs text-slate-400">{{ student.nis }}</p>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                <div v-else class="px-5 py-5 text-center">
-                    <p class="text-sm text-slate-400">Belum ada siswa di kelas ini.</p>
-                </div>
-            </div>
-
+            </div> <!-- /grid -->
         </div>
+
 
         <!-- ══ Modal: Assign Guru Kelas ════════════════════════════════════════ -->
         <Modal :show="showAssignGuruKelas" max-width="sm" @close="showAssignGuruKelas = false">
@@ -636,7 +737,9 @@ const submitDelete = () => {
                         </div>
                         <div>
                             <p class="text-sm font-medium text-slate-800">{{ student.name }}</p>
-                            <p class="tabular-nums text-xs text-slate-400">{{ student.nis }}</p>
+                            <p class="tabular-nums text-xs text-slate-400">
+                                NISN {{ student.nisn ?? '—' }}<span v-if="student.nis"> • NIS {{ student.nis }}</span>
+                            </p>
                         </div>
                     </label>
                 </div>
@@ -665,6 +768,110 @@ const submitDelete = () => {
         </Modal>
 
         <!-- ══ Modal: Delete Confirm ═══════════════════════════════════════════ -->
+        <!-- Manage students -->
+        <Modal :show="showMoveStudents" max-width="sm" @close="showMoveStudents = false">
+            <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+                <h3 class="text-base font-bold text-slate-900">Pindahkan Siswa</h3>
+                <button
+                    type="button"
+                    @click="showMoveStudents = false"
+                    class="flex size-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                    aria-label="Tutup modal"
+                >
+                    <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <form @submit.prevent="submitMoveStudents" class="space-y-4 px-6 py-5">
+                <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+                    <p class="text-sm font-semibold text-slate-800">{{ selectedInClass.length }} siswa dipilih</p>
+                    <p class="mt-0.5 text-xs text-slate-500">Pindahkan ke rombel lain (tingkat yang sama) di tahun ajaran aktif.</p>
+                </div>
+
+                <div>
+                    <label for="mv-target" class="mb-1.5 block text-xs font-semibold text-slate-600">
+                        Kelas Tujuan <span class="text-red-500">*</span>
+                    </label>
+                    <select
+                        id="mv-target"
+                        v-model="moveStudentsForm.target_classroom_id"
+                        :class="[
+                            'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
+                            'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                            moveStudentsForm.errors.target_classroom_id ? 'border-red-400' : 'border-slate-200',
+                        ]"
+                    >
+                        <option value="" disabled>Pilih kelas tujuan</option>
+                        <option v-for="cls in peerClassrooms" :key="cls.id" :value="cls.id">
+                            {{ cls.name }}
+                        </option>
+                    </select>
+                    <p v-if="moveStudentsForm.errors.target_classroom_id" class="mt-1.5 text-xs text-red-500">{{ moveStudentsForm.errors.target_classroom_id }}</p>
+                </div>
+
+                <p v-if="moveStudentsForm.errors.student_ids" class="text-xs text-red-500">{{ moveStudentsForm.errors.student_ids }}</p>
+
+                <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+                    <button
+                        type="button"
+                        @click="showMoveStudents = false"
+                        class="rounded-lg px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100"
+                    >
+                        Batal
+                    </button>
+                    <button
+                        type="submit"
+                        :disabled="moveStudentsForm.processing || !moveStudentsForm.target_classroom_id"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
+                    >
+                        <svg v-if="moveStudentsForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                        </svg>
+                        {{ moveStudentsForm.processing ? 'Memindahkan...' : 'Pindahkan' }}
+                    </button>
+                </div>
+            </form>
+        </Modal>
+
+        <Modal :show="showRemoveStudents" max-width="sm" @close="showRemoveStudents = false">
+            <div class="px-6 py-5">
+                <div class="mb-4 flex size-10 items-center justify-center rounded-full bg-red-100">
+                    <svg class="size-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                    </svg>
+                </div>
+                <h3 class="text-balance text-base font-bold text-slate-900">Keluarkan Siswa dari Rombel</h3>
+                <p class="text-pretty mt-1.5 text-sm text-slate-500">
+                    Keluarkan {{ selectedInClass.length }} siswa dari rombel <span class="font-semibold text-slate-700">{{ classroom.name }}</span>?
+                    Ini hanya memutus relasi rombel di tahun ajaran aktif.
+                </p>
+            </div>
+
+            <p v-if="removeStudentsForm.errors.student_ids" class="px-6 text-xs text-red-500">{{ removeStudentsForm.errors.student_ids }}</p>
+
+            <div class="flex items-center justify-end gap-3 border-t border-slate-100 px-6 py-4">
+                <button
+                    type="button"
+                    @click="showRemoveStudents = false"
+                    class="rounded-lg px-4 py-2 text-sm font-semibold text-slate-600 transition-[background-color] duration-150 hover:bg-slate-100"
+                >
+                    Batal
+                </button>
+                <button
+                    @click="submitRemoveStudents"
+                    :disabled="removeStudentsForm.processing"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-red-600 disabled:opacity-60"
+                >
+                    <svg v-if="removeStudentsForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                    {{ removeStudentsForm.processing ? 'Mengeluarkan...' : 'Ya, Keluarkan' }}
+                </button>
+            </div>
+        </Modal>
+
         <Modal :show="showDelete" max-width="sm" @close="showDelete = false">
             <div class="px-6 py-5">
                 <div class="mb-4 flex size-10 items-center justify-center rounded-full bg-red-100">

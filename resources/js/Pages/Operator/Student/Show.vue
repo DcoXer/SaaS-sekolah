@@ -3,7 +3,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import BackButton from '@/Components/BackButton.vue';
 import { Head, Link, useForm, router } from '@inertiajs/vue3';
-import { ref, computed, watch } from 'vue';
+import { ref } from 'vue';
 
 const props = defineProps({
     student:       { type: Object, required: true },
@@ -13,6 +13,7 @@ const props = defineProps({
 
 // ── Edit form ─────────────────────────────────────────────────────────────────
 const editForm = useForm({
+    nisn:        props.student.nisn,
     nis:         props.student.nis,
     name:        props.student.name,
     gender:      props.student.gender,
@@ -28,32 +29,6 @@ const submitEdit = () => {
 };
 
 // ── Assign classroom ──────────────────────────────────────────────────────────
-const assignForm = useForm({
-    academic_year_id: '',
-    classroom_id:     '',
-});
-
-// Filter kelas sesuai tahun ajaran + grade siswa
-const filteredClassrooms = computed(() =>
-    props.classrooms.filter(c =>
-        String(c.academic_year_id) === String(assignForm.academic_year_id) &&
-        c.grade === props.student.grade
-    )
-);
-
-// Reset classroom_id kalau tahun ajaran berubah
-watch(() => assignForm.academic_year_id, () => {
-    assignForm.classroom_id = '';
-});
-
-const submitAssign = () => {
-    assignForm.patch(route('operator.students.assign-classroom', props.student.id), {
-        onSuccess: () => {
-            assignForm.reset();
-        },
-    });
-};
-
 // ── Delete ────────────────────────────────────────────────────────────────────
 const showDelete = ref(false);
 const deleteForm  = useForm({});
@@ -106,7 +81,9 @@ const formatDate = (d) => d
                     </div>
                     <div>
                         <h2 class="text-balance text-base font-bold text-slate-900">{{ student.name }}</h2>
-                        <p class="tabular-nums text-sm text-slate-500">NIS: {{ student.nis }}</p>
+                        <p class="tabular-nums text-sm text-slate-500">
+                            NISN: {{ student.nisn ?? 'â€”' }}<span v-if="student.nis"> â€¢ NIS: {{ student.nis }}</span>
+                        </p>
                         <div class="mt-1.5 flex flex-wrap items-center gap-1.5">
                             <span
                                 class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ring-1"
@@ -151,20 +128,20 @@ const formatDate = (d) => d
 
                         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                             <div>
-                                <label for="e-nis" class="mb-1.5 block text-xs font-semibold text-slate-600">
-                                    NIS <span class="text-red-500">*</span>
+                                <label for="e-nisn" class="mb-1.5 block text-xs font-semibold text-slate-600">
+                                    NISN <span class="text-red-500">*</span>
                                 </label>
                                 <input
-                                    id="e-nis"
-                                    v-model="editForm.nis"
+                                    id="e-nisn"
+                                    v-model="editForm.nisn"
                                     type="text"
                                     :class="[
                                         'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
                                         'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                        editForm.errors.nis ? 'border-red-400' : 'border-slate-200',
+                                        editForm.errors.nisn ? 'border-red-400' : 'border-slate-200',
                                     ]"
                                 />
-                                <p v-if="editForm.errors.nis" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.nis }}</p>
+                                <p v-if="editForm.errors.nisn" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.nisn }}</p>
                             </div>
                             <div>
                                 <label for="e-name" class="mb-1.5 block text-xs font-semibold text-slate-600">
@@ -182,6 +159,23 @@ const formatDate = (d) => d
                                 />
                                 <p v-if="editForm.errors.name" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.name }}</p>
                             </div>
+                        </div>
+
+                        <div>
+                            <label for="e-nis" class="mb-1.5 block text-xs font-semibold text-slate-600">
+                                NIS <span class="text-slate-400">(opsional)</span>
+                            </label>
+                            <input
+                                id="e-nis"
+                                v-model="editForm.nis"
+                                type="text"
+                                :class="[
+                                    'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
+                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                    editForm.errors.nis ? 'border-red-400' : 'border-slate-200',
+                                ]"
+                            />
+                            <p v-if="editForm.errors.nis" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.nis }}</p>
                         </div>
 
                         <!-- Grade + Tanggal Lahir -->
@@ -330,6 +324,9 @@ const formatDate = (d) => d
             <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                 <div class="border-b border-slate-100 px-5 py-4">
                     <h3 class="text-sm font-semibold text-slate-800">Riwayat Kelas</h3>
+                    <p class="mt-0.5 text-xs text-slate-400">
+                        Penempatan/mutasi kelas dikelola dari menu <Link href="/operator/classrooms" class="font-semibold text-emerald-600 hover:underline">Kelas</Link>.
+                    </p>
                 </div>
 
                 <div v-if="student.classrooms?.length > 0">
@@ -352,87 +349,6 @@ const formatDate = (d) => d
                 <div v-else class="px-5 py-6 text-center">
                     <p class="text-sm text-slate-400">Belum pernah ditempatkan di kelas manapun.</p>
                 </div>
-            </div>
-
-            <!-- Assign / Pindah Kelas -->
-            <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-                <div class="border-b border-slate-100 px-5 py-4">
-                    <h3 class="text-sm font-semibold text-slate-800">Tempatkan ke Kelas</h3>
-                    <p class="mt-0.5 text-xs text-slate-400">
-                        Pilih tahun ajaran dan kelas. Jika sudah ada di tahun ajaran tersebut, kelasnya akan diganti.
-                    </p>
-                </div>
-
-                <form @submit.prevent="submitAssign" class="space-y-3 p-5">
-                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                        <!-- Tahun Ajaran -->
-                        <div>
-                            <label for="a-year" class="mb-1.5 block text-xs font-semibold text-slate-600">
-                                Tahun Ajaran <span class="text-red-500">*</span>
-                            </label>
-                            <select
-                                id="a-year"
-                                v-model="assignForm.academic_year_id"
-                                :class="[
-                                    'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                    assignForm.errors.academic_year_id ? 'border-red-400' : 'border-slate-200',
-                                ]"
-                            >
-                                <option value="" disabled>Pilih tahun ajaran</option>
-                                <option v-for="year in academicYears" :key="year.id" :value="year.id">
-                                    {{ year.name }}
-                                </option>
-                            </select>
-                            <p v-if="assignForm.errors.academic_year_id" class="mt-1.5 text-xs text-red-500">{{ assignForm.errors.academic_year_id }}</p>
-                        </div>
-
-                        <!-- Kelas (difilter) -->
-                        <div>
-                            <label for="a-class" class="mb-1.5 block text-xs font-semibold text-slate-600">
-                                Kelas <span class="text-red-500">*</span>
-                            </label>
-                            <select
-                                id="a-class"
-                                v-model="assignForm.classroom_id"
-                                :disabled="!assignForm.academic_year_id"
-                                :class="[
-                                    'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                    !assignForm.academic_year_id ? 'cursor-not-allowed bg-slate-50 text-slate-400' : '',
-                                    assignForm.errors.classroom_id ? 'border-red-400' : 'border-slate-200',
-                                ]"
-                            >
-                                <option value="" disabled>
-                                    {{ assignForm.academic_year_id ? 'Pilih kelas' : 'Pilih tahun ajaran dulu' }}
-                                </option>
-                                <option v-for="cls in filteredClassrooms" :key="cls.id" :value="cls.id">
-                                    {{ cls.name }} (Kelas {{ cls.grade }})
-                                </option>
-                            </select>
-                            <p v-if="assignForm.errors.classroom_id" class="mt-1.5 text-xs text-red-500">{{ assignForm.errors.classroom_id }}</p>
-                            <p
-                                v-if="assignForm.academic_year_id && filteredClassrooms.length === 0"
-                                class="mt-1.5 text-xs text-amber-600"
-                            >
-                                Tidak ada kelas tingkat {{ student.grade }} di tahun ajaran ini.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="flex justify-end pt-1">
-                        <button
-                            type="submit"
-                            :disabled="assignForm.processing || !assignForm.classroom_id"
-                            class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60"
-                        >
-                            <svg v-if="assignForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                            </svg>
-                            {{ assignForm.processing ? 'Menyimpan...' : 'Tempatkan' }}
-                        </button>
-                    </div>
-                </form>
             </div>
 
         </div>

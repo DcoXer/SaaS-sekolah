@@ -141,6 +141,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
              ->name('classrooms.available-students');
         Route::post('classrooms/{classroom}/assign-students', [ClassroomController::class, 'assignStudents'])
              ->name('classrooms.assign-students');
+        Route::patch('classrooms/{classroom}/move-students', [ClassroomController::class, 'moveStudents'])
+             ->name('classrooms.move-students');
+        Route::delete('classrooms/{classroom}/remove-students', [ClassroomController::class, 'removeStudents'])
+             ->name('classrooms.remove-students');
         Route::post('classrooms/{classroom}/assign-guru-kelas', [ClassroomController::class, 'assignGuruKelas'])
              ->name('classrooms.assign-guru-kelas');
         Route::post('classrooms/{classroom}/assign-wali-kelas', [ClassroomController::class, 'assignWaliKelas'])

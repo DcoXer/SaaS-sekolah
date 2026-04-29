@@ -42,11 +42,23 @@ class ClassroomController extends Controller
     public function show(Classroom $classroom): Response
     {
         $classroom = $this->service->getById($classroom);
+        $activeYear = $this->academicYearService->getActive();
+
+        $peerClassrooms = collect();
+        if ($activeYear && (int) $activeYear->id === (int) $classroom->academic_year_id) {
+            $peerClassrooms = Classroom::query()
+                ->where('academic_year_id', $activeYear->id)
+                ->where('grade', $classroom->grade)
+                ->where('id', '!=', $classroom->id)
+                ->orderBy('name')
+                ->get(['id', 'name']);
+        }
 
         return Inertia::render('Operator/Classroom/Show', [
             'classroom' => $classroom,
             'teachers'  => $this->teacherService->getAll(),
             'subjects'  => $this->subjectService->getByGrade($classroom->grade),
+            'peerClassrooms' => $peerClassrooms,
         ]);
     }
 
@@ -89,6 +101,44 @@ class ClassroomController extends Controller
         $this->service->assignStudents($classroom, $activeYear, $request->student_ids);
 
         return redirect()->back()->with('success', 'Siswa berhasil ditambahkan ke rombel.');
+    }
+
+    public function moveStudents(Request $request, Classroom $classroom)
+    {
+        $request->validate([
+            'student_ids'         => ['required', 'array', 'min:1'],
+            'student_ids.*'       => ['exists:students,id'],
+            'target_classroom_id' => ['required', 'exists:classrooms,id'],
+        ]);
+
+        $activeYear = $this->academicYearService->getActive();
+        abort_if(!$activeYear, 404);
+        abort_if((int) $activeYear->id !== (int) $classroom->academic_year_id, 422, 'Kelas ini bukan dari tahun ajaran aktif.');
+
+        $target = Classroom::findOrFail($request->target_classroom_id);
+        abort_if((int) $target->academic_year_id !== (int) $activeYear->id, 422, 'Target kelas bukan dari tahun ajaran aktif.');
+        abort_if((int) $target->grade !== (int) $classroom->grade, 422, 'Target kelas harus satu tingkat.');
+        abort_if((int) $target->id === (int) $classroom->id, 422, 'Target kelas tidak boleh sama.');
+
+        $moved = $this->service->moveStudents($classroom, $target, $activeYear, $request->student_ids);
+
+        return redirect()->back()->with('success', "{$moved} siswa berhasil dipindahkan.");
+    }
+
+    public function removeStudents(Request $request, Classroom $classroom)
+    {
+        $request->validate([
+            'student_ids'   => ['required', 'array', 'min:1'],
+            'student_ids.*' => ['exists:students,id'],
+        ]);
+
+        $activeYear = $this->academicYearService->getActive();
+        abort_if(!$activeYear, 404);
+        abort_if((int) $activeYear->id !== (int) $classroom->academic_year_id, 422, 'Kelas ini bukan dari tahun ajaran aktif.');
+
+        $removed = $this->service->removeStudents($classroom, $activeYear, $request->student_ids);
+
+        return redirect()->back()->with('success', "{$removed} siswa dikeluarkan dari rombel.");
     }
 
     public function assignGuruKelas(Request $request, Classroom $classroom)

@@ -98,6 +98,40 @@ class ClassroomService
         });
     }
 
+    public function moveStudents(Classroom $from, Classroom $to, AcademicYear $academicYear, array $studentIds): int
+    {
+        return DB::transaction(function () use ($from, $to, $academicYear, $studentIds) {
+            $studentIds = array_values(array_unique(array_map('intval', $studentIds)));
+
+            if (count($studentIds) === 0) {
+                return 0;
+            }
+
+            return StudentClassroom::query()
+                ->where('academic_year_id', $academicYear->id)
+                ->where('classroom_id', $from->id)
+                ->whereIn('student_id', $studentIds)
+                ->update(['classroom_id' => $to->id]);
+        });
+    }
+
+    public function removeStudents(Classroom $classroom, AcademicYear $academicYear, array $studentIds): int
+    {
+        return DB::transaction(function () use ($classroom, $academicYear, $studentIds) {
+            $studentIds = array_values(array_unique(array_map('intval', $studentIds)));
+
+            if (count($studentIds) === 0) {
+                return 0;
+            }
+
+            return StudentClassroom::query()
+                ->where('academic_year_id', $academicYear->id)
+                ->where('classroom_id', $classroom->id)
+                ->whereIn('student_id', $studentIds)
+                ->delete();
+        });
+    }
+
     public function assignGuruKelas(Classroom $classroom, Teacher $teacher, AcademicYear $academicYear): void
     {
         abort_if($classroom->grade > 3, 422, 'Guru kelas hanya bisa di-assign ke kelas 1-3.');

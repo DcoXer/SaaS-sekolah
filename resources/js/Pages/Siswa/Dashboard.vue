@@ -58,7 +58,9 @@ const statusConfig = {
                 <!-- Student info badge -->
                 <div v-if="student" class="hidden sm:flex flex-col items-end gap-0.5">
                     <span class="text-sm font-semibold text-slate-700">{{ student.name }}</span>
-                    <span class="text-xs text-slate-400">NIS: {{ student.nis }}</span>
+                    <span class="text-xs text-slate-400">
+                        NISN: {{ student.nisn ?? 'â€”' }}<span v-if="student.nis"> â€¢ NIS: {{ student.nis }}</span>
+                    </span>
                 </div>
             </div>
 
@@ -82,7 +84,9 @@ const statusConfig = {
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-semibold text-slate-800">{{ student.name }}</p>
-                            <p class="text-xs text-slate-400">NIS: {{ student.nis }}</p>
+                            <p class="text-xs text-slate-400">
+                                NISN: {{ student.nisn ?? 'â€”' }}<span v-if="student.nis"> â€¢ NIS: {{ student.nis }}</span>
+                            </p>
                         </div>
                         <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">
                             Siswa
