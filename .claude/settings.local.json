@@ -36,7 +36,23 @@
       "Bash(node -e ':*)",
       "Bash(node replace_hero.js)",
       "Bash(node replace_hero.cjs)",
-      "Bash(node \"C:/laragon/www/school-management/replace_hero.cjs\")"
+      "Bash(node \"C:/laragon/www/school-management/replace_hero.cjs\")",
+      "Bash(php -m)",
+      "Bash(php -l app/Services/AcademicYearService.php)",
+      "Bash(php -l app/Services/ClassroomService.php)",
+      "Bash(php -l app/Services/InvoiceService.php)",
+      "Bash(php -l app/Services/AssessmentComponentService.php)",
+      "Bash(php -l app/Services/TeacherHonorariumService.php)",
+      "Bash(php -l app/Http/Controllers/Siswa/LetterController.php)",
+      "Bash(php -l app/Http/Requests/BulkInputScoreRequest.php)",
+      "Bash(php -l app/Services/ReportCardService.php)",
+      "Bash(php -l app/Http/Controllers/Kamad/ReportCardController.php)",
+      "Bash(php -l app/Services/LetterService.php)",
+      "Bash(sed -i 's/type=\"file\" accept=\"image\\\\/\\\\*\" class=\"sr-only\"/type=\"file\" accept=\"image\\\\/*\" class=\"hidden\"/g' \"C:/laragon/www/school-management/resources/js/Pages/Operator/Extracurricular/Index.vue\" \"C:/laragon/www/school-management/resources/js/Pages/Operator/SchoolGallery/Index.vue\")",
+      "Bash(sed -i 's/type=\"file\" accept=\"\\\\.jpg,\\\\.jpeg,\\\\.png,\\\\.pdf\" class=\"sr-only\"/type=\"file\" accept=\".jpg,.jpeg,.png,.pdf\" class=\"hidden\"/g' \"C:/laragon/www/school-management/resources/js/Pages/Keuangan/Invoice/Show.vue\")",
+      "Bash(sed -n '6,15p' \"C:/laragon/www/school-management/resources/js/Pages/Galeri.vue\")",
+      "Bash(sed -n '6,15p' \"C:/laragon/www/school-management/resources/js/Pages/Ekskul.vue\")",
+      "Bash(sed -n '6,20p' \"C:/laragon/www/school-management/resources/js/Pages/PpdbCheck.vue\")"
     ]
   }
 }

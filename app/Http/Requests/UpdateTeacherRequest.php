@@ -25,6 +25,7 @@ class UpdateTeacherRequest extends FormRequest
             'nip'      => ['nullable', 'string', 'max:20', "unique:teachers,nip,{$teacherId}"],
             'gender'   => ['required', 'in:L,P'],
             'phone'    => ['nullable', 'string', 'max:15'],
+            'photo'    => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ];
     }
 

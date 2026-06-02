@@ -61,6 +61,13 @@ class ReportCardController extends Controller
             'Hanya raport berstatus draft yang dapat diajukan.'
         );
 
+        $reportCard->load('classroom.academicYear');
+        abort_if(
+            $reportCard->classroom->academicYear?->status !== 'active',
+            422,
+            'Raport hanya dapat diajukan pada tahun ajaran yang sedang aktif.'
+        );
+
         $this->service->submitForApproval($reportCard);
 
         return redirect()->back()->with('success', 'Raport berhasil diajukan untuk persetujuan Kamad.');
@@ -123,9 +130,12 @@ class ReportCardController extends Controller
         $teacher   = $user->teacher;
         $classroom = $reportCard->classroom;
 
-        if ($classroom->homeroom_teacher_id !== $teacher?->id) {
-            abort(403, 'Hanya wali kelas yang dapat mengisi catatan raport.');
-        }
+        abort_if(!$teacher, 403, 'Profil guru tidak ditemukan.');
+        abort_if(
+            $classroom->homeroom_teacher_id !== $teacher->id,
+            403,
+            'Hanya wali kelas yang dapat mengisi catatan raport.'
+        );
 
         $this->service->updateNotes($reportCard, $request->validated());
 

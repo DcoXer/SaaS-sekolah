@@ -18,6 +18,7 @@ const grouped = computed(() => {
     const map = new Map();
     for (const inv of props.unpaidInvoices) {
         const sid = inv.student?.id;
+        if (sid == null) continue; // skip invoice dengan relasi student null/broken
         if (!map.has(sid)) {
             map.set(sid, { student: inv.student, invoices: [] });
         }

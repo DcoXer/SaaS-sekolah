@@ -2,7 +2,9 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import BackButton from '@/Components/BackButton.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, inject } from 'vue';
+
+const addToast = inject('addToast', () => {});
 
 const props = defineProps({
     classroom:           { type: Object, required: true },
@@ -25,6 +27,7 @@ const form = useForm({
 const submit = () => {
     form.post(route('guru.assessments.bulk-store', props.assessmentComponent.id), {
         preserveScroll: true,
+        onSuccess: () => addToast('Nilai berhasil disimpan.', 'success'),
     });
 };
 

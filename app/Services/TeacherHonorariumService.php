@@ -41,6 +41,9 @@ class TeacherHonorariumService
 
     public function generate(Teacher $teacher, AcademicYear $academicYear, int $month, int $year): TeacherHonorarium
     {
+        // Pastikan guru masih punya akun user aktif
+        abort_if(!$teacher->user, 422, 'Akun guru tidak ditemukan, slip tidak dapat dibuat.');
+
         // Ambil konfigurasi jam pelajaran
         $teachingHour = TeacherTeachingHour::where('teacher_id', $teacher->id)
             ->where('academic_year_id', $academicYear->id)

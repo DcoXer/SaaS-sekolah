@@ -55,7 +55,11 @@ class ReportCardController extends Controller
             return redirect()->back()->with('error', 'Tidak ada tahun ajaran aktif.');
         }
 
-        $this->service->generateForClass($classroom, $activeYear, request('semester', 1));
+        try {
+            $this->service->generateForClass($classroom, $activeYear, request('semester', 1));
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
 
         return redirect()->back()->with('success', 'Raport berhasil digenerate.');
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Siswa;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RequestLetterRequest;
 use App\Models\Letter;
+use App\Models\LetterRecipient;
 use App\Models\LetterTemplate;
 use App\Services\LetterService;
 use App\Services\LetterTemplateService;
@@ -76,6 +77,14 @@ class LetterController extends Controller
         $student = $user->student;
 
         abort_if(!$student, 404);
+
+        // Pastikan siswa ini adalah penerima surat yang valid
+        abort_if(
+            !LetterRecipient::where('letter_id', $letter->id)
+                             ->where('student_id', $student->id)
+                             ->exists(),
+            403
+        );
 
         $this->service->markAsRead($letter, $student);
 

@@ -41,20 +41,33 @@ class PpdbController extends Controller
 
     public function accept(PpdbRegistration $registration)
     {
-        $this->service->accept($registration, auth()->id());
-        return redirect()->back()->with('success', 'Pendaftar diterima.');
+        try {
+            $this->service->accept($registration, auth()->id());
+            return redirect()->back()->with('success', 'Pendaftar berhasil diterima.');
+        } catch (\RuntimeException $e) {
+            return redirect()->back()->withErrors(['action' => $e->getMessage()]);
+        }
     }
 
     public function reject(Request $request, PpdbRegistration $registration)
     {
         $request->validate(['notes' => 'required|string|max:500']);
-        $this->service->reject($registration, auth()->id(), $request->notes);
-        return redirect()->back()->with('success', 'Pendaftar ditolak.');
+
+        try {
+            $this->service->reject($registration, auth()->id(), $request->notes);
+            return redirect()->back()->with('success', 'Pendaftar ditolak.');
+        } catch (\RuntimeException $e) {
+            return redirect()->back()->withErrors(['action' => $e->getMessage()]);
+        }
     }
 
     public function waitlist(PpdbRegistration $registration)
     {
-        $this->service->waitlist($registration, auth()->id());
-        return redirect()->back()->with('success', 'Pendaftar dimasukkan ke daftar tunggu.');
+        try {
+            $this->service->waitlist($registration, auth()->id());
+            return redirect()->back()->with('success', 'Pendaftar dimasukkan ke daftar tunggu.');
+        } catch (\RuntimeException $e) {
+            return redirect()->back()->withErrors(['action' => $e->getMessage()]);
+        }
     }
 }

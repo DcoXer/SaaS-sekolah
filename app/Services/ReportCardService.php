@@ -43,6 +43,8 @@ class ReportCardService
     ): void {
         $students = $classroom->students;
 
+        abort_if($students->isEmpty(), 422, 'Kelas ini belum memiliki siswa. Tambahkan siswa ke kelas terlebih dahulu.');
+
         DB::transaction(function () use ($students, $classroom, $academicYear, $semester) {
             foreach ($students as $student) {
                 ReportCard::firstOrCreate(
@@ -120,8 +122,16 @@ class ReportCardService
                 $student, $classroom, $subject->id, $semester, $academicYear, 'ki4'
             );
 
-            // Fallback: jika tidak ada komponen ber-ki, hitung tanpa filter ki
-            if ($ki3['score'] === null && $ki4['score'] === null) {
+            // Fallback: gunakan hanya jika memang tidak ada komponen ki3/ki4 sama sekali
+            // (bukan sekedar belum dinilai — jika komponen ada tapi nilai kosong, biarkan null)
+            $hasKiComponents = \App\Models\AssessmentComponent::where('classroom_id', $classroom->id)
+                ->where('subject_id', $subject->id)
+                ->where('semester', $semester)
+                ->where('type', 'numeric')
+                ->whereIn('ki', ['ki3', 'ki4'])
+                ->exists();
+
+            if (!$hasKiComponents) {
                 $fallback = $this->assessmentService->calculateFinalScore(
                     $student, $classroom, $subject->id, $semester, $academicYear
                 );

@@ -31,7 +31,7 @@ watch([filterMonth, filterYear, filterStatus], () => {
 const filtered = computed(() => {
     if (!search.value.trim()) return props.honorariums;
     const q = search.value.toLowerCase();
-    return props.honorariums.filter(h => h.teacher.user.name.toLowerCase().includes(q));
+    return props.honorariums.filter(h => h.teacher?.user?.name?.toLowerCase().includes(q));
 });
 
 const hasFilter = computed(() => search.value.trim() || filterMonth.value || filterYear.value || filterStatus.value);

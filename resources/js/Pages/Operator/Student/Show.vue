@@ -3,7 +3,9 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import BackButton from '@/Components/BackButton.vue';
 import { Head, Link, useForm, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, inject } from 'vue';
+
+const addToast = inject('addToast');
 
 const props = defineProps({
     student:       { type: Object, required: true },
@@ -25,7 +27,9 @@ const editForm = useForm({
 });
 
 const submitEdit = () => {
-    editForm.put(route('operator.students.update', props.student.id));
+    editForm.put(route('operator.students.update', props.student.id), {
+        onSuccess: () => addToast?.('Data siswa berhasil diperbarui.', 'success'),
+    });
 };
 
 // ── Assign classroom ──────────────────────────────────────────────────────────

@@ -101,7 +101,7 @@ const chartOptions = {
 };
 
 const quickLinks = [
-    { label: 'Tambah Tahun Ajaran', href: '/operator/academic-years',        color: 'bg-violet-50 text-violet-700', dot: 'bg-violet-400' },
+    { label: 'Kelola Tahun Ajaran', href: '/operator/academic-years',        color: 'bg-violet-50 text-violet-700', dot: 'bg-violet-400' },
     { label: 'Kelola Guru',         href: '/operator/teachers',              color: 'bg-sky-50 text-sky-700',       dot: 'bg-sky-400' },
     { label: 'Kelola Siswa',        href: '/operator/students',              color: 'bg-emerald-50 text-emerald-700', dot: 'bg-emerald-400' },
     { label: 'Atur Kelas',          href: '/operator/classrooms',            color: 'bg-amber-50 text-amber-700',   dot: 'bg-amber-400' },

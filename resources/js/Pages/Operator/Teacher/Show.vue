@@ -3,7 +3,9 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import BackButton from '@/Components/BackButton.vue';
 import { Head, Link, useForm, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, inject } from 'vue';
+
+const addToast = inject('addToast');
 
 const props = defineProps({
     teacher: { type: Object, required: true },
@@ -11,8 +13,8 @@ const props = defineProps({
 
 // ── Edit form ─────────────────────────────────────────────────────────────────
 const editForm = useForm({
-    name:     props.teacher.user.name,
-    email:    props.teacher.user.email,
+    name:     props.teacher.user?.name ?? '',
+    email:    props.teacher.user?.email ?? '',
     password: '',
     type:     props.teacher.type,
     position: props.teacher.position ?? '',
@@ -22,7 +24,9 @@ const editForm = useForm({
 });
 
 const submitEdit = () => {
-    editForm.put(route('operator.teachers.update', props.teacher.id));
+    editForm.put(route('operator.teachers.update', props.teacher.id), {
+        onSuccess: () => addToast?.('Data guru berhasil diperbarui.', 'success'),
+    });
 };
 
 // ── Delete ────────────────────────────────────────────────────────────────────

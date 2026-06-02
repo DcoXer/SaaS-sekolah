@@ -76,19 +76,28 @@ class InvoiceService
 
     public function recalculateStatus(Invoice $invoice): void
     {
-        $totalPaid = $invoice->payments()->sum('amount');
+        // Bungkus dalam transaction + lockForUpdate agar aman dari concurrent Midtrans callback
+        DB::transaction(function () use ($invoice) {
+            $locked    = Invoice::lockForUpdate()->findOrFail($invoice->id);
+            $totalPaid = $locked->payments()->sum('amount');
 
-        $status = match (true) {
-            $totalPaid <= 0              => 'unpaid',
-            $totalPaid < $invoice->amount => 'partial',
-            default                      => 'paid',
-        };
+            $status = match (true) {
+                $totalPaid <= 0               => 'unpaid',
+                $totalPaid < $locked->amount  => 'partial',
+                default                       => 'paid',
+            };
 
-        $invoice->update(['status' => $status]);
+            $locked->update(['status' => $status]);
+        });
     }
 
     public function hasExamAccess(Student $student, AcademicYear $academicYear): bool
     {
+        // Siswa yang sudah alumni atau non-active tidak punya akses ujian
+        if ($student->status !== 'active') {
+            return false;
+        }
+
         return !Invoice::where('student_id', $student->id)
             ->where('academic_year_id', $academicYear->id)
             ->whereHas('paymentType', fn($q) => $q->where('is_exam_related', true))

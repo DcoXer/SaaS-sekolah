@@ -20,11 +20,12 @@ class PublicPpdbController extends Controller
         $stats   = $setting ? $this->service->getStats($setting) : null;
 
         return Inertia::render('Ppdb', [
-            'setting'     => $setting,
-            'school'      => $school,
-            'stats'       => $stats,
-            'canLogin'    => true,
-            'isLoggedIn'  => auth()->check(),
+            'setting'        => $setting,
+            'school'         => $school,
+            'stats'          => $stats,
+            'serverDate'     => now()->toDateString(),
+            'canLogin'       => true,
+            'isLoggedIn'     => auth()->check(),
             'dashboardRoute' => auth()->check() ? $this->dashboardRoute() : null,
         ]);
     }
@@ -37,7 +38,11 @@ class PublicPpdbController extends Controller
             return redirect()->back()->withErrors(['form' => 'Pendaftaran PPDB saat ini tidak dibuka.']);
         }
 
-        $reg = $this->service->register($setting, $request->validated(), $request->allFiles());
+        try {
+            $reg = $this->service->register($setting, $request->validated(), $request->allFiles());
+        } catch (\RuntimeException $e) {
+            return redirect()->back()->withErrors(['form' => $e->getMessage()]);
+        }
 
         return redirect()->route('ppdb.index')
             ->with('success', "Pendaftaran berhasil! Nomor pendaftaran Anda: {$reg->registration_number}");

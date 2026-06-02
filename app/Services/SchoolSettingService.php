@@ -16,22 +16,29 @@ class SchoolSettingService
     {
         $setting = SchoolSetting::first() ?? new SchoolSetting();
 
+        // Simpan file baru DULU sebelum hapus yang lama — agar tidak kehilangan file jika upload crash
         if (!empty($data['logo'])) {
-            if ($setting->logo) {
-                Storage::disk('public')->delete($setting->logo);
-            }
-            $data['logo'] = $data['logo']->store('school/logo', 'public');
+            $newLogo      = $data['logo']->store('school/logo', 'public');
+            $oldLogo      = $setting->logo;
+            $data['logo'] = $newLogo;
         }
 
         if (!empty($data['stamp'])) {
-            if ($setting->stamp) {
-                Storage::disk('public')->delete($setting->stamp);
-            }
-            $data['stamp'] = $data['stamp']->store('school/stamp', 'public');
+            $newStamp      = $data['stamp']->store('school/stamp', 'public');
+            $oldStamp      = $setting->stamp;
+            $data['stamp'] = $newStamp;
         }
 
         $setting->fill($data);
         $setting->save();
+
+        // Hapus file lama setelah setting berhasil disimpan
+        if (!empty($oldLogo)) {
+            Storage::disk('public')->delete($oldLogo);
+        }
+        if (!empty($oldStamp)) {
+            Storage::disk('public')->delete($oldStamp);
+        }
 
         return $setting;
     }

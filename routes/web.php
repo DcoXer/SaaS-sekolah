@@ -71,7 +71,7 @@ Route::get('/ekskul', ExtracurricularPageController::class)->name('ekskul');
 // PPDB public — rate limit: 10 submit/menit per IP
 Route::get('/ppdb', [PublicPpdbController::class, 'index'])->name('ppdb.index');
 Route::post('/ppdb/daftar', [PublicPpdbController::class, 'store'])->middleware('throttle:10,1')->name('ppdb.store');
-Route::get('/ppdb/cek', [PublicPpdbController::class, 'check'])->name('ppdb.check');
+Route::get('/ppdb/cek', [PublicPpdbController::class, 'check'])->middleware('throttle:30,1')->name('ppdb.check');
 
 // Verify barcode letters — rate limit: 30 req/menit per IP
 Route::get('verify/{barcodeCode}', [KamadLetter::class, 'verify'])
@@ -207,7 +207,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('payment-types/generate-spp', [PaymentTypeController::class, 'generateSpp'])->name('payment-types.generate-spp');
         Route::get('invoices', [KeuanganInvoice::class, 'index'])->name('invoices.index');
         Route::get('invoices/{student}', [KeuanganInvoice::class, 'show'])->name('invoices.show');
-        Route::post('invoices/{invoice}/payments', [KeuanganPayment::class, 'store'])->name('payments.store');
+        Route::post('invoices/{invoice}/payments', [KeuanganPayment::class, 'store'])->middleware('throttle:20,1')->name('payments.store');
         Route::delete('payments/{payment}', [KeuanganPayment::class, 'destroy'])->name('payments.destroy');
         Route::get('invoices/{invoice}/receipt', [KeuanganPayment::class, 'receipt'])->name('payments.receipt');
         Route::get('invoices/{invoice}/receipt/pdf', [KeuanganPayment::class, 'receiptPdf'])->name('payments.receipt-pdf');
@@ -230,7 +230,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Raport
         Route::get('/assessments', [AssessmentController::class, 'index'])->name('assessments.index');
         Route::get('/assessments/{classroom}/{assessmentComponent}', [AssessmentController::class, 'show'])->name('assessments.show');
-        Route::post('/assessments/{assessmentComponent}/bulk', [AssessmentController::class, 'bulkStore'])->name('assessments.bulk-store');
+        Route::post('/assessments/{assessmentComponent}/bulk', [AssessmentController::class, 'bulkStore'])->middleware('throttle:30,1')->name('assessments.bulk-store');
         Route::get('/report-cards', [GuruReportCard::class, 'index'])->name('report-cards.index');
         Route::patch('/report-cards/{reportCard}/notes', [GuruReportCard::class, 'updateNotes'])->name('report-cards.update-notes');
         Route::patch('/report-cards/{reportCard}/submit', [GuruReportCard::class, 'submit'])->name('report-cards.submit');
@@ -256,7 +256,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Pembayaran
         Route::get('invoices', [SiswaInvoice::class, 'index'])->name('invoices.index');
         Route::post('invoices/{invoice}/request-cash', [SiswaPayment::class, 'requestCash'])->name('payments.request-cash');
-        Route::post('invoices/{invoice}/pay', [SiswaPayment::class, 'initiate'])->name('payments.initiate');
+        Route::post('invoices/{invoice}/pay', [SiswaPayment::class, 'initiate'])->middleware('throttle:10,1')->name('payments.initiate');
         Route::post('invoices/{invoice}/verify-payment', [SiswaPayment::class, 'verify'])->name('payments.verify');
         Route::get('payment/finish', [SiswaPayment::class, 'finish'])->name('payments.finish');
         Route::get('invoices/{invoice}/receipt', [SiswaPayment::class, 'receipt'])->name('payments.receipt');

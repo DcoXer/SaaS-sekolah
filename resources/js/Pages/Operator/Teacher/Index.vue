@@ -19,8 +19,8 @@ const filtered = computed(() => {
     if (search.value.trim()) {
         const q = search.value.toLowerCase();
         list = list.filter(t =>
-            t.user.name.toLowerCase().includes(q) ||
-            t.user.email.toLowerCase().includes(q) ||
+            t.user?.name?.toLowerCase().includes(q) ||
+            t.user?.email?.toLowerCase().includes(q) ||
             (t.nip && t.nip.toLowerCase().includes(q))
         );
     }

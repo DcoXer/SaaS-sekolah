@@ -37,8 +37,11 @@ const openAssignGuruKelas = async () => {
     assignGuruKelasForm.reset();
     try {
         const res = await fetch(route('operator.classrooms.available-teachers', props.classroom.id));
+        if (!res.ok) throw new Error(res.statusText);
         const data = await res.json();
         availableGuruKelas.value = data.teachers ?? [];
+    } catch {
+        availableGuruKelas.value = [];
     } finally {
         loadingGuruKelas.value = false;
     }
@@ -62,8 +65,11 @@ const openAssignWaliKelas = async () => {
     assignWaliKelasForm.reset();
     try {
         const res = await fetch(route('operator.classrooms.available-teachers', props.classroom.id));
+        if (!res.ok) throw new Error(res.statusText);
         const data = await res.json();
         availableWaliKelas.value = data.wali_kelas ?? [];
+    } catch {
+        availableWaliKelas.value = [];
     } finally {
         loadingWaliKelas.value = false;
     }
@@ -87,8 +93,11 @@ const openAssignGuruBidang = async () => {
     assignGuruBidangForm.reset();
     try {
         const res = await fetch(route('operator.classrooms.available-teachers', props.classroom.id));
+        if (!res.ok) throw new Error(res.statusText);
         const data = await res.json();
         availableGuruBidang.value = data.all_guru_bidang ?? [];
+    } catch {
+        availableGuruBidang.value = [];
     } finally {
         loadingGuruBidang.value = false;
     }
@@ -113,7 +122,10 @@ const openAssignSiswa = async () => {
     selectedStudentIds.value = [];
     try {
         const res = await fetch(route('operator.classrooms.available-students', props.classroom.id));
+        if (!res.ok) throw new Error(res.statusText);
         availableSiswa.value = await res.json();
+    } catch {
+        availableSiswa.value = [];
     } finally {
         loadingSiswa.value = false;
     }

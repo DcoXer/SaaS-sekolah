@@ -29,7 +29,12 @@ class BulkInputScoreRequest extends FormRequest
                 Rule::exists('student_classrooms', 'student_id')
                     ->where('classroom_id', $classroomId),
             ],
-            'scores.*.score'       => ['nullable', 'integer', 'min:0', 'max:100'],
+            'scores.*.score'       => [
+                'nullable',
+                'numeric',
+                'min:' . ($component instanceof AssessmentComponent ? ($component->min_score ?? 0) : 0),
+                'max:' . ($component instanceof AssessmentComponent ? ($component->max_score ?? 100) : 100),
+            ],
             'scores.*.predicate'   => ['nullable', 'string', 'max:5'],
             'scores.*.narrative'   => ['nullable', 'string'],
         ];
@@ -41,7 +46,8 @@ class BulkInputScoreRequest extends FormRequest
             'scores.required'              => 'Data nilai wajib diisi.',
             'scores.*.student_id.required' => 'ID siswa wajib ada.',
             'scores.*.student_id.exists'   => 'Siswa tidak valid.',
-            'scores.*.score.max'           => 'Nilai maksimal 100.',
+            'scores.*.score.max'           => 'Nilai melebihi batas maksimum komponen ini.',
+            'scores.*.score.min'           => 'Nilai di bawah batas minimum komponen ini.',
         ];
     }
 }

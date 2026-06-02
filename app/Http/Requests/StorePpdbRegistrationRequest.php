@@ -16,7 +16,12 @@ class StorePpdbRegistrationRequest extends FormRequest
             'nik_siswa'       => 'nullable|string|digits:16',
             'no_kk'           => 'required|string|digits:16',
             'birth_place'     => 'required|string|max:100',
-            'birth_date'      => 'required|date',
+            'birth_date'      => [
+                'required', 'date',
+                // Usia minimal 5 tahun (masuk SD) dan maksimal 12 tahun
+                'before:' . now()->subYears(5)->toDateString(),
+                'after:'  . now()->subYears(12)->toDateString(),
+            ],
             'gender'          => 'required|in:male,female',
             'religion'        => 'nullable|string|max:50',
             'previous_school' => 'nullable|string|max:255',
@@ -75,6 +80,14 @@ class StorePpdbRegistrationRequest extends FormRequest
             'photo'           => 'foto siswa',
             'document_kk'     => 'Kartu Keluarga',
             'document_akta'   => 'Akta Lahir',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'birth_date.before' => 'Calon siswa harus berusia minimal 5 tahun pada saat pendaftaran.',
+            'birth_date.after'  => 'Calon siswa tidak boleh berusia lebih dari 12 tahun pada saat pendaftaran.',
         ];
     }
 }

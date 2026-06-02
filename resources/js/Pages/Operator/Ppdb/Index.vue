@@ -265,12 +265,12 @@ const statusLabel = {
                         </p>
                         <div class="flex gap-1">
                             <a v-for="link in registrations.links" :key="link.label"
-                                :href="link.url ?? '#'"
+                                :href="link.url || undefined"
                                 v-html="link.label"
                                 class="rounded-lg px-3 py-1.5 text-xs font-medium transition-colors"
                                 :class="link.active
                                     ? 'bg-green-700 text-white'
-                                    : link.url ? 'border border-slate-200 text-slate-600 hover:bg-slate-50' : 'cursor-not-allowed text-slate-300'"
+                                    : link.url ? 'border border-slate-200 text-slate-600 hover:bg-slate-50' : 'cursor-not-allowed text-slate-300 pointer-events-none'"
                             />
                         </div>
                     </div>

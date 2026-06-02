@@ -27,7 +27,10 @@ const applyFilter = () => {
     );
 };
 
-watch([selectedClassroom, selectedSemester], applyFilter);
+watch([selectedClassroom, selectedSemester], ([newClassroom]) => {
+    if (!newClassroom) return;
+    applyFilter();
+});
 
 // ── Group by subject ──────────────────────────────────────────────────────────
 const grouped = computed(() => {

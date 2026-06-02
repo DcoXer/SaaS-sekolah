@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Classroom;
 use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
@@ -71,6 +72,10 @@ class TeacherService
     public function delete(Teacher $teacher): void
     {
         DB::transaction(function () use ($teacher) {
+            // Bersihkan homeroom_teacher_id di semua kelas yang diampu guru ini
+            Classroom::where('homeroom_teacher_id', $teacher->id)
+                     ->update(['homeroom_teacher_id' => null]);
+
             $teacher->user->delete();
             $teacher->delete();
         });

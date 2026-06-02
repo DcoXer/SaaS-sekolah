@@ -80,12 +80,8 @@ class AssessmentComponentService
         $query = AssessmentComponent::where('classroom_id', $classroom->id)
                                     ->where('subject_id', $subject->id)
                                     ->where('semester', $semester)
-                                    ->where('type', 'numeric');
-
-        // Validasi per KI jika ki disediakan
-        if ($ki !== null) {
-            $query->where('ki', $ki);
-        }
+                                    ->where('type', 'numeric')
+                                    ->where('ki', $ki); // Setiap bucket KI (ki3/ki4/null) punya budget 100% sendiri
 
         if ($excludeId) {
             $query->where('id', '!=', $excludeId);

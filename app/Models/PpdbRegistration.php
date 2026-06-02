@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
     'ppdb_setting_id', 'registration_number',
@@ -17,6 +18,8 @@ use Illuminate\Database\Eloquent\Model;
 ])]
 class PpdbRegistration extends Model
 {
+    use SoftDeletes;
+
     protected function casts(): array
     {
         return [

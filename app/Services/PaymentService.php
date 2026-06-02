@@ -187,8 +187,9 @@ class PaymentService
                 return;
             }
 
-            // Ambil remaining_amount sebelum bayar sebagai amount
-            $amount = $invoice->remaining_amount;
+            // Lock invoice sebelum baca remaining_amount — cegah concurrent double-record
+            $invoice = Invoice::lockForUpdate()->findOrFail($invoice->id);
+            $amount  = $invoice->remaining_amount;
 
             Payment::create([
                 'invoice_id'        => $invoice->id,
@@ -224,6 +225,14 @@ class PaymentService
 
             $invoiceId = (int) $matches[1];
             $invoice   = Invoice::findOrFail($invoiceId);
+
+            // Validasi gross_amount tidak melebihi total tagihan (anti-tamper sanity check)
+            $grossAmount = (int) ($payload['gross_amount'] ?? 0);
+            abort_if(
+                $grossAmount <= 0 || $grossAmount > $invoice->amount,
+                400,
+                'Nominal pembayaran tidak valid.'
+            );
 
             // Cek apakah sudah ada payment dengan order_id ini
             $existing = Payment::where('midtrans_order_id', $orderId)->first();

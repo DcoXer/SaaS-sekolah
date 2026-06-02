@@ -115,7 +115,7 @@ class LetterService
             'requested_by'       => $operator->id,
             'target_grade'       => $data['target_grade'] ?? null,
             'status'             => 'published',
-            'content'            => $data['content'],
+            'content'            => $this->sanitizeHtml($data['content']),
             'published_at'       => now(),
         ]);
 
@@ -167,6 +167,30 @@ class LetterService
                      ->first();
     }
 
+    /**
+     * Sanitasi HTML agar aman ditampilkan di browser.
+     * Allow tag formatting umum, strip script/event handler/javascript URI.
+     */
+    private function sanitizeHtml(string $html): string
+    {
+        // Izinkan hanya tag formatting yang aman
+        $safe = strip_tags($html, [
+            'p', 'br', 'b', 'i', 'u', 'strong', 'em',
+            'ul', 'ol', 'li', 'span', 'div',
+            'h1', 'h2', 'h3', 'h4',
+            'table', 'thead', 'tbody', 'tr', 'td', 'th',
+            'a',
+        ]);
+
+        // Strip semua event handler (onclick, onload, onerror, dll)
+        $safe = preg_replace('/\s+on\w+\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]*)/i', '', $safe);
+
+        // Ganti javascript: URI
+        $safe = preg_replace('/javascript\s*:/i', 'nojs:', $safe);
+
+        return $safe;
+    }
+
     private function replacePlaceholders(
         string $content,
         Student $student,
@@ -193,10 +217,13 @@ class LetterService
             '{{barcode}}'            => '', // akan di-replace waktu generate PDF
         ];
 
-        return str_replace(
+        $result = str_replace(
             array_keys($replacements),
             array_values($replacements),
             $content
         );
+
+        // Hapus placeholder yang tidak dikenali agar tidak tercetak literal di surat
+        return preg_replace('/\{\{[^}]+\}\}/', '', $result);
     }
 }

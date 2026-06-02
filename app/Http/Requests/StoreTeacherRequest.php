@@ -21,6 +21,7 @@ class StoreTeacherRequest extends FormRequest
             'nip'      => ['nullable', 'string', 'max:20', 'unique:teachers,nip'],
             'gender'   => ['required', 'in:L,P'],
             'phone'    => ['nullable', 'string', 'max:15'],
+            'photo'    => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ];
     }
 

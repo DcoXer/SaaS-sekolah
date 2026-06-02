@@ -3,11 +3,13 @@
 namespace App\Services;
 
 use App\Models\AcademicYear;
+use App\Models\Classroom;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class StudentService
 {
@@ -37,7 +39,8 @@ class StudentService
                 $user = User::create([
                     'name'     => $data['parent_name'],
                     'email'    => $data['email'],
-                    'password' => Hash::make($data['password'] ?? 'password'),
+                    // Generate password aman jika tidak diisi — hindari default 'password'
+                    'password' => Hash::make($data['password'] ?? Str::password(12)),
                 ]);
                 $user->assignRole('siswa');
                 $userId = $user->id;
@@ -97,6 +100,14 @@ class StudentService
 
     public function assignToClassroom(Student $student, int $classroomId, int $academicYearId): void
     {
+        // Cek status tahun ajaran — hanya boleh assign ke tahun yang masih active
+        $academicYear = AcademicYear::findOrFail($academicYearId);
+        abort_if(
+            $academicYear->status === 'closed',
+            422,
+            'Tidak dapat assign siswa ke kelas pada tahun ajaran yang sudah ditutup.'
+        );
+
         // Cek apakah sudah ada di tahun ajaran ini
         $exists = $student->classrooms()
                           ->wherePivot('academic_year_id', $academicYearId)

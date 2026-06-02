@@ -82,18 +82,15 @@ class ClassroomService
     {
         DB::transaction(function () use ($classroom, $academicYear, $studentIds) {
             foreach ($studentIds as $studentId) {
-                // Double check siswa belum ada di rombel lain tahun ajaran ini
-                $alreadyAssigned = StudentClassroom::where('student_id', $studentId)
-                                                   ->where('academic_year_id', $academicYear->id)
-                                                   ->exists();
-
-                if (!$alreadyAssigned) {
-                    StudentClassroom::create([
-                        'student_id'       => $studentId,
-                        'classroom_id'     => $classroom->id,
-                        'academic_year_id' => $academicYear->id,
-                    ]);
-                }
+                // Gunakan insertOrIgnore agar race-safe — unique constraint (student_id, academic_year_id)
+                // mencegah siswa masuk dua rombel di tahun yang sama, INSERT IGNORE skip duplikat tanpa error
+                StudentClassroom::insertOrIgnore([
+                    'student_id'       => $studentId,
+                    'classroom_id'     => $classroom->id,
+                    'academic_year_id' => $academicYear->id,
+                    'created_at'       => now(),
+                    'updated_at'       => now(),
+                ]);
             }
         });
     }
@@ -134,6 +131,7 @@ class ClassroomService
 
     public function assignGuruKelas(Classroom $classroom, Teacher $teacher, AcademicYear $academicYear): void
     {
+        abort_if($academicYear->status !== 'active', 422, 'Penugasan guru hanya bisa dilakukan pada tahun ajaran yang sedang aktif.');
         abort_if($classroom->grade > 3, 422, 'Guru kelas hanya bisa di-assign ke kelas 1-3.');
         abort_if(!$teacher->isGuruKelas(), 422, 'Guru ini bukan guru kelas.');
 
@@ -144,22 +142,26 @@ class ClassroomService
 
         abort_if($alreadyAssigned, 422, 'Guru kelas ini sudah di-assign ke kelas lain.');
 
-        $classroom->update(['homeroom_teacher_id' => $teacher->id]);
+        // Bungkus dalam transaction — update homeroom + assign semua mapel harus atomic
+        DB::transaction(function () use ($classroom, $teacher, $academicYear) {
+            $classroom->update(['homeroom_teacher_id' => $teacher->id]);
 
-        $subjects = Subject::where('grade', $classroom->grade)->get();
+            $subjects = Subject::where('grade', $classroom->grade)->get();
 
-        foreach ($subjects as $subject) {
-            TeacherSubject::firstOrCreate([
-                'teacher_id'       => $teacher->id,
-                'subject_id'       => $subject->id,
-                'classroom_id'     => $classroom->id,
-                'academic_year_id' => $academicYear->id,
-            ]);
-        }
+            foreach ($subjects as $subject) {
+                TeacherSubject::firstOrCreate([
+                    'teacher_id'       => $teacher->id,
+                    'subject_id'       => $subject->id,
+                    'classroom_id'     => $classroom->id,
+                    'academic_year_id' => $academicYear->id,
+                ]);
+            }
+        });
     }
 
     public function assignWaliKelas(Classroom $classroom, Teacher $teacher, AcademicYear $academicYear): void
     {
+        abort_if($academicYear->status !== 'active', 422, 'Penugasan wali kelas hanya bisa dilakukan pada tahun ajaran yang sedang aktif.');
         abort_if($classroom->grade < 4, 422, 'Wali kelas 4-6 hanya untuk kelas tingkat 4-6.');
         abort_if(!$teacher->isGuruBidang(), 422, 'Wali kelas harus dari guru bidang.');
 

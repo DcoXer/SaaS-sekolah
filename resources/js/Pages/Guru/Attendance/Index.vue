@@ -95,6 +95,7 @@ const submitEdit = () => {
 const deleteTarget = ref(null);
 const deleteForm   = useForm({});
 const submitDelete = () => {
+    if (!deleteTarget.value?.attendance?.id) return;
     deleteForm.delete(route('guru.attendance.destroy', deleteTarget.value.attendance.id), {
         onSuccess: () => { deleteTarget.value = null; },
     });
