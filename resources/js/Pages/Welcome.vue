@@ -1,6 +1,7 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
+import JsonLd from '@/Components/JsonLd.vue';
 
 const props = defineProps({
     canLogin:         { type: Boolean, default: true },
@@ -87,16 +88,44 @@ onUnmounted(() => {
     window.removeEventListener('scroll', onScroll);
     clearInterval(timer);
 });
+
+const baseUrl = usePage().props.ziggy?.url ?? '';
+const jsonLd = computed(() => ({
+    '@context':  'https://schema.org',
+    '@type':     'WebPage',
+    '@id':       `${baseUrl}/#webpage`,
+    'name':      props.school?.name ?? '',
+    'description': props.school?.tagline || props.school?.description || '',
+    'url':       baseUrl,
+    'isPartOf':  { '@id': `${baseUrl}/#website` },
+    'about':     { '@id': `${baseUrl}/#school` },
+    'breadcrumb': {
+        '@type': 'BreadcrumbList',
+        'itemListElement': [
+            { '@type': 'ListItem', 'position': 1, 'name': 'Beranda', 'item': baseUrl },
+        ],
+    },
+}));
 </script>
 
 <template>
-    <Head :title="school?.name ?? 'Profil Sekolah'" />
+    <Head :title="school?.name ?? 'Beranda'">
+        <meta head-key="description" name="description" :content="school?.tagline || school?.description || ''">
+        <meta head-key="og:title" property="og:title" :content="school?.name ?? ''">
+        <meta head-key="og:description" property="og:description" :content="school?.tagline || school?.description || ''">
+        <meta head-key="og:type" property="og:type" content="website">
+        <meta v-if="school?.logo" head-key="og:image" property="og:image" :content="school.logo">
+        <meta v-if="school?.logo" head-key="twitter:image" name="twitter:image" :content="school.logo">
+        <meta head-key="twitter:title" name="twitter:title" :content="school?.name ?? ''">
+        <meta head-key="twitter:description" name="twitter:description" :content="school?.tagline || school?.description || ''">
+    </Head>
+    <JsonLd :data="jsonLd" />
 
     <div class="min-h-screen overflow-x-hidden bg-white font-sans antialiased" style="font-family:'Plus Jakarta Sans',sans-serif">
 
         <!-- Top Info Bar -->
         <div class="hidden bg-green-900 md:block">
-            <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-2 text-xs text-green-200">
+            <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-2 text-xs text-white">
                 <div class="flex items-center gap-5">
                     <span v-if="school?.phone" class="flex items-center gap-1.5">
                         <svg class="size-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
@@ -107,7 +136,7 @@ onUnmounted(() => {
                         {{ school.email }}
                     </span>
                 </div>
-                <span v-if="school?.npsn" class="text-green-300">NPSN: {{ school.npsn }}</span>
+                <span v-if="school?.npsn" class="text-white">NPSN: {{ school.npsn }}</span>
             </div>
         </div>
 

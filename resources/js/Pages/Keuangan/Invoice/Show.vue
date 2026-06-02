@@ -258,7 +258,7 @@ const activeClassroom = props.student.classrooms?.[0];
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                             </svg>
                             {{ payForm.proof_file ? payForm.proof_file.name : 'Pilih file (jpg/png/pdf, maks 2MB)' }}
-                            <input type="file" accept=".jpg,.jpeg,.png,.pdf" class="sr-only" @change="onProofChange" />
+                            <input type="file" accept=".jpg,.jpeg,.png,.pdf" class="hidden" @change="onProofChange" />
                         </label>
                         <p v-if="payForm.errors.proof_file" class="mt-1.5 text-xs text-red-500">{{ payForm.errors.proof_file }}</p>
                     </div>

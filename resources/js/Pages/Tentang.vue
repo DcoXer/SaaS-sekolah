@@ -1,7 +1,8 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import PublicHeader from '@/Components/PublicHeader.vue';
+import JsonLd from '@/Components/JsonLd.vue';
 
 const props = defineProps({
     school:         { type: Object,  default: null },
@@ -18,10 +19,39 @@ const initials = (name) => name?.split(' ').slice(0, 2).map(n => n[0]).join('').
 const missionLines = computed(() =>
     (props.school?.mission ?? '').split('\n').filter(l => l.trim())
 );
+
+const baseUrl = usePage().props.ziggy?.url ?? '';
+const jsonLd = computed(() => ({
+    '@context':  'https://schema.org',
+    '@type':     'AboutPage',
+    '@id':       `${baseUrl}/tentang#webpage`,
+    'name':      `Tentang Kami — ${props.school?.name ?? ''}`,
+    'description': props.school?.description || `Profil, visi, misi, dan sejarah ${props.school?.name ?? ''}`,
+    'url':       `${baseUrl}/tentang`,
+    'isPartOf':  { '@id': `${baseUrl}/#website` },
+    'about':     { '@id': `${baseUrl}/#school` },
+    'breadcrumb': {
+        '@type': 'BreadcrumbList',
+        'itemListElement': [
+            { '@type': 'ListItem', 'position': 1, 'name': 'Beranda',     'item': baseUrl },
+            { '@type': 'ListItem', 'position': 2, 'name': 'Tentang Kami','item': `${baseUrl}/tentang` },
+        ],
+    },
+}));
 </script>
 
 <template>
-    <Head :title="`Tentang Kami — ${school?.name ?? 'Sekolah'}`" />
+    <Head :title="`Tentang Kami — ${school?.name ?? 'Sekolah'}`">
+        <meta head-key="description" name="description" :content="`Profil, visi, misi, dan sejarah ${school?.name ?? 'sekolah kami'}.`">
+        <meta head-key="og:title" property="og:title" :content="`Tentang Kami — ${school?.name ?? ''}`">
+        <meta head-key="og:description" property="og:description" :content="school?.description ?? ''">
+        <meta head-key="og:type" property="og:type" content="website">
+        <meta v-if="school?.logo" head-key="og:image" property="og:image" :content="school.logo">
+        <meta v-if="school?.logo" head-key="twitter:image" name="twitter:image" :content="school.logo">
+        <meta head-key="twitter:title" name="twitter:title" :content="`Tentang Kami — ${school?.name ?? ''}`">
+        <meta head-key="twitter:description" name="twitter:description" :content="school?.description ?? ''">
+    </Head>
+    <JsonLd :data="jsonLd" />
 
     <div class="min-h-screen bg-white font-sans antialiased" style="font-family:'Plus Jakarta Sans',sans-serif">
 

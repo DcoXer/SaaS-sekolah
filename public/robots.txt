@@ -1,2 +1,11 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /operator/
+Disallow: /kamad/
+Disallow: /guru/
+Disallow: /siswa/
+Disallow: /keuangan/
+Disallow: /profile
+Disallow: /verify/
+
+Sitemap: /sitemap.xml

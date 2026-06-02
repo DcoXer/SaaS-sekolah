@@ -1,10 +1,23 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Modal from '@/Components/Modal.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref, computed, inject } from 'vue';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { ref, computed, inject, onMounted } from 'vue';
 
-const addToast = inject('addToast');
+const addToast = inject('addToast', () => {});
+
+// ── Load Midtrans Snap hanya di halaman ini ───────────────────────────────────
+const midtrans = usePage().props.midtrans;
+onMounted(() => {
+    if (document.getElementById('midtrans-snap-js')) return; // sudah di-load
+    const script = document.createElement('script');
+    script.id  = 'midtrans-snap-js';
+    script.src = midtrans?.is_production
+        ? 'https://app.midtrans.com/snap/snap.js'
+        : 'https://app.sandbox.midtrans.com/snap/snap.js';
+    script.setAttribute('data-client-key', midtrans?.client_key ?? '');
+    document.head.appendChild(script);
+});
 
 const props = defineProps({
     invoices:      { type: Array,   required: true },
@@ -87,9 +100,11 @@ const formatDate = (val) => {
     return new Date(val).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 };
 
-const totalUnpaid = props.invoices
-    .filter(i => i.status !== 'paid')
-    .reduce((acc, i) => acc + (i.amount - (i.payments?.reduce((s, p) => s + p.amount, 0) ?? 0)), 0);
+const totalUnpaid = computed(() =>
+    props.invoices
+        .filter(i => i.status !== 'paid')
+        .reduce((acc, i) => acc + (i.amount - (i.payments?.reduce((s, p) => s + p.amount, 0) ?? 0)), 0)
+);
 
 // ── Search ────────────────────────────────────────────────────────────────────
 const search = ref('');

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted, provide } from 'vue';
-import { Link, usePage, router } from '@inertiajs/vue3';
+import { Head, Link, usePage, router } from '@inertiajs/vue3';
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
@@ -212,7 +212,11 @@ const iconPaths = {
 </script>
 
 <template>
-    <div class="flex h-dvh overflow-hidden bg-slate-100 font-sans antialiased">
+    <Head>
+        <meta name="robots" content="noindex, nofollow">
+    </Head>
+
+    <div class="flex h-full overflow-hidden bg-slate-100 font-sans antialiased">
 
         <!-- ── Mobile overlay ─────────────────────────────────────────────────── -->
         <Transition
@@ -521,7 +525,7 @@ const iconPaths = {
             </header>
 
             <!-- Page content -->
-            <main class="flex-1 overflow-y-auto p-4 sm:p-6">
+            <main class="min-h-0 flex-1 overflow-y-auto bg-slate-100 p-4 sm:p-6">
                 <slot />
             </main>
         </div>

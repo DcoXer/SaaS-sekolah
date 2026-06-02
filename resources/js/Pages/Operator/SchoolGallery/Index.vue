@@ -133,7 +133,7 @@ const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                                 </svg>
                                 Pilih Foto
-                                <input type="file" accept="image/*" class="sr-only" @change="onPhotoChange" />
+                                <input type="file" accept="image/*" class="hidden" @change="onPhotoChange" />
                             </label>
                         </div>
                         <p v-if="photoForm.errors.file" class="mt-1 text-xs text-red-500">{{ photoForm.errors.file }}</p>

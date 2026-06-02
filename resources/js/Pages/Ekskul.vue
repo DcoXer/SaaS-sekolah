@@ -1,7 +1,8 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import PublicHeader from '@/Components/PublicHeader.vue';
+import JsonLd from '@/Components/JsonLd.vue';
 
 const props = defineProps({
     school:           { type: Object,  default: null },
@@ -37,10 +38,52 @@ const colors = [
     { bg: 'bg-indigo-100', text: 'text-indigo-700', ring: 'ring-indigo-200' },
 ];
 const color = (i) => colors[i % colors.length];
+
+const baseUrl = usePage().props.ziggy?.url ?? '';
+const jsonLd = computed(() => [
+    {
+        '@context':  'https://schema.org',
+        '@type':     'CollectionPage',
+        '@id':       `${baseUrl}/ekskul#webpage`,
+        'name':      `Ekstrakulikuler — ${props.school?.name ?? ''}`,
+        'description': `Daftar kegiatan ekstrakurikuler ${props.school?.name ?? ''}.`,
+        'url':       `${baseUrl}/ekskul`,
+        'isPartOf':  { '@id': `${baseUrl}/#website` },
+        'about':     { '@id': `${baseUrl}/#school` },
+        'breadcrumb': {
+            '@type': 'BreadcrumbList',
+            'itemListElement': [
+                { '@type': 'ListItem', 'position': 1, 'name': 'Beranda',          'item': baseUrl },
+                { '@type': 'ListItem', 'position': 2, 'name': 'Ekstrakulikuler',  'item': `${baseUrl}/ekskul` },
+            ],
+        },
+    },
+    {
+        '@context':  'https://schema.org',
+        '@type':     'ItemList',
+        'name':      `Daftar Ekstrakurikuler ${props.school?.name ?? ''}`,
+        'itemListElement': props.extracurriculars.map((e, i) => ({
+            '@type':    'ListItem',
+            'position': i + 1,
+            'name':     e.name,
+            ...(e.description ? { 'description': e.description } : {}),
+        })),
+    },
+]);
 </script>
 
 <template>
-    <Head :title="`Ekstrakulikuler — ${school?.name ?? 'Sekolah'}`" />
+    <Head :title="`Ekstrakulikuler — ${school?.name ?? 'Sekolah'}`">
+        <meta head-key="description" name="description" :content="`Kegiatan ekstrakurikuler ${school?.name ?? 'sekolah kami'}. Berbagai program pengembangan bakat dan minat siswa.`">
+        <meta head-key="og:title" property="og:title" :content="`Ekstrakulikuler — ${school?.name ?? ''}`">
+        <meta head-key="og:description" property="og:description" :content="`Daftar kegiatan ekstrakurikuler dan pengembangan diri siswa ${school?.name ?? ''}.`">
+        <meta head-key="og:type" property="og:type" content="website">
+        <meta v-if="school?.logo" head-key="og:image" property="og:image" :content="school.logo">
+        <meta v-if="school?.logo" head-key="twitter:image" name="twitter:image" :content="school.logo">
+        <meta head-key="twitter:title" name="twitter:title" :content="`Ekstrakulikuler — ${school?.name ?? ''}`">
+        <meta head-key="twitter:description" name="twitter:description" :content="`Kegiatan ekstrakurikuler ${school?.name ?? ''} untuk pengembangan bakat dan minat siswa.`">
+    </Head>
+    <JsonLd :data="jsonLd" />
 
     <div class="min-h-screen overflow-x-hidden bg-white font-sans antialiased" style="font-family:'Plus Jakarta Sans',sans-serif">
 

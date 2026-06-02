@@ -150,7 +150,7 @@ const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                                 </svg>
                                 Upload Foto
-                                <input type="file" accept="image/*" class="sr-only" @change="onImageChange" />
+                                <input type="file" accept="image/*" class="hidden" @change="onImageChange" />
                             </label>
                         </div>
                         <p v-if="form.errors.image" class="mt-1 text-xs text-red-500">{{ form.errors.image }}</p>
@@ -253,7 +253,7 @@ const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-
                             </div>
                             <label class="mt-1 inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50">
                                 Ganti Foto
-                                <input type="file" accept="image/*" class="sr-only" @change="onEditImageChange" />
+                                <input type="file" accept="image/*" class="hidden" @change="onEditImageChange" />
                             </label>
                         </div>
                     </div>

@@ -1,7 +1,8 @@
 <script setup>
-import { Head, Link, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
 import PublicHeader from '@/Components/PublicHeader.vue';
+import JsonLd from '@/Components/JsonLd.vue';
 
 const props = defineProps({
     result:         { type: Object,  default: null },
@@ -14,6 +15,26 @@ const props = defineProps({
 });
 
 const input = ref(props.number ?? '');
+
+const baseUrl = usePage().props.ziggy?.url ?? '';
+const jsonLd = computed(() => ({
+    '@context':  'https://schema.org',
+    '@type':     'WebPage',
+    '@id':       `${baseUrl}/ppdb/cek#webpage`,
+    'name':      `Cek Status PPDB — ${props.school?.name ?? ''}`,
+    'description': `Cek status pendaftaran PPDB ${props.school?.name ?? ''} menggunakan nomor pendaftaran Anda.`,
+    'url':       `${baseUrl}/ppdb/cek`,
+    'isPartOf':  { '@id': `${baseUrl}/#website` },
+    'about':     { '@id': `${baseUrl}/#school` },
+    'breadcrumb': {
+        '@type': 'BreadcrumbList',
+        'itemListElement': [
+            { '@type': 'ListItem', 'position': 1, 'name': 'Beranda', 'item': baseUrl },
+            { '@type': 'ListItem', 'position': 2, 'name': 'PPDB',    'item': `${baseUrl}/ppdb` },
+            { '@type': 'ListItem', 'position': 3, 'name': 'Cek Status', 'item': `${baseUrl}/ppdb/cek` },
+        ],
+    },
+}));
 
 const check = () => {
     if (!input.value.trim()) return;
@@ -41,7 +62,17 @@ const statusIcon = {
 </script>
 
 <template>
-    <Head :title="`Cek Status PPDB — ${school?.name ?? 'Sekolah'}`" />
+    <Head :title="`Cek Status PPDB — ${school?.name ?? 'Sekolah'}`">
+        <meta head-key="description" name="description" :content="`Cek status pendaftaran PPDB ${school?.name ?? 'sekolah kami'} menggunakan nomor pendaftaran Anda.`">
+        <meta head-key="og:title" property="og:title" :content="`Cek Status PPDB — ${school?.name ?? ''}`">
+        <meta head-key="og:description" property="og:description" :content="`Lacak dan cek hasil seleksi PPDB ${school?.name ?? ''} secara online.`">
+        <meta head-key="og:type" property="og:type" content="website">
+        <meta v-if="school?.logo" head-key="og:image" property="og:image" :content="school.logo">
+        <meta v-if="school?.logo" head-key="twitter:image" name="twitter:image" :content="school.logo">
+        <meta head-key="twitter:title" name="twitter:title" :content="`Cek Status PPDB — ${school?.name ?? ''}`">
+        <meta head-key="twitter:description" name="twitter:description" :content="`Cek status pendaftaran PPDB ${school?.name ?? ''} menggunakan nomor pendaftaran Anda.`">
+    </Head>
+    <JsonLd :data="jsonLd" />
 
     <div class="min-h-screen bg-white font-sans antialiased" style="font-family:'Plus Jakarta Sans',sans-serif">
 

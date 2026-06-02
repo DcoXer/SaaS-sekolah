@@ -2,11 +2,13 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { ref, computed, watch } from 'vue';
 import PublicHeader from '@/Components/PublicHeader.vue';
+import JsonLd from '@/Components/JsonLd.vue';
 
 const props = defineProps({
     setting:        { type: Object,  default: null },
     school:         { type: Object,  default: null },
     stats:          { type: Object,  default: null },
+    serverDate:     { type: String,  default: null },
     canLogin:       { type: Boolean, default: true },
     isLoggedIn:     { type: Boolean, default: false },
     dashboardRoute: { type: String,  default: null },
@@ -14,6 +16,25 @@ const props = defineProps({
 
 const page  = usePage();
 const flash = computed(() => page.props.flash ?? {});
+
+const baseUrl = page.props.ziggy?.url ?? '';
+const jsonLd  = computed(() => ({
+    '@context':    'https://schema.org',
+    '@type':       'WebPage',
+    '@id':         `${baseUrl}/ppdb#webpage`,
+    'name':        `PPDB — ${props.school?.name ?? ''}`,
+    'description': `Pendaftaran Peserta Didik Baru ${props.school?.name ?? ''}. Daftarkan putra-putri Anda sekarang.`,
+    'url':         `${baseUrl}/ppdb`,
+    'isPartOf':    { '@id': `${baseUrl}/#website` },
+    'about':       { '@id': `${baseUrl}/#school` },
+    'breadcrumb': {
+        '@type': 'BreadcrumbList',
+        'itemListElement': [
+            { '@type': 'ListItem', 'position': 1, 'name': 'Beranda', 'item': baseUrl },
+            { '@type': 'ListItem', 'position': 2, 'name': 'PPDB',    'item': `${baseUrl}/ppdb` },
+        ],
+    },
+}));
 
 const showForm = ref(false);
 
@@ -39,39 +60,67 @@ const fetchProvinces = async () => {
 };
 fetchProvinces();
 
-watch(selectedProvince, async (id) => {
+// Fix #14: AbortController + onCleanup mencegah race condition saat user ganti pilihan cepat
+watch(selectedProvince, async (id, _, onCleanup) => {
     form.province = provinces.value.find(p => p.id === id)?.name ?? '';
     form.regency  = ''; form.district = ''; form.village = '';
     selectedRegency.value = ''; selectedDistrict.value = '';
     regencies.value = []; districts.value = []; villages.value = [];
     if (!id) return;
+
+    const controller = new AbortController();
+    onCleanup(() => controller.abort());
+
     loadingRegency.value = true;
-    const res = await fetch(`${API}/regencies/${id}.json`);
-    regencies.value = await res.json();
-    loadingRegency.value = false;
+    try {
+        const res = await fetch(`${API}/regencies/${id}.json`, { signal: controller.signal });
+        regencies.value = await res.json();
+    } catch (e) {
+        if (e.name !== 'AbortError') console.error('Gagal memuat kabupaten:', e);
+    } finally {
+        loadingRegency.value = false;
+    }
 });
 
-watch(selectedRegency, async (id) => {
+watch(selectedRegency, async (id, _, onCleanup) => {
     form.regency  = regencies.value.find(r => r.id === id)?.name ?? '';
     form.district = ''; form.village = '';
     selectedDistrict.value = '';
     districts.value = []; villages.value = [];
     if (!id) return;
+
+    const controller = new AbortController();
+    onCleanup(() => controller.abort());
+
     loadingDistrict.value = true;
-    const res = await fetch(`${API}/districts/${id}.json`);
-    districts.value = await res.json();
-    loadingDistrict.value = false;
+    try {
+        const res = await fetch(`${API}/districts/${id}.json`, { signal: controller.signal });
+        districts.value = await res.json();
+    } catch (e) {
+        if (e.name !== 'AbortError') console.error('Gagal memuat kecamatan:', e);
+    } finally {
+        loadingDistrict.value = false;
+    }
 });
 
-watch(selectedDistrict, async (id) => {
+watch(selectedDistrict, async (id, _, onCleanup) => {
     form.district = districts.value.find(d => d.id === id)?.name ?? '';
     form.village  = '';
     villages.value = [];
     if (!id) return;
+
+    const controller = new AbortController();
+    onCleanup(() => controller.abort());
+
     loadingVillage.value = true;
-    const res = await fetch(`${API}/villages/${id}.json`);
-    villages.value = await res.json();
-    loadingVillage.value = false;
+    try {
+        const res = await fetch(`${API}/villages/${id}.json`, { signal: controller.signal });
+        villages.value = await res.json();
+    } catch (e) {
+        if (e.name !== 'AbortError') console.error('Gagal memuat desa:', e);
+    } finally {
+        loadingVillage.value = false;
+    }
 });
 
 // ── Form 
@@ -121,13 +170,39 @@ const submit = () => {
     });
 };
 
-const isOpen = computed(() => props.setting?.is_open && (() => {
-    if (!props.setting) return false;
-    const now = new Date().toISOString().slice(0, 10);
+// Fix #6: pakai serverDate dari backend supaya konsisten dengan timezone server
+const isOpen = computed(() => {
+    if (!props.setting?.is_open) return false;
+    const now = props.serverDate;
     return now >= props.setting.registration_start && now <= props.setting.registration_end;
-})());
+});
 
-// ── Helpers 
+// ── File upload helpers (Fix #15)
+const fileNames   = ref({ photo: null, document_kk: null, document_akta: null });
+const fileErrors  = ref({ photo: null, document_kk: null, document_akta: null });
+
+const fileLimits = { photo: 2, document_kk: 5, document_akta: 5 };
+
+const handleFileChange = (field, event) => {
+    const file = event.target.files[0];
+    fileNames.value[field]  = null;
+    fileErrors.value[field] = null;
+    form[field] = null;
+
+    if (!file) return;
+
+    const maxBytes = fileLimits[field] * 1024 * 1024;
+    if (file.size > maxBytes) {
+        fileErrors.value[field] = `Ukuran file (${(file.size / 1024 / 1024).toFixed(1)}MB) melebihi batas ${fileLimits[field]}MB.`;
+        event.target.value = '';
+        return;
+    }
+
+    fileNames.value[field] = file.name;
+    form[field] = file;
+};
+
+// ── Helpers
 const inputClass = (field) => [
     'w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors focus:border-amber-400 focus:ring-2 focus:ring-amber-100',
     form.errors[field] ? 'border-red-300 bg-red-50' : 'border-slate-200',
@@ -146,7 +221,17 @@ const selectWilayahClass = (field, disabled) => [
 </script>
 
 <template>
-    <Head :title="`PPDB — ${school?.name ?? 'Sekolah'}`" />
+    <Head :title="`PPDB — ${school?.name ?? 'Sekolah'}`">
+        <meta head-key="description" name="description" :content="`Pendaftaran Peserta Didik Baru (PPDB) ${school?.name ?? 'sekolah kami'}. Daftarkan putra-putri Anda sekarang.`">
+        <meta head-key="og:title" property="og:title" :content="`PPDB — ${school?.name ?? ''}`">
+        <meta head-key="og:description" property="og:description" :content="`Penerimaan Peserta Didik Baru ${school?.name ?? ''}. Informasi pendaftaran, syarat, dan jadwal PPDB.`">
+        <meta head-key="og:type" property="og:type" content="website">
+        <meta v-if="school?.logo" head-key="og:image" property="og:image" :content="school.logo">
+        <meta v-if="school?.logo" head-key="twitter:image" name="twitter:image" :content="school.logo">
+        <meta head-key="twitter:title" name="twitter:title" :content="`PPDB — ${school?.name ?? ''}`">
+        <meta head-key="twitter:description" name="twitter:description" :content="`Pendaftaran Peserta Didik Baru ${school?.name ?? ''}. Daftarkan putra-putri Anda sekarang.`">
+    </Head>
+    <JsonLd :data="jsonLd" />
 
     <div class="min-h-screen overflow-x-hidden bg-white font-sans antialiased" style="font-family:'Plus Jakarta Sans',sans-serif">
 
@@ -532,10 +617,14 @@ const selectWilayahClass = (field, disabled) => [
                                                         {{ doc.label }} <span class="text-red-500">*</span>
                                                     </label>
                                                     <input type="file" :accept="doc.accept"
-                                                        @change="form[doc.field] = $event.target.files[0]"
+                                                        @change="handleFileChange(doc.field, $event)"
                                                         class="w-full text-xs text-slate-600 file:mr-2 file:rounded-lg file:border-0 file:bg-amber-50 file:px-2 file:py-1 file:text-xs file:font-semibold file:text-amber-700 cursor-pointer"/>
-                                                    <p class="mt-1.5 text-[10px] text-slate-400">{{ doc.hint }}</p>
-                                                    <p v-if="form.errors[doc.field]" class="mt-1 text-xs text-red-500">{{ form.errors[doc.field] }}</p>
+                                                    <p v-if="fileNames[doc.field]" class="mt-1.5 flex items-center gap-1 text-[10px] text-emerald-600">
+                                                        <span>✓</span> {{ fileNames[doc.field] }}
+                                                    </p>
+                                                    <p v-else class="mt-1.5 text-[10px] text-slate-400">{{ doc.hint }}</p>
+                                                    <p v-if="fileErrors[doc.field]" class="mt-1 text-xs text-red-500">{{ fileErrors[doc.field] }}</p>
+                                                    <p v-else-if="form.errors[doc.field]" class="mt-1 text-xs text-red-500">{{ form.errors[doc.field] }}</p>
                                                 </div>
                                             </div>
                                         </div>

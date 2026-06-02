@@ -295,7 +295,7 @@ const submit = () => {
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                                     </svg>
                                     Upload Logo
-                                    <input type="file" accept="image/jpg,image/jpeg,image/png" class="sr-only" @change="onLogoChange" />
+                                    <input type="file" accept="image/jpg,image/jpeg,image/png" class="hidden" @change="onLogoChange" />
                                 </label>
                                 <button v-if="logoPreview" type="button" @click="removeLogo"
                                     class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-red-500 transition-[background-color] duration-150 hover:bg-red-50">
@@ -327,7 +327,7 @@ const submit = () => {
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                                     </svg>
                                     Upload Stempel
-                                    <input type="file" accept="image/jpg,image/jpeg,image/png" class="sr-only" @change="onStampChange" />
+                                    <input type="file" accept="image/jpg,image/jpeg,image/png" class="hidden" @change="onStampChange" />
                                 </label>
                                 <button v-if="stampPreview" type="button" @click="removeStamp"
                                     class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-red-500 transition-[background-color] duration-150 hover:bg-red-50">

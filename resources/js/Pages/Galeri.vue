@@ -1,7 +1,8 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import PublicHeader from '@/Components/PublicHeader.vue';
+import JsonLd from '@/Components/JsonLd.vue';
 
 const props = defineProps({
     school:         { type: Object,  default: null },
@@ -46,10 +47,39 @@ const lbNext = () => {
     lbIndex.value = (lbIndex.value + 1) % arr.length;
     lightbox.value = arr[lbIndex.value];
 };
+
+const baseUrl = usePage().props.ziggy?.url ?? '';
+const jsonLd = computed(() => ({
+    '@context':  'https://schema.org',
+    '@type':     'CollectionPage',
+    '@id':       `${baseUrl}/galeri#webpage`,
+    'name':      `Galeri — ${props.school?.name ?? ''}`,
+    'description': `Galeri foto dan video kegiatan ${props.school?.name ?? ''}.`,
+    'url':       `${baseUrl}/galeri`,
+    'isPartOf':  { '@id': `${baseUrl}/#website` },
+    'about':     { '@id': `${baseUrl}/#school` },
+    'breadcrumb': {
+        '@type': 'BreadcrumbList',
+        'itemListElement': [
+            { '@type': 'ListItem', 'position': 1, 'name': 'Beranda', 'item': baseUrl },
+            { '@type': 'ListItem', 'position': 2, 'name': 'Galeri',  'item': `${baseUrl}/galeri` },
+        ],
+    },
+}));
 </script>
 
 <template>
-    <Head :title="`Galeri — ${school?.name ?? 'Sekolah'}`" />
+    <Head :title="`Galeri — ${school?.name ?? 'Sekolah'}`">
+        <meta head-key="description" name="description" :content="`Galeri foto dan video kegiatan ${school?.name ?? 'sekolah kami'}. Lihat dokumentasi berbagai kegiatan dan momen berharga.`">
+        <meta head-key="og:title" property="og:title" :content="`Galeri — ${school?.name ?? ''}`">
+        <meta head-key="og:description" property="og:description" :content="`Koleksi foto dan video kegiatan ${school?.name ?? ''}.`">
+        <meta head-key="og:type" property="og:type" content="website">
+        <meta v-if="school?.logo" head-key="og:image" property="og:image" :content="school.logo">
+        <meta v-if="school?.logo" head-key="twitter:image" name="twitter:image" :content="school.logo">
+        <meta head-key="twitter:title" name="twitter:title" :content="`Galeri — ${school?.name ?? ''}`">
+        <meta head-key="twitter:description" name="twitter:description" :content="`Galeri foto dan video kegiatan ${school?.name ?? ''}.`">
+    </Head>
+    <JsonLd :data="jsonLd" />
 
     <div class="min-h-screen overflow-x-hidden bg-white font-sans antialiased" style="font-family:'Plus Jakarta Sans',sans-serif">
 

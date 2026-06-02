@@ -56,6 +56,24 @@ class HandleInertiaRequests extends Middleware
             'unreadCount' => fn () => $user
                 ? app(NotificationService::class)->getUnreadCount($user)
                 : 0,
+            'midtrans' => [
+                'client_key'    => config('services.midtrans.client_key'),
+                'is_production' => config('services.midtrans.is_production'),
+            ],
+            'seo' => function () {
+                $school = \App\Models\SchoolSetting::current();
+                return [
+                    'name'        => $school?->name        ?? config('app.name'),
+                    'tagline'     => $school?->tagline      ?? '',
+                    'description' => $school?->description  ?? '',
+                    'address'     => $school?->address      ?? '',
+                    'phone'       => $school?->phone        ?? '',
+                    'email'       => $school?->email        ?? '',
+                    'website'     => $school?->website      ?? config('app.url'),
+                    'logo_url'    => $school?->logo         ? asset('storage/' . $school->logo) : null,
+                    'npsn'        => $school?->npsn         ?? '',
+                ];
+            },
         ];
     }
 }
