@@ -17,18 +17,19 @@ const props = defineProps({
 // ── Edit form ─────────────────────────────────────────────────────────────────
 const editForm = useForm({
     nisn:          props.student.nisn,
-    nik:           props.student.nik          ?? '',
+    nik:           props.student.nik           ?? '',
     nis:           props.student.nis,
     name:          props.student.name,
     gender:        props.student.gender,
     grade:         props.student.grade,
-    birth_place:   props.student.birth_place  ?? '',
-    birth_date:    props.student.birth_date   ?? '',
-    address:       props.student.address      ?? '',
-    father_name:   props.student.father_name  ?? '',
-    mother_name:   props.student.mother_name  ?? '',
+    birth_place:   props.student.birth_place   ?? '',
+    birth_date:    props.student.birth_date    ?? '',
+    address:       props.student.address       ?? '',
+    father_name:   props.student.father_name   ?? '',
+    mother_name:   props.student.mother_name   ?? '',
     guardian_name: props.student.guardian_name ?? '',
-    parent_name:   props.student.user?.name   ?? '',
+    parent_phone:  props.student.parent_phone  ?? '',
+    parent_name:   props.student.user?.name    ?? '',
     password:      '',
 });
 
@@ -336,6 +337,18 @@ const formatDate = (d) => d
                                 placeholder="Nama wali (kosongkan jika sama dengan ayah/ibu)"
                                 :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.guardian_name ? 'border-red-400' : 'border-slate-200']"
                             />
+                        </div>
+
+                        <div>
+                            <label for="e-parent-phone" class="mb-1.5 block text-xs font-semibold text-slate-600">No. HP Orang Tua/Wali</label>
+                            <input
+                                id="e-parent-phone"
+                                v-model="editForm.parent_phone"
+                                type="text"
+                                placeholder="08xxxxxxxxxx"
+                                :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.parent_phone ? 'border-red-400' : 'border-slate-200']"
+                            />
+                            <p v-if="editForm.errors.parent_phone" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.parent_phone }}</p>
                         </div>
 
                         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">

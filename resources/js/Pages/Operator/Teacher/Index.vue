@@ -40,34 +40,6 @@ const paginated  = computed(() => {
 // Reset to page 1 when filter/search changes
 watch([search, filterType], () => { currentPage.value = 1; });
 
-// ── Create ────────────────────────────────────────────────────────────────────
-const showCreate = ref(false);
-
-const createForm = useForm({
-    name:     '',
-    email:    '',
-    password: '',
-    type:     '',
-    nip:      '',
-    gender:   '',
-    phone:    '',
-});
-
-const openCreate = () => {
-    createForm.reset();
-    createForm.clearErrors();
-    showCreate.value = true;
-};
-
-const submitCreate = () => {
-    createForm.post(route('operator.teachers.store'), {
-        onSuccess: () => {
-            showCreate.value = false;
-            createForm.reset();
-        },
-    });
-};
-
 // ── Delete ────────────────────────────────────────────────────────────────────
 const deleteTarget = ref(null);
 const deleteForm   = useForm({});
@@ -92,10 +64,6 @@ const positionConfig = {
     wakamad_kesiswaan: { label: 'Wakamad Kesiswaan', badge: 'bg-orange-50 text-orange-700 ring-orange-200' },
     wakamad_kurikulum: { label: 'Wakamad Kurikulum',  badge: 'bg-teal-50 text-teal-700 ring-teal-200' },
 };
-const typeOptions = [
-    { value: 'guru_kelas',  label: 'Guru Kelas',  desc: 'Kelas 1–3, mengajar semua mapel' },
-    { value: 'guru_bidang', label: 'Guru Bidang',  desc: 'Kelas 4–6, mapel spesifik' },
-];
 </script>
 
 <template>
@@ -139,15 +107,15 @@ const typeOptions = [
                         </svg>
                         Import
                     </Link>
-                    <button
-                        @click="openCreate"
+                    <Link
+                        :href="route('operator.teachers.create')"
                         class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600"
                     >
                         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
                         Tambah
-                    </button>
+                    </Link>
                 </div>
             </div>
 
@@ -190,15 +158,15 @@ const typeOptions = [
                 </svg>
                 <p class="text-sm font-semibold text-slate-700">Belum ada data guru</p>
                 <p class="mt-1 text-xs text-slate-400">Tambah guru untuk mulai mengatur data mengajar.</p>
-                <button
-                    @click="openCreate"
+                <Link
+                    :href="route('operator.teachers.create')"
                     class="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600"
                 >
                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                     Tambah Guru
-                </button>
+                </Link>
             </div>
 
             <!-- No results -->
@@ -346,197 +314,6 @@ const typeOptions = [
             </template>
 
         </div>
-
-        <!-- ── Create Modal ────────────────────────────────────────────────────── -->
-        <Modal :show="showCreate" max-width="md" @close="showCreate = false">
-            <form @submit.prevent="submitCreate">
-                <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
-                    <h3 class="text-balance text-base font-bold text-slate-900">Tambah Guru</h3>
-                    <button
-                        type="button"
-                        aria-label="Tutup modal"
-                        @click="showCreate = false"
-                        class="flex size-8 items-center justify-center rounded-lg text-slate-400 transition-[background-color,color] duration-150 hover:bg-slate-100 hover:text-slate-600"
-                    >
-                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="space-y-4 px-6 py-5">
-
-                    <!-- Nama -->
-                    <div>
-                        <label for="c-name" class="mb-1.5 block text-xs font-semibold text-slate-600">
-                            Nama Lengkap <span class="text-red-500">*</span>
-                        </label>
-                        <input
-                            id="c-name"
-                            v-model="createForm.name"
-                            type="text"
-                            placeholder="Nama lengkap guru"
-                            autocomplete="off"
-                            :class="[
-                                'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150',
-                                'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                createForm.errors.name ? 'border-red-400' : 'border-slate-200',
-                            ]"
-                        />
-                        <p v-if="createForm.errors.name" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.name }}</p>
-                    </div>
-
-                    <!-- Email + Password -->
-                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                        <div>
-                            <label for="c-email" class="mb-1.5 block text-xs font-semibold text-slate-600">
-                                Email <span class="text-red-500">*</span>
-                            </label>
-                            <input
-                                id="c-email"
-                                v-model="createForm.email"
-                                type="email"
-                                placeholder="email@sekolah.ac.id"
-                                autocomplete="off"
-                                :class="[
-                                    'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150',
-                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                    createForm.errors.email ? 'border-red-400' : 'border-slate-200',
-                                ]"
-                            />
-                            <p v-if="createForm.errors.email" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.email }}</p>
-                        </div>
-                        <div>
-                            <label for="c-password" class="mb-1.5 block text-xs font-semibold text-slate-600">
-                                Password <span class="text-red-500">*</span>
-                            </label>
-                            <input
-                                id="c-password"
-                                v-model="createForm.password"
-                                type="password"
-                                placeholder="Min. 8 karakter"
-                                autocomplete="new-password"
-                                :class="[
-                                    'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150',
-                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                    createForm.errors.password ? 'border-red-400' : 'border-slate-200',
-                                ]"
-                            />
-                            <p v-if="createForm.errors.password" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.password }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Tipe Guru -->
-                    <div>
-                        <label class="mb-1.5 block text-xs font-semibold text-slate-600">
-                            Tipe Guru <span class="text-red-500">*</span>
-                        </label>
-                        <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                            <label
-                                v-for="opt in typeOptions"
-                                :key="opt.value"
-                                :class="[
-                                    'flex cursor-pointer flex-col gap-0.5 rounded-lg border px-3.5 py-2.5 transition-[border-color,background-color] duration-150',
-                                    createForm.type === opt.value
-                                        ? 'border-emerald-400 bg-emerald-50'
-                                        : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50',
-                                ]"
-                            >
-                                <input type="radio" :value="opt.value" v-model="createForm.type" class="sr-only" />
-                                <span :class="['text-sm font-semibold', createForm.type === opt.value ? 'text-emerald-700' : 'text-slate-700']">
-                                    {{ opt.label }}
-                                </span>
-                                <span class="text-xs text-slate-400">{{ opt.desc }}</span>
-                            </label>
-                        </div>
-                        <p v-if="createForm.errors.type" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.type }}</p>
-                    </div>
-
-                    <!-- NIP + Telepon -->
-                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                        <div>
-                            <label for="c-nip" class="mb-1.5 block text-xs font-semibold text-slate-600">NIP</label>
-                            <input
-                                id="c-nip"
-                                v-model="createForm.nip"
-                                type="text"
-                                placeholder="Nomor Induk Pegawai"
-                                :class="[
-                                    'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150',
-                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                    createForm.errors.nip ? 'border-red-400' : 'border-slate-200',
-                                ]"
-                            />
-                            <p v-if="createForm.errors.nip" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.nip }}</p>
-                        </div>
-                        <div>
-                            <label for="c-phone" class="mb-1.5 block text-xs font-semibold text-slate-600">Telepon</label>
-                            <input
-                                id="c-phone"
-                                v-model="createForm.phone"
-                                type="text"
-                                placeholder="08xxxxxxxxxx"
-                                :class="[
-                                    'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150',
-                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                    createForm.errors.phone ? 'border-red-400' : 'border-slate-200',
-                                ]"
-                            />
-                            <p v-if="createForm.errors.phone" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.phone }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Gender -->
-                    <div>
-                        <label class="mb-1.5 block text-xs font-semibold text-slate-600">
-                            Jenis Kelamin <span class="text-red-500">*</span>
-                        </label>
-                        <div class="flex gap-3">
-                            <label
-                                v-for="opt in [{ value: 'L', label: 'Laki-laki' }, { value: 'P', label: 'Perempuan' }]"
-                                :key="opt.value"
-                                :class="[
-                                    'flex flex-1 cursor-pointer items-center gap-2.5 rounded-lg border px-3.5 py-2.5 text-sm transition-[border-color,background-color] duration-150',
-                                    createForm.gender === opt.value
-                                        ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
-                                        : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50',
-                                ]"
-                            >
-                                <input
-                                    type="radio"
-                                    :value="opt.value"
-                                    v-model="createForm.gender"
-                                    class="sr-only"
-                                />
-                                <span class="text-sm font-medium">{{ opt.label }}</span>
-                            </label>
-                        </div>
-                        <p v-if="createForm.errors.gender" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.gender }}</p>
-                    </div>
-
-                </div>
-
-                <div class="flex items-center justify-end gap-3 border-t border-slate-100 px-6 py-4">
-                    <button
-                        type="button"
-                        @click="showCreate = false"
-                        class="rounded-lg px-4 py-2 text-sm font-semibold text-slate-600 transition-[background-color] duration-150 hover:bg-slate-100"
-                    >
-                        Batal
-                    </button>
-                    <button
-                        type="submit"
-                        :disabled="createForm.processing"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60"
-                    >
-                        <svg v-if="createForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                        </svg>
-                        {{ createForm.processing ? 'Menyimpan...' : 'Simpan' }}
-                    </button>
-                </div>
-            </form>
-        </Modal>
 
         <!-- ── Delete Confirm ──────────────────────────────────────────────────── -->
         <Modal :show="!!deleteTarget" max-width="sm" @close="deleteTarget = null">

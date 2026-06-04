@@ -3,9 +3,11 @@
 namespace App\Services;
 
 use App\Models\SchoolPost;
+use App\Models\SchoolPostImage;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Http\UploadedFile;
 
 class SchoolPostService
 {
@@ -89,6 +91,23 @@ class SchoolPostService
         }
 
         return $post;
+    }
+
+    public function storeImage(SchoolPost $post, UploadedFile $file): SchoolPostImage
+    {
+        $path = $file->store('school-posts/images', 'public');
+        $lastOrder = $post->images()->max('sort_order') ?? 0;
+
+        return $post->images()->create([
+            'path'       => $path,
+            'sort_order' => $lastOrder + 1,
+        ]);
+    }
+
+    public function deleteImage(SchoolPostImage $image): void
+    {
+        Storage::disk('public')->delete($image->path);
+        $image->delete();
     }
 
     private function generateSlug(string $title): string

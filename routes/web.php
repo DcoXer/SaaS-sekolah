@@ -8,6 +8,7 @@ use App\Http\Controllers\ReceiptVerifyController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\GalleryPageController;
 use App\Http\Controllers\ExtracurricularPageController;
+use App\Http\Controllers\ExtracurricularDetailController;
 use App\Http\Controllers\AboutPageController;
 use App\Http\Controllers\PublicPpdbController;
 use App\Http\Controllers\PublicSchoolPostController;
@@ -78,6 +79,7 @@ Route::get('/', WelcomeController::class)->name('welcome');
 Route::get('/tentang', AboutPageController::class)->name('tentang');
 Route::get('/galeri', GalleryPageController::class)->name('galeri');
 Route::get('/ekskul', ExtracurricularPageController::class)->name('ekskul');
+Route::get('/ekskul/{extracurricular}', ExtracurricularDetailController::class)->name('ekskul.show');
 
 // Berita & Pengumuman public
 Route::get('/berita', [PublicSchoolPostController::class, 'index'])->name('berita.index');
@@ -159,7 +161,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('teachers/import/confirm', [TeacherImportExportController::class, 'confirm'])->name('teachers.import.confirm');
 
         // Create Guru
-        Route::resource('teachers', TeacherController::class)->except(['create', 'edit']);
+        Route::resource('teachers', TeacherController::class)->except(['edit']);
 
         // Create Kelas
         Route::resource('classrooms', ClassroomController::class)->except(['create', 'edit']);
@@ -192,7 +194,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('students/import/confirm', [StudentImportExportController::class, 'confirm'])->name('students.import.confirm');
 
         // Create Siswa
-        Route::resource('students', StudentController::class)->except(['create', 'edit']);
+        Route::resource('students', StudentController::class)->except(['edit']);
         Route::patch('students/{student}/assign-classroom', [StudentController::class, 'assignClassroom'])
             ->name('students.assign-classroom');
 
@@ -210,10 +212,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('school-settings', [SchoolSettingController::class, 'save'])->name('school-settings.save');
         Route::post('school-settings/hero-photos', [SchoolHeroPhotoController::class, 'store'])->name('hero-photos.store');
         Route::delete('school-settings/hero-photos/{heroPhoto}', [SchoolHeroPhotoController::class, 'destroy'])->name('hero-photos.destroy');
-        Route::resource('extracurriculars', ExtracurricularController::class)->except(['create', 'edit', 'show']);
+        Route::resource('extracurriculars', ExtracurricularController::class);
+        Route::post('extracurriculars/{extracurricular}/photos', [ExtracurricularController::class, 'storePhoto'])->name('extracurriculars.photos.store');
+        Route::delete('extracurriculars/{extracurricular}/photos/{photo}', [ExtracurricularController::class, 'destroyPhoto'])->name('extracurriculars.photos.destroy');
+        Route::post('extracurriculars/{extracurricular}/achievements', [ExtracurricularController::class, 'storeAchievement'])->name('extracurriculars.achievements.store');
+        Route::patch('extracurriculars/{extracurricular}/achievements/{achievement}', [ExtracurricularController::class, 'updateAchievement'])->name('extracurriculars.achievements.update');
+        Route::delete('extracurriculars/{extracurricular}/achievements/{achievement}', [ExtracurricularController::class, 'destroyAchievement'])->name('extracurriculars.achievements.destroy');
         Route::resource('school-galleries', SchoolGalleryController::class)->only(['index', 'store', 'destroy']);
         Route::resource('letter-types', LetterTypeController::class)->except(['create', 'edit', 'show']);
-        Route::resource('letter-templates', LetterTemplateController::class)->except(['create', 'edit', 'show']);
+        Route::resource('letter-templates', LetterTemplateController::class)->except(['show']);
         Route::get('letters', [OperatorLetter::class, 'index'])->name('letters.index');
         Route::post('letters/notification', [OperatorLetter::class, 'storeNotification'])->name('letters.store-notification');
         Route::patch('letters/{letter}/submit', [OperatorLetter::class, 'submitForApproval'])->name('letters.submit');
@@ -226,13 +233,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Berita & Pengumuman
         Route::get('school-posts', [OperatorSchoolPost::class, 'index'])->name('school-posts.index');
+        Route::get('school-posts/create', [OperatorSchoolPost::class, 'create'])->name('school-posts.create');
         Route::post('school-posts', [OperatorSchoolPost::class, 'store'])->name('school-posts.store');
+        Route::get('school-posts/{post}/edit', [OperatorSchoolPost::class, 'edit'])->name('school-posts.edit');
+        Route::get('school-posts/{post}', [OperatorSchoolPost::class, 'show'])->name('school-posts.show');
         Route::put('school-posts/{post}', [OperatorSchoolPost::class, 'update'])->name('school-posts.update');
         Route::delete('school-posts/{post}', [OperatorSchoolPost::class, 'destroy'])->name('school-posts.destroy');
         Route::patch('school-posts/{post}/toggle-publish', [OperatorSchoolPost::class, 'togglePublish'])->name('school-posts.toggle-publish');
+        Route::post('school-posts/{post}/images', [OperatorSchoolPost::class, 'storeImage'])->name('school-posts.images.store');
+        Route::delete('school-posts/{post}/images/{image}', [OperatorSchoolPost::class, 'destroyImage'])->name('school-posts.images.destroy');
 
         // Rekap Absensi Guru
-        Route::get('teacher-attendances/recap', OperatorTeacherAttendanceRecap::class)->name('teacher-attendances.recap');
+        Route::get('teacher-attendances/recap', [OperatorTeacherAttendanceRecap::class, 'index'])->name('teacher-attendances.recap');
+        Route::get('teacher-attendances/recap/export', [OperatorTeacherAttendanceRecap::class, 'export'])->name('teacher-attendances.recap.export');
 
         // PPDB
         Route::get('ppdb', [OperatorPpdb::class, 'index'])->name('ppdb.index');
@@ -259,12 +272,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('invoices/{invoice}/receipt/pdf', [KeuanganPayment::class, 'receiptPdf'])->name('payments.receipt-pdf');
         Route::get('reports/export', [KeuanganReport::class, 'export'])->name('reports.export');
 
+        // SPP Reminder WA
+        Route::post('invoices/send-spp-reminders', [KeuanganInvoice::class, 'sendSppReminders'])->name('invoices.send-spp-reminders');
+
         // Honor Guru
         Route::get('honorariums', [KeuanganHonorarium::class, 'index'])->name('honorariums.index');
         Route::post('honorariums/generate', [KeuanganHonorarium::class, 'generate'])->name('honorariums.generate');
+        Route::post('honorariums/generate-all', [KeuanganHonorarium::class, 'generateAll'])->name('honorariums.generate-all');
+        Route::post('honorariums/mark-all-paid', [KeuanganHonorarium::class, 'markAllPaid'])->name('honorariums.mark-all-paid');
+        Route::post('honorariums/send-all-slips', [KeuanganHonorarium::class, 'sendAllSlips'])->name('honorariums.send-all-slips');
         Route::patch('honorariums/{honorarium}/mark-paid', [KeuanganHonorarium::class, 'markPaid'])->name('honorariums.mark-paid');
         Route::delete('honorariums/{honorarium}', [KeuanganHonorarium::class, 'destroy'])->name('honorariums.destroy');
         Route::get('honorariums/{honorarium}/slip', [KeuanganHonorarium::class, 'downloadSlip'])->name('honorariums.slip');
+        Route::post('honorariums/{honorarium}/send-slip', [KeuanganHonorarium::class, 'sendSlip'])->name('honorariums.send-slip');
     });
 
     // Guru Routes

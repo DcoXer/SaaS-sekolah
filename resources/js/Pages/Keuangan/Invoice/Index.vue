@@ -1,14 +1,16 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
+import Modal from '@/Components/Modal.vue';
 import Pagination from '@/Components/Pagination.vue';
 import FilterSelect from '@/Components/FilterSelect.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref, computed, watch } from 'vue';
 
 const props = defineProps({
     unpaidInvoices: { type: Array, required: true },
     summary:        { type: Object, default: null },
     activeYear:     { type: Object, default: null },
+    paymentTypes:   { type: Array, default: () => [] },
 });
 
 const formatRupiah = (val) =>
@@ -75,6 +77,22 @@ const hasActiveFilter = computed(() => search.value.trim() || filterStatus.value
 // Per-group helpers
 const unpaidCount  = (group) => group.invoices.filter(i => i.status === 'unpaid').length;
 const partialCount = (group) => group.invoices.filter(i => i.status === 'partial').length;
+
+// ── WA Reminder ───────────────────────────────────────────────────────────────
+const showReminder = ref(false);
+const reminderForm = useForm({ payment_type_id: '', grade: '' });
+
+const openReminder = () => {
+    reminderForm.reset();
+    reminderForm.clearErrors();
+    showReminder.value = true;
+};
+
+const submitReminder = () => {
+    reminderForm.post(route('keuangan.invoices.send-spp-reminders'), {
+        onSuccess: () => { showReminder.value = false; },
+    });
+};
 </script>
 
 <template>
@@ -97,19 +115,31 @@ const partialCount = (group) => group.invoices.filter(i => i.status === 'partial
                 <div class="pointer-events-none absolute -right-8 -top-8 size-40 rounded-full bg-white/10"></div>
                 <div class="pointer-events-none absolute -bottom-10 right-16 size-28 rounded-full bg-white/8"></div>
 
-                <div class="relative flex items-center gap-4">
-                    <div class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm ring-1 ring-white/30">
-                        <svg class="size-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                <div class="relative flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm ring-1 ring-white/30">
+                            <svg class="size-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold text-white">Tagihan Siswa</h1>
+                            <p class="mt-0.5 text-sm text-emerald-100">
+                                <span v-if="activeYear">Tahun ajaran {{ activeYear.name }} — tagihan belum atau kurang terbayar</span>
+                                <span v-else>Tidak ada tahun ajaran aktif saat ini</span>
+                            </p>
+                        </div>
+                    </div>
+                    <button
+                        v-if="activeYear && paymentTypes.length > 0"
+                        @click="openReminder"
+                        class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-white/20 px-3.5 py-2 text-sm font-semibold text-white ring-1 ring-white/30 backdrop-blur-sm transition-[background-color] duration-150 hover:bg-white/30"
+                    >
+                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 8.25h3m-3 3h3m-3 3h3" />
                         </svg>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-bold text-white">Tagihan Siswa</h1>
-                        <p class="mt-0.5 text-sm text-emerald-100">
-                            <span v-if="activeYear">Tahun ajaran {{ activeYear.name }} — tagihan belum atau kurang terbayar</span>
-                            <span v-else>Tidak ada tahun ajaran aktif saat ini</span>
-                        </p>
-                    </div>
+                        Kirim Reminder WA
+                    </button>
                 </div>
             </div>
 
@@ -381,5 +411,90 @@ const partialCount = (group) => group.invoices.filter(i => i.status === 'partial
             </template>
 
         </div>
+
+        <!-- ── Reminder WA Modal ────────────────────────────────────────────── -->
+        <Modal :show="showReminder" max-width="sm" @close="showReminder = false">
+            <form @submit.prevent="submitReminder">
+                <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+                    <h3 class="text-base font-bold text-slate-900">Kirim Reminder Tagihan WA</h3>
+                    <button
+                        type="button"
+                        aria-label="Tutup modal"
+                        @click="showReminder = false"
+                        class="flex size-8 items-center justify-center rounded-lg text-slate-400 transition-[background-color,color] duration-150 hover:bg-slate-100 hover:text-slate-600"
+                    >
+                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="space-y-4 px-6 py-5">
+                    <p class="text-xs text-slate-500">
+                        Pesan pengingat akan dikirim ke nomor HP orang tua/wali siswa yang memiliki tagihan
+                        <span class="font-semibold">belum bayar</span> atau <span class="font-semibold">kurang bayar</span>.
+                        Siswa tanpa nomor HP akan dilewati.
+                    </p>
+
+                    <!-- Jenis Tagihan -->
+                    <div>
+                        <label class="mb-1.5 block text-xs font-semibold text-slate-600">
+                            Jenis Tagihan <span class="text-red-500">*</span>
+                        </label>
+                        <FilterSelect
+                            v-model="reminderForm.payment_type_id"
+                            :options="[
+                                { value: '', label: 'Pilih jenis tagihan...' },
+                                ...paymentTypes.map(pt => ({ value: pt.id, label: pt.name + (pt.grade ? ` (Kelas ${pt.grade})` : '') }))
+                            ]"
+                            block
+                            :has-error="!!reminderForm.errors.payment_type_id"
+                        />
+                        <p v-if="reminderForm.errors.payment_type_id" class="mt-1.5 text-xs text-red-500">{{ reminderForm.errors.payment_type_id }}</p>
+                    </div>
+
+                    <!-- Filter Grade (opsional) -->
+                    <div>
+                        <label class="mb-1.5 block text-xs font-semibold text-slate-600">
+                            Filter Kelas <span class="text-slate-400">(opsional)</span>
+                        </label>
+                        <FilterSelect
+                            v-model="reminderForm.grade"
+                            :options="[
+                                { value: '', label: 'Semua Kelas' },
+                                { value: 1, label: 'Kelas 1' },
+                                { value: 2, label: 'Kelas 2' },
+                                { value: 3, label: 'Kelas 3' },
+                                { value: 4, label: 'Kelas 4' },
+                                { value: 5, label: 'Kelas 5' },
+                                { value: 6, label: 'Kelas 6' },
+                            ]"
+                            block
+                        />
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 border-t border-slate-100 px-6 py-4">
+                    <button
+                        type="button"
+                        @click="showReminder = false"
+                        class="rounded-lg px-4 py-2 text-sm font-semibold text-slate-600 transition-[background-color] duration-150 hover:bg-slate-100"
+                    >
+                        Batal
+                    </button>
+                    <button
+                        type="submit"
+                        :disabled="reminderForm.processing"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60"
+                    >
+                        <svg v-if="reminderForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                        </svg>
+                        {{ reminderForm.processing ? 'Menjadwalkan...' : 'Kirim Reminder' }}
+                    </button>
+                </div>
+            </form>
+        </Modal>
+
     </AppLayout>
 </template>

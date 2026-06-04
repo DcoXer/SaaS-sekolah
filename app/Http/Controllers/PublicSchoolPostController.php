@@ -51,6 +51,7 @@ class PublicSchoolPostController extends Controller
     {
         abort_if(! $post->is_published, 404);
 
+        $post->load('images');
         $user = request()->user();
         $role = $user?->getRoleNames()->first();
 
@@ -75,6 +76,9 @@ class PublicSchoolPostController extends Controller
             'category'     => $post->category,
             'is_published' => $post->is_published,
             'published_at' => $post->published_at?->locale('id')->isoFormat('D MMMM YYYY'),
+            'images'       => $post->relationLoaded('images')
+                ? $post->images->map(fn ($img) => Storage::disk('public')->url($img->path))->values()->all()
+                : [],
         ];
     }
 

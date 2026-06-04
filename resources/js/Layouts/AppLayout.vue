@@ -542,7 +542,7 @@ const iconPaths = {
 
     <!-- ── Toast container ──────────────────────────────────────────────────── -->
     <div
-        class="fixed bottom-4 left-4 right-4 z-50 flex flex-col gap-2 pb-[env(safe-area-inset-bottom)] sm:bottom-5 sm:left-auto sm:right-5 sm:w-80"
+        class="fixed top-4 left-4 right-4 z-50 flex flex-col gap-2 pt-[env(safe-area-inset-top)] sm:top-5 sm:left-auto sm:right-5 sm:w-80"
         aria-live="polite"
         aria-atomic="false"
     >

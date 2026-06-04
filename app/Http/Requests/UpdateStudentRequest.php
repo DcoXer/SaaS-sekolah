@@ -28,6 +28,7 @@ class UpdateStudentRequest extends FormRequest
             'father_name'   => ['nullable', 'string', 'max:100'],
             'mother_name'   => ['nullable', 'string', 'max:100'],
             'guardian_name' => ['nullable', 'string', 'max:100'],
+            'parent_phone'  => ['nullable', 'string', 'max:20'],
             'parent_name'   => ['nullable', 'string', 'max:100'],
             'password'    => ['nullable', 'string', 'min:8'],
         ];

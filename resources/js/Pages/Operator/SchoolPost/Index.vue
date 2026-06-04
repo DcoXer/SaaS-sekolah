@@ -1,7 +1,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import FilterSelect from '@/Components/FilterSelect.vue';
-import { Head, useForm, router } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 
 const props = defineProps({
@@ -28,95 +28,19 @@ const applyFilters = () => {
 
 watch([search, category, status], applyFilters);
 
-// ── Modal state ───────────────────────────────────────────────────────────────
-const showModal  = ref(false);
-const editTarget = ref(null);
-const deleteId   = ref(null);
-const coverPreview = ref(null);
-
-const blankForm = () => ({
-    title:        '',
-    excerpt:      '',
-    content:      '',
-    cover_image:  null,
-    category:     'berita',
-    is_published: false,
-});
-
-const form = useForm(blankForm());
-
-const openCreate = () => {
-    editTarget.value  = null;
-    coverPreview.value = null;
-    form.reset();
-    Object.assign(form, blankForm());
-    showModal.value = true;
-};
-
-const openEdit = (post) => {
-    editTarget.value  = post;
-    coverPreview.value = post.cover_image_url ?? null;
-    form.reset();
-    form.title        = post.title;
-    form.excerpt      = post.excerpt ?? '';
-    form.content      = post.content;
-    form.category     = post.category;
-    form.is_published = post.is_published;
-    form.cover_image  = null;
-    showModal.value   = true;
-};
-
-const closeModal = () => {
-    showModal.value   = false;
-    editTarget.value  = null;
-    coverPreview.value = null;
-    form.reset();
-};
-
-// ── Cover image preview ───────────────────────────────────────────────────────
-const onCoverChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    form.cover_image   = file;
-    coverPreview.value = URL.createObjectURL(file);
-};
-
-// ── Submit ────────────────────────────────────────────────────────────────────
-const submitForm = () => {
-    if (editTarget.value) {
-        form.transform(data => {
-            if (!data.cover_image) delete data.cover_image;
-            return data;
-        }).put(route('operator.school-posts.update', editTarget.value.id), {
-            forceFormData: true,
-            onSuccess:     () => closeModal(),
-        });
-    } else {
-        form.post(route('operator.school-posts.store'), {
-            forceFormData: true,
-            onSuccess:     () => closeModal(),
-        });
-    }
-};
-
 // ── Delete ────────────────────────────────────────────────────────────────────
+const deleteId = ref(null);
 const doDelete = () => {
     router.delete(route('operator.school-posts.destroy', deleteId.value), {
         onSuccess: () => { deleteId.value = null; },
     });
 };
 
-// ── Toggle publish ────────────────────────────────────────────────────────────
+// ── Toggle publish ─────────────────────────────────────────────────────────────
 const togglePublish = (post) => {
     router.patch(route('operator.school-posts.toggle-publish', post.id));
 };
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-const INPUT_CLS  = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20';
-const categoryOptions = [
-    { value: 'berita',     label: 'Berita' },
-    { value: 'pengumuman', label: 'Pengumuman' },
-];
 </script>
 
 <template>
@@ -139,13 +63,13 @@ const categoryOptions = [
                     <h2 class="text-lg font-bold text-slate-900">Berita & Pengumuman</h2>
                     <p class="text-sm text-slate-500">Kelola konten berita dan pengumuman yang ditampilkan di halaman publik.</p>
                 </div>
-                <button
-                    @click="openCreate"
+                <Link
+                    :href="route('operator.school-posts.create')"
                     class="inline-flex shrink-0 items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-600 transition-colors"
                 >
                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
                     Tulis Post
-                </button>
+                </Link>
             </div>
 
             <!-- Filters -->
@@ -237,15 +161,15 @@ const categoryOptions = [
                             </svg>
                         </button>
                         <!-- Edit -->
-                        <button
-                            @click="openEdit(post)"
+                        <Link
+                            :href="route('operator.school-posts.edit', post.id)"
                             title="Edit"
                             class="flex size-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-600"
                         >
                             <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/>
                             </svg>
-                        </button>
+                        </Link>
                         <!-- Delete -->
                         <button
                             @click="deleteId = post.id"
@@ -285,90 +209,6 @@ const categoryOptions = [
             </div>
 
         </div>
-
-        <!-- Modal Create / Edit -->
-        <Teleport to="body">
-            <div v-if="showModal" class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4 pt-10" @click.self="closeModal">
-                <div class="w-full max-w-2xl rounded-2xl bg-white shadow-xl">
-                    <!-- Header -->
-                    <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
-                        <h3 class="text-base font-bold text-slate-800">{{ editTarget ? 'Edit Post' : 'Tulis Post Baru' }}</h3>
-                        <button @click="closeModal" class="flex size-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600">
-                            <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                        </button>
-                    </div>
-
-                    <!-- Body -->
-                    <form @submit.prevent="submitForm" class="grid grid-cols-1 gap-5 px-6 py-5 sm:grid-cols-2">
-
-                        <!-- Title -->
-                        <div class="sm:col-span-2">
-                            <label class="mb-1.5 block text-xs font-semibold text-slate-600">Judul <span class="text-red-500">*</span></label>
-                            <input v-model="form.title" type="text" placeholder="Judul berita atau pengumuman" :class="INPUT_CLS" />
-                            <p v-if="form.errors.title" class="mt-1 text-xs text-red-500">{{ form.errors.title }}</p>
-                        </div>
-
-                        <!-- Category -->
-                        <div>
-                            <label class="mb-1.5 block text-xs font-semibold text-slate-600">Kategori <span class="text-red-500">*</span></label>
-                            <FilterSelect v-model="form.category" :options="categoryOptions" block :hasError="!!form.errors.category" />
-                            <p v-if="form.errors.category" class="mt-1 text-xs text-red-500">{{ form.errors.category }}</p>
-                        </div>
-
-                        <!-- Published -->
-                        <div class="flex items-center gap-3 pt-6">
-                            <input id="is_published" v-model="form.is_published" type="checkbox" class="size-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-400" />
-                            <label for="is_published" class="text-sm font-medium text-slate-700 cursor-pointer">Langsung publikasikan</label>
-                        </div>
-
-                        <!-- Excerpt -->
-                        <div class="sm:col-span-2">
-                            <label class="mb-1.5 block text-xs font-semibold text-slate-600">Ringkasan (opsional)</label>
-                            <textarea v-model="form.excerpt" rows="2" placeholder="Ringkasan singkat yang ditampilkan di list berita..." :class="INPUT_CLS" class="resize-none" />
-                            <p v-if="form.errors.excerpt" class="mt-1 text-xs text-red-500">{{ form.errors.excerpt }}</p>
-                        </div>
-
-                        <!-- Content -->
-                        <div class="sm:col-span-2">
-                            <label class="mb-1.5 block text-xs font-semibold text-slate-600">Isi Konten <span class="text-red-500">*</span></label>
-                            <textarea v-model="form.content" rows="8" placeholder="Tulis isi berita atau pengumuman di sini..." :class="INPUT_CLS" class="resize-y" />
-                            <p v-if="form.errors.content" class="mt-1 text-xs text-red-500">{{ form.errors.content }}</p>
-                        </div>
-
-                        <!-- Cover image -->
-                        <div class="sm:col-span-2">
-                            <label class="mb-2 block text-xs font-semibold text-slate-600">Foto Cover (opsional, maks 2 MB)</label>
-                            <div class="flex items-start gap-4">
-                                <div class="size-24 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 shrink-0">
-                                    <img v-if="coverPreview" :src="coverPreview" class="size-full object-cover" />
-                                    <div v-else class="flex size-full items-center justify-center">
-                                        <svg class="size-8 text-slate-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <label class="mt-2 inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50">
-                                    <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
-                                    </svg>
-                                    Pilih Gambar
-                                    <input type="file" accept="image/*" class="hidden" @change="onCoverChange" />
-                                </label>
-                            </div>
-                            <p v-if="form.errors.cover_image" class="mt-1 text-xs text-red-500">{{ form.errors.cover_image }}</p>
-                        </div>
-
-                        <!-- Actions -->
-                        <div class="flex justify-end gap-2 sm:col-span-2">
-                            <button type="button" @click="closeModal" class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50">Batal</button>
-                            <button type="submit" :disabled="form.processing" class="rounded-lg bg-emerald-500 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60">
-                                {{ form.processing ? 'Menyimpan...' : (editTarget ? 'Simpan Perubahan' : 'Buat Post') }}
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </Teleport>
 
         <!-- Modal Konfirmasi Hapus -->
         <Teleport to="body">

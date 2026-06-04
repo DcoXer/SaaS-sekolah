@@ -4,6 +4,8 @@ import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, router } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 
+const showExportMenu = ref(false);
+
 const props = defineProps({
     recap: { type: Array, default: () => [] },
     month: { type: Number, required: true },
@@ -35,6 +37,15 @@ function applyFilter() {
     }, { preserveState: true, replace: true });
 }
 
+function doExport(format) {
+    showExportMenu.value = false;
+    const url = new URL(route('operator.teacher-attendances.recap.export'), window.location.origin);
+    url.searchParams.set('month', selectedMonth.value);
+    url.searchParams.set('year', selectedYear.value);
+    url.searchParams.set('format', format);
+    window.location.href = url.toString();
+}
+
 const totals = computed(() => ({
     hadir: props.recap.reduce((s, r) => s + r.hadir, 0),
     izin:  props.recap.reduce((s, r) => s + r.izin,  0),
@@ -50,22 +61,58 @@ const typeLabel = { guru_kelas: 'Guru Kelas', guru_bidang: 'Guru Bidang' };
     <Head title="Rekap Absensi Guru" />
 
     <AppLayout>
-        <template #header>
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                    <h1 class="text-xl font-bold text-slate-800">Rekap Absensi Guru</h1>
-                    <p class="mt-0.5 text-sm text-slate-500">Ringkasan kehadiran semua guru — {{ currentMonthName }}</p>
-                </div>
-
-                <!-- Filter -->
-                <div class="flex items-center gap-2">
-                    <FilterSelect v-model="selectedMonth" :options="monthOptions" @change="applyFilter" />
-                    <FilterSelect v-model="selectedYear"  :options="yearOptions"  @change="applyFilter" />
-                </div>
+        <template #title>
+            <div class="flex items-center gap-2 text-sm text-slate-500">
+                <span>Operator</span>
+                <span>/</span>
+                <span class="font-semibold text-slate-700">Rekap Absensi Guru</span>
             </div>
         </template>
 
         <div class="mx-auto max-w-6xl space-y-6 p-6">
+
+            <!-- Heading + Filter + Export -->
+            <div class="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Rekap Absensi Guru</h2>
+                    <p class="text-sm text-slate-500">Ringkasan kehadiran semua guru — {{ currentMonthName }}</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <FilterSelect v-model="selectedMonth" :options="monthOptions" @change="applyFilter" />
+                    <FilterSelect v-model="selectedYear"  :options="yearOptions"  @change="applyFilter" />
+
+                    <!-- Export dropdown -->
+                    <div class="relative">
+                        <button
+                            @click="showExportMenu = !showExportMenu"
+                            class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+                        >
+                            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                            </svg>
+                            Export
+                        </button>
+                        <div
+                            v-if="showExportMenu"
+                            class="absolute right-0 z-20 mt-1.5 w-36 overflow-hidden rounded-xl border border-slate-100 bg-white shadow-lg"
+                            @mouseleave="showExportMenu = false"
+                        >
+                            <button @click="doExport('xlsx')" class="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
+                                <svg class="size-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+                                </svg>
+                                Excel (.xlsx)
+                            </button>
+                            <button @click="doExport('csv')" class="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
+                                <svg class="size-4 text-sky-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                                </svg>
+                                CSV (.csv)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Summary cards -->
             <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">

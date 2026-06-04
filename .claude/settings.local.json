@@ -59,7 +59,19 @@
       "Bash(npm install:*)",
       "Bash(grep -n \"nisn\" /c/laragon/www/school-management/database/migrations/*.php)",
       "Bash(grep -n '$data\\\\['\\\\''' /c/laragon/www/school-management/app/Services/StudentService.php)",
-      "Bash(grep -v \"^--$\")"
+      "Bash(grep -v \"^--$\")",
+      "Bash(grep -r \"phone\\\\|whatsapp\\\\|hp\" database/migrations/*student*)",
+      "Bash(grep -n \"parent_phone\\\\|parent_name\\\\|guardian_name\\\\|father_name\" /c/laragon/www/school-management/database/migrations/*.php)",
+      "Bash(cp \".claude\\\\worktrees\\\\agent-aa60176c\\\\app\\\\Http\\\\Controllers\\\\Operator\\\\ExtracurricularController.php\" \"app\\\\Http\\\\Controllers\\\\Operator\\\\ExtracurricularController.php\")",
+      "Bash(cp \".claude\\\\worktrees\\\\agent-aa60176c\\\\app\\\\Http\\\\Requests\\\\StoreExtracurricularRequest.php\" \"app\\\\Http\\\\Requests\\\\StoreExtracurricularRequest.php\")",
+      "Bash(cp \".claude\\\\worktrees\\\\agent-aa60176c\\\\app\\\\Http\\\\Requests\\\\UpdateExtracurricularRequest.php\" \"app\\\\Http\\\\Requests\\\\UpdateExtracurricularRequest.php\")",
+      "Bash(cp \".claude\\\\worktrees\\\\agent-aa60176c\\\\app\\\\Models\\\\Extracurricular.php\" \"app\\\\Models\\\\Extracurricular.php\")",
+      "Bash(cp \".claude\\\\worktrees\\\\agent-aa60176c\\\\app\\\\Services\\\\ExtracurricularService.php\" \"app\\\\Services\\\\ExtracurricularService.php\")",
+      "Bash(cp \".claude\\\\worktrees\\\\agent-aa60176c\\\\app\\\\Http\\\\Controllers\\\\ExtracurricularDetailController.php\" \"app\\\\Http\\\\Controllers\\\\ExtracurricularDetailController.php\")",
+      "Bash(cp \".claude\\\\worktrees\\\\agent-aa60176c\\\\app\\\\Http\\\\Requests\\\\StoreExtracurricularAchievementRequest.php\" \"app\\\\Http\\\\Requests\\\\StoreExtracurricularAchievementRequest.php\")",
+      "Bash(cp \".claude\\\\worktrees\\\\agent-aa60176c\\\\app\\\\Http\\\\Requests\\\\UpdateExtracurricularAchievementRequest.php\" \"app\\\\Http\\\\Requests\\\\UpdateExtracurricularAchievementRequest.php\")",
+      "Bash(cp \".claude\\\\worktrees\\\\agent-aa60176c\\\\app\\\\Models\\\\ExtracurricularAchievement.php\" \"app\\\\Models\\\\ExtracurricularAchievement.php\")",
+      "Bash(cp \".claude\\\\worktrees\\\\agent-aa60176c\\\\database\\\\migrations\\\\2026_06_04_200000_create_extracurricular_achievements_table.php\" \"database\\\\migrations\\\\2026_06_04_200000_create_extracurricular_achievements_table.php\")"
     ]
   }
 }

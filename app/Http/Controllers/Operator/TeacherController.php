@@ -21,11 +21,16 @@ class TeacherController extends Controller
         ]);
     }
 
+    public function create(): Response
+    {
+        return Inertia::render('Operator/Teacher/Create');
+    }
+
     public function store(StoreTeacherRequest $request)
     {
         $this->service->create($request->validated());
 
-        return redirect()->back()->with('success', 'Data guru berhasil ditambahkan.');
+        return redirect()->route('operator.teachers.index')->with('success', 'Data guru berhasil ditambahkan.');
     }
 
     public function show(Teacher $teacher): Response

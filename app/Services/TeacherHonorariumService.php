@@ -90,6 +90,24 @@ class TeacherHonorariumService
         return $honorarium->fresh(['teacher.user', 'academicYear', 'tuKeuangan']);
     }
 
+    public function markAllPaid(int $month, int $year, User $paidBy): int
+    {
+        $honorariums = TeacherHonorarium::where('period_month', $month)
+            ->where('period_year', $year)
+            ->where('status', 'draft')
+            ->get();
+
+        foreach ($honorariums as $honorarium) {
+            $honorarium->update([
+                'status'         => 'paid',
+                'paid_at'        => now(),
+                'tu_keuangan_id' => $paidBy->id,
+            ]);
+        }
+
+        return $honorariums->count();
+    }
+
     public function delete(TeacherHonorarium $honorarium): void
     {
         $honorarium->delete();
@@ -101,5 +119,32 @@ class TeacherHonorariumService
             ->where('period_month', $month)
             ->where('period_year', $year)
             ->exists();
+    }
+
+    /**
+     * Generate slip untuk semua guru yang punya konfigurasi jam pelajaran di tahun ajaran tsb.
+     * Skip guru yang sudah punya slip untuk periode yang sama.
+     * Return ['created' => int, 'skipped' => int]
+     */
+    public function generateAll(AcademicYear $academicYear, int $month, int $year): array
+    {
+        $teachers = Teacher::with('user')
+            ->whereHas('teachingHours', fn($q) => $q->where('academic_year_id', $academicYear->id))
+            ->get();
+
+        $created = 0;
+        $skipped = 0;
+
+        foreach ($teachers as $teacher) {
+            if ($this->alreadyGenerated($teacher, $month, $year)) {
+                $skipped++;
+                continue;
+            }
+
+            $this->generate($teacher, $academicYear, $month, $year);
+            $created++;
+        }
+
+        return ['created' => $created, 'skipped' => $skipped];
     }
 }

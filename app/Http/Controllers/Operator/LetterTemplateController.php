@@ -27,18 +27,35 @@ class LetterTemplateController extends Controller
         ]);
     }
 
+    public function create(): Response
+    {
+        return Inertia::render('Operator/LetterTemplate/Create', [
+            'letterTypes'          => $this->letterTypeService->getActive(),
+            'availablePlaceholders'=> LetterTemplateService::AVAILABLE_PLACEHOLDERS,
+        ]);
+    }
+
+    public function edit(LetterTemplate $letterTemplate): Response
+    {
+        return Inertia::render('Operator/LetterTemplate/Edit', [
+            'template'             => $letterTemplate,
+            'letterTypes'          => $this->letterTypeService->getActive(),
+            'availablePlaceholders'=> LetterTemplateService::AVAILABLE_PLACEHOLDERS,
+        ]);
+    }
+
     public function store(StoreLetterTemplateRequest $request)
     {
         $this->service->create($request->validated());
 
-        return redirect()->back()->with('success', 'Template surat berhasil ditambahkan.');
+        return redirect()->route('operator.letter-templates.index')->with('success', 'Template surat berhasil ditambahkan.');
     }
 
     public function update(UpdateLetterTemplateRequest $request, LetterTemplate $letterTemplate)
     {
         $this->service->update($letterTemplate, $request->validated());
 
-        return redirect()->back()->with('success', 'Template surat berhasil diupdate.');
+        return redirect()->route('operator.letter-templates.index')->with('success', 'Template surat berhasil diupdate.');
     }
 
     public function destroy(LetterTemplate $letterTemplate)

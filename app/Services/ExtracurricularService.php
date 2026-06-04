@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Extracurricular;
+use App\Models\ExtracurricularAchievement;
+use App\Models\ExtracurricularPhoto;
 use Illuminate\Support\Facades\Storage;
 
 class ExtracurricularService
@@ -44,5 +46,35 @@ class ExtracurricularService
         }
 
         $extracurricular->delete();
+    }
+
+    public function storeAchievement(Extracurricular $extracurricular, array $data): ExtracurricularAchievement
+    {
+        return $extracurricular->achievements()->create($data);
+    }
+
+    public function updateAchievement(ExtracurricularAchievement $achievement, array $data): ExtracurricularAchievement
+    {
+        $achievement->update($data);
+
+        return $achievement;
+    }
+
+    public function deleteAchievement(ExtracurricularAchievement $achievement): void
+    {
+        $achievement->delete();
+    }
+
+    public function storePhoto(Extracurricular $extracurricular, $file): ExtracurricularPhoto
+    {
+        $path = $file->store('school/extracurricular/photos', 'public');
+
+        return $extracurricular->photos()->create(['path' => $path]);
+    }
+
+    public function deletePhoto(ExtracurricularPhoto $photo): void
+    {
+        Storage::disk('public')->delete($photo->path);
+        $photo->delete();
     }
 }

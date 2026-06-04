@@ -16,6 +16,8 @@ class StoreExtracurricularRequest extends FormRequest
         return [
             'name'        => ['required', 'string', 'max:100'],
             'description' => ['nullable', 'string'],
+            'coach'       => ['nullable', 'string', 'max:150'],
+            'schedule'    => ['nullable', 'string', 'max:200'],
             'image'       => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'is_active'   => ['boolean'],
             'sort_order'  => ['integer', 'min:0'],

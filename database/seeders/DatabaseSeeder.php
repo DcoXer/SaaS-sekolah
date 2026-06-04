@@ -44,6 +44,8 @@ class DatabaseSeeder extends Seeder
             // ── Profil Publik ─────────────────────────────────────────────────
             ExtracurricularSeeder::class,
             SchoolGallerySeeder::class,
+            SchoolPostSeeder::class,
+            SchoolHeroPhotoSeeder::class,
         ]);
 
         // Pastikan semua user bisa login (email verified)

@@ -4,7 +4,7 @@ import Modal from '@/Components/Modal.vue';
 import Pagination from '@/Components/Pagination.vue';
 import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps({
     honorariums:       { type: Array,  required: true },
@@ -52,8 +52,10 @@ const paginated   = computed(() => {
 watch([search, filterMonth, filterYear, filterStatus], () => { currentPage.value = 1; });
 
 // ── Generate Modal ─────────────────────────────────────────────────────────────
-const showGenerate = ref(false);
-const now          = new Date();
+const showGenerate     = ref(false);
+const showGenerateAll  = ref(false);
+const showGenerateMenu = ref(false);
+const now             = new Date();
 
 const generateForm = useForm({
     teacher_id:       '',
@@ -68,12 +70,57 @@ const submitGenerate = () => {
     });
 };
 
-// ── Mark Paid ──────────────────────────────────────────────────────────────────
+const generateAllForm = useForm({
+    academic_year_id: props.activeYear?.id ?? '',
+    period_month:     now.getMonth() + 1,
+    period_year:      now.getFullYear(),
+});
+
+const submitGenerateAll = () => {
+    generateAllForm.post(route('keuangan.honorariums.generate-all'), {
+        onSuccess: () => { showGenerateAll.value = false; generateAllForm.reset('period_month', 'period_year'); },
+    });
+};
+
+// ── Send WA (single) ───────────────────────────────────────────────────────────
+const sendTarget = ref(null);
+const sendForm   = useForm({});
+const submitSend = () => {
+    sendForm.post(route('keuangan.honorariums.send-slip', sendTarget.value.id), {
+        onSuccess: () => { sendTarget.value = null; },
+    });
+};
+
+// ── Send All WA ────────────────────────────────────────────────────────────────
+const showSendAll    = ref(false);
+const sendAllForm    = useForm({
+    period_month: now.getMonth() + 1,
+    period_year:  now.getFullYear(),
+});
+const submitSendAll = () => {
+    sendAllForm.post(route('keuangan.honorariums.send-all-slips'), {
+        onSuccess: () => { showSendAll.value = false; },
+    });
+};
+
+// ── Mark Paid (single) ─────────────────────────────────────────────────────────
 const paidTarget = ref(null);
 const paidForm   = useForm({});
 const submitMarkPaid = () => {
     paidForm.patch(route('keuangan.honorariums.mark-paid', paidTarget.value.id), {
         onSuccess: () => { paidTarget.value = null; },
+    });
+};
+
+// ── Mark All Paid ──────────────────────────────────────────────────────────────
+const showMarkAllPaid  = ref(false);
+const markAllPaidForm  = useForm({
+    period_month: now.getMonth() + 1,
+    period_year:  now.getFullYear(),
+});
+const submitMarkAllPaid = () => {
+    markAllPaidForm.post(route('keuangan.honorariums.mark-all-paid'), {
+        onSuccess: () => { showMarkAllPaid.value = false; },
     });
 };
 
@@ -110,6 +157,11 @@ const academicYearOptions = computed(() =>
 const periodMonthOptions = monthOptions;
 const periodYearOptions  = yearOptions.map(y => ({ value: y, label: String(y) }));
 
+// Close generate dropdown on outside click
+const closeGenerateMenu = () => { showGenerateMenu.value = false; };
+onMounted(() => document.addEventListener('click', closeGenerateMenu));
+onUnmounted(() => document.removeEventListener('click', closeGenerateMenu));
+
 // Summary
 const totalAll   = computed(() => filtered.value.reduce((s, h) => s + h.total_amount, 0));
 const totalPaid  = computed(() => filtered.value.filter(h => h.status === 'paid').reduce((s, h) => s + h.total_amount, 0));
@@ -130,11 +182,13 @@ const totalDraft = computed(() => filtered.value.filter(h => h.status === 'draft
         <div class="space-y-5">
 
             <!-- Header Banner -->
-            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500 via-amber-400 to-orange-400 p-6 text-white shadow-lg">
-                <!-- Decorative circles -->
-                <div class="pointer-events-none absolute -right-6 -top-6 size-40 rounded-full bg-white/10"></div>
-                <div class="pointer-events-none absolute -bottom-8 right-16 size-28 rounded-full bg-white/10"></div>
-                <div class="pointer-events-none absolute bottom-3 right-3 size-14 rounded-full bg-orange-300/30"></div>
+            <div class="relative rounded-2xl bg-gradient-to-br from-amber-500 via-amber-400 to-orange-400 p-6 text-white shadow-lg">
+                <!-- Decorative circles (clipped inside their own layer) -->
+                <div class="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
+                    <div class="absolute -right-6 -top-6 size-40 rounded-full bg-white/10"></div>
+                    <div class="absolute -bottom-8 right-16 size-28 rounded-full bg-white/10"></div>
+                    <div class="absolute bottom-3 right-3 size-14 rounded-full bg-orange-300/30"></div>
+                </div>
 
                 <div class="relative flex items-center justify-between gap-4">
                     <div class="flex items-center gap-4">
@@ -148,13 +202,55 @@ const totalDraft = computed(() => filtered.value.filter(h => h.status === 'draft
                             <p class="text-sm font-medium text-amber-100">Generate dan kelola slip honor bulanan guru</p>
                         </div>
                     </div>
-                    <button @click="showGenerate = true"
-                        class="flex shrink-0 items-center gap-2 rounded-xl bg-white/20 px-4 py-2.5 text-sm font-semibold text-white ring-1 ring-white/30 backdrop-blur-sm transition hover:bg-white/30 shadow-sm">
-                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
-                        </svg>
-                        <span class="hidden sm:inline">Buat Slip</span>
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <!-- Kirim Semua -->
+                        <button @click="showSendAll = true"
+                            class="flex shrink-0 items-center gap-2 rounded-xl bg-green-500/80 px-3.5 py-2 text-sm font-semibold text-white ring-1 ring-white/30 backdrop-blur-sm transition hover:bg-green-500 shadow-sm">
+                            <svg class="size-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                            <span class="hidden sm:inline">Kirim Semua</span>
+                        </button>
+                        <!-- Bayar Semua -->
+                        <button @click="showMarkAllPaid = true"
+                            class="flex shrink-0 items-center gap-2 rounded-xl bg-emerald-500/80 px-3.5 py-2 text-sm font-semibold text-white ring-1 ring-white/30 backdrop-blur-sm transition hover:bg-emerald-500 shadow-sm">
+                            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span class="hidden sm:inline">Bayar Semua</span>
+                        </button>
+                        <!-- Generate dropdown -->
+                        <div class="relative">
+                            <button @click.stop="showGenerateMenu = !showGenerateMenu"
+                                class="flex shrink-0 items-center gap-2 rounded-xl bg-white/20 px-3.5 py-2 text-sm font-semibold text-white ring-1 ring-white/30 backdrop-blur-sm transition hover:bg-white/30 shadow-sm">
+                                <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                                </svg>
+                                <span class="hidden sm:inline">Generate</span>
+                                <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+                                </svg>
+                            </button>
+                            <!-- Dropdown menu -->
+                            <div v-if="showGenerateMenu"
+                                class="absolute right-0 top-full z-20 mt-1.5 min-w-[170px] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg"
+                                @click.stop>
+                                <button type="button" @click="showGenerateAll = true; showGenerateMenu = false"
+                                    class="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50">
+                                    <svg class="size-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z"/>
+                                    </svg>
+                                    Generate Semua
+                                </button>
+                                <div class="mx-3 border-t border-slate-100"/>
+                                <button type="button" @click="showGenerate = true; showGenerateMenu = false"
+                                    class="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50">
+                                    <svg class="size-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+                                    </svg>
+                                    Buat Satu Slip
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -258,139 +354,130 @@ const totalDraft = computed(() => filtered.value.filter(h => h.status === 'draft
             <!-- List -->
             <div v-else class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
-                <!-- Desktop header -->
-                <div class="hidden grid-cols-12 gap-3 border-b border-slate-100 bg-slate-50/80 px-5 py-3 sm:grid">
-                    <div class="col-span-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Guru</div>
-                    <div class="col-span-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Periode</div>
-                    <div class="col-span-2 text-xs font-semibold uppercase tracking-wide text-slate-400 text-right">Jam Pelajaran</div>
-                    <div class="col-span-2 text-xs font-semibold uppercase tracking-wide text-slate-400 text-right">Transport</div>
-                    <div class="col-span-1 text-xs font-semibold uppercase tracking-wide text-slate-400 text-right">Total</div>
-                    <div class="col-span-2 text-xs font-semibold uppercase tracking-wide text-slate-400 text-right">Aksi</div>
-                </div>
-
-                <ul class="divide-y divide-slate-100">
-                    <li v-for="h in paginated" :key="h.id"
-                        class="px-4 py-4 transition-colors hover:bg-slate-50/60 sm:px-5 sm:py-3.5">
-
-                        <!-- Mobile -->
-                        <div class="sm:hidden space-y-3">
-                            <div class="flex items-start justify-between gap-3">
-                                <div class="flex items-center gap-3">
-                                    <div class="flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-sm font-bold text-white shadow-sm">
-                                        {{ h.teacher.user.name.charAt(0).toUpperCase() }}
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-semibold text-slate-800">{{ h.teacher.user.name }}</p>
-                                        <p class="text-xs text-slate-400">{{ periodLabel(h) }} · {{ h.academic_year?.name }}</p>
-                                    </div>
-                                </div>
-                                <span class="shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold"
-                                    :class="statusConfig[h.status]?.badge">
-                                    {{ statusConfig[h.status]?.label }}
-                                </span>
-                            </div>
-                            <div class="rounded-xl bg-slate-50 px-3 py-3 space-y-2">
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div class="rounded-lg bg-white px-2.5 py-2 text-center shadow-sm">
-                                        <p class="text-xs text-slate-400">Jam Pelajaran</p>
-                                        <p class="text-xs font-bold text-slate-700 mt-0.5">Rp {{ fmt(h.teaching_hours_amount) }}</p>
-                                        <p class="text-xs text-slate-400">{{ h.teaching_hours }} jam</p>
-                                    </div>
-                                    <div class="rounded-lg bg-white px-2.5 py-2 text-center shadow-sm">
-                                        <p class="text-xs text-slate-400">Transport</p>
-                                        <p class="text-xs font-bold text-slate-700 mt-0.5">Rp {{ fmt(h.transport_amount) }}</p>
-                                        <p class="text-xs text-slate-400">{{ h.transport_days }} hari</p>
-                                    </div>
-                                </div>
-                                <div v-if="h.position_allowance > 0"
-                                    class="flex items-center justify-between rounded-lg bg-amber-50 px-2.5 py-1.5">
-                                    <span class="text-xs text-amber-600 font-medium">{{ h.position_name }}</span>
-                                    <span class="text-xs font-bold text-amber-700">Rp {{ fmt(h.position_allowance) }}</span>
-                                </div>
-                                <div class="flex items-center justify-between border-t border-slate-200 pt-2">
-                                    <span class="text-xs font-semibold text-slate-500">Total</span>
-                                    <span class="text-sm font-bold text-slate-900">Rp {{ fmt(h.total_amount) }}</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <a :href="route('keuangan.honorariums.slip', h.id)" target="_blank"
-                                    class="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors">
-                                    <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
-                                    </svg>
-                                    Cetak PDF
-                                </a>
-                                <button v-if="h.status === 'draft'" @click="paidTarget = h"
-                                    class="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-600 transition-colors">
-                                    <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
-                                    </svg>
-                                    Bayar
-                                </button>
-                                <button v-if="h.status === 'draft'" @click="deleteTarget = h"
-                                    class="flex items-center gap-1.5 rounded-lg border border-red-100 px-3 py-1.5 text-xs font-semibold text-red-500 hover:bg-red-50 transition-colors">
-                                    <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
-                                    </svg>
-                                    Hapus
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Desktop -->
-                        <div class="hidden grid-cols-12 items-center gap-3 sm:grid">
-                            <div class="col-span-3 flex items-center gap-3">
-                                <div class="flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-xs font-bold text-white shadow-sm">
+                <!-- Mobile cards -->
+                <ul class="divide-y divide-slate-100 sm:hidden">
+                    <li v-for="h in paginated" :key="h.id" class="space-y-3 p-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-sm font-bold text-white shadow-sm">
                                     {{ h.teacher.user.name.charAt(0).toUpperCase() }}
                                 </div>
-                                <div class="min-w-0">
-                                    <p class="truncate text-sm font-semibold text-slate-800">{{ h.teacher.user.name }}</p>
-                                    <p class="text-xs text-slate-400">{{ h.academic_year?.name }}</p>
+                                <div>
+                                    <p class="text-sm font-semibold text-slate-800">{{ h.teacher.user.name }}</p>
+                                    <p class="text-xs text-slate-400">{{ periodLabel(h) }} · {{ h.academic_year?.name }}</p>
                                 </div>
                             </div>
-                            <div class="col-span-2">
-                                <p class="text-sm text-slate-700 font-medium">{{ periodLabel(h) }}</p>
+                            <span class="shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold" :class="statusConfig[h.status]?.badge">
+                                {{ statusConfig[h.status]?.label }}
+                            </span>
+                        </div>
+                        <div class="rounded-xl bg-slate-50 px-3 py-3 space-y-2">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="rounded-lg bg-white px-2.5 py-2 text-center shadow-sm">
+                                    <p class="text-xs text-slate-400">Jam Pelajaran</p>
+                                    <p class="text-xs font-bold text-slate-700 mt-0.5">Rp {{ fmt(h.teaching_hours_amount) }}</p>
+                                    <p class="text-xs text-slate-400">{{ h.teaching_hours }} jam</p>
+                                </div>
+                                <div class="rounded-lg bg-white px-2.5 py-2 text-center shadow-sm">
+                                    <p class="text-xs text-slate-400">Transport</p>
+                                    <p class="text-xs font-bold text-slate-700 mt-0.5">Rp {{ fmt(h.transport_amount) }}</p>
+                                    <p class="text-xs text-slate-400">{{ h.transport_days }} hari</p>
+                                </div>
                             </div>
-                            <div class="col-span-2 text-right">
-                                <p class="text-sm font-medium text-slate-700">Rp {{ fmt(h.teaching_hours_amount) }}</p>
-                                <p class="text-xs text-slate-400">{{ h.teaching_hours }} jam</p>
+                            <div v-if="h.position_allowance > 0" class="flex items-center justify-between rounded-lg bg-amber-50 px-2.5 py-1.5">
+                                <span class="text-xs text-amber-600 font-medium">{{ h.position_name }}</span>
+                                <span class="text-xs font-bold text-amber-700">Rp {{ fmt(h.position_allowance) }}</span>
                             </div>
-                            <div class="col-span-2 text-right">
-                                <p class="text-sm font-medium text-slate-700">Rp {{ fmt(h.transport_amount) }}</p>
-                                <p class="text-xs text-slate-400">{{ h.transport_days }} hari</p>
-                            </div>
-                            <div class="col-span-1 text-right">
-                                <p class="text-sm font-bold text-slate-900">Rp {{ fmt(h.total_amount) }}</p>
-                            </div>
-                            <div class="col-span-2 flex items-center justify-end gap-1.5">
-                                <span class="rounded-full px-2 py-0.5 text-xs font-semibold"
-                                    :class="statusConfig[h.status]?.badge">
-                                    {{ statusConfig[h.status]?.label }}
-                                </span>
-                                <a :href="route('keuangan.honorariums.slip', h.id)" target="_blank"
-                                    class="flex size-7 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors" title="Cetak PDF">
-                                    <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
-                                    </svg>
-                                </a>
-                                <button v-if="h.status === 'draft'" @click="paidTarget = h"
-                                    class="flex items-center gap-1 rounded-lg bg-emerald-500 px-2.5 py-1 text-xs font-semibold text-white hover:bg-emerald-600 transition-colors">
-                                    <svg class="size-3" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
-                                    </svg>
-                                    Bayar
-                                </button>
-                                <button v-if="h.status === 'draft'" @click="deleteTarget = h"
-                                    class="flex size-7 items-center justify-center rounded-lg border border-red-100 text-red-400 hover:bg-red-50 hover:text-red-500 transition-colors" title="Hapus">
-                                    <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
-                                    </svg>
-                                </button>
+                            <div class="flex items-center justify-between border-t border-slate-200 pt-2">
+                                <span class="text-xs font-semibold text-slate-500">Total</span>
+                                <span class="text-sm font-bold text-slate-900">Rp {{ fmt(h.total_amount) }}</span>
                             </div>
                         </div>
-
+                        <div class="flex items-center gap-2">
+                            <a :href="route('keuangan.honorariums.slip', h.id)" target="_blank"
+                                class="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors">
+                                <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                                Cetak PDF
+                            </a>
+                            <button @click="sendTarget = h"
+                                class="flex items-center gap-1.5 rounded-lg border border-green-200 px-3 py-1.5 text-xs font-semibold text-green-600 hover:bg-green-50 transition-colors">
+                                <svg class="size-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                                Kirim WA
+                            </button>
+                            <button v-if="h.status === 'draft'" @click="paidTarget = h"
+                                class="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-600 transition-colors">
+                                <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                                Bayar
+                            </button>
+                            <button v-if="h.status === 'draft'" @click="deleteTarget = h"
+                                class="flex items-center gap-1.5 rounded-lg border border-red-100 px-3 py-1.5 text-xs font-semibold text-red-500 hover:bg-red-50 transition-colors">
+                                <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                                Hapus
+                            </button>
+                        </div>
                     </li>
                 </ul>
+
+                <!-- Desktop table -->
+                <div class="hidden sm:block overflow-x-auto">
+                    <table class="min-w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-100 bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                <th class="px-5 py-3.5 text-left whitespace-nowrap">Guru</th>
+                                <th class="px-5 py-3.5 text-left whitespace-nowrap">Periode</th>
+                                <th class="px-5 py-3.5 text-right whitespace-nowrap">Jam Pelajaran</th>
+                                <th class="px-5 py-3.5 text-right whitespace-nowrap">Transport</th>
+                                <th class="px-5 py-3.5 text-right whitespace-nowrap">Total</th>
+                                <th class="px-5 py-3.5 text-center whitespace-nowrap">Status</th>
+                                <th class="px-5 py-3.5 text-right whitespace-nowrap">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50">
+                            <tr v-for="h in paginated" :key="h.id" class="hover:bg-slate-50/60 transition-colors">
+                                <td class="px-5 py-3.5">
+                                    <p class="font-semibold text-slate-800">{{ h.teacher.user.name }}</p>
+                                    <p class="text-xs text-slate-400">{{ h.academic_year?.name }}</p>
+                                </td>
+                                <td class="px-5 py-3.5 text-slate-700 font-medium whitespace-nowrap">{{ periodLabel(h) }}</td>
+                                <td class="px-5 py-3.5 text-right">
+                                    <p class="font-medium text-slate-700">Rp {{ fmt(h.teaching_hours_amount) }}</p>
+                                    <p class="text-xs text-slate-400">{{ h.teaching_hours }} jam</p>
+                                </td>
+                                <td class="px-5 py-3.5 text-right">
+                                    <p class="font-medium text-slate-700">Rp {{ fmt(h.transport_amount) }}</p>
+                                    <p class="text-xs text-slate-400">{{ h.transport_days }} hari</p>
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-bold text-slate-900 whitespace-nowrap">Rp {{ fmt(h.total_amount) }}</td>
+                                <td class="px-5 py-3.5 text-center">
+                                    <span class="rounded-full px-2.5 py-0.5 text-xs font-semibold" :class="statusConfig[h.status]?.badge">
+                                        {{ statusConfig[h.status]?.label }}
+                                    </span>
+                                </td>
+                                <td class="px-5 py-3.5">
+                                    <div class="flex items-center justify-end gap-1.5">
+                                        <a :href="route('keuangan.honorariums.slip', h.id)" target="_blank"
+                                            class="flex size-7 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors" title="Cetak PDF">
+                                            <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                                        </a>
+                                        <button @click="sendTarget = h"
+                                            class="flex size-7 items-center justify-center rounded-lg border border-green-200 text-green-600 hover:bg-green-50 transition-colors" title="Kirim ke WhatsApp">
+                                            <svg class="size-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                                        </button>
+                                        <button v-if="h.status === 'draft'" @click="paidTarget = h"
+                                            class="flex items-center gap-1 rounded-lg bg-emerald-500 px-2.5 py-1 text-xs font-semibold text-white hover:bg-emerald-600 transition-colors">
+                                            <svg class="size-3" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                                            Bayar
+                                        </button>
+                                        <button v-if="h.status === 'draft'" @click="deleteTarget = h"
+                                            class="flex size-7 items-center justify-center rounded-lg border border-red-100 text-red-400 hover:bg-red-50 hover:text-red-500 transition-colors" title="Hapus">
+                                            <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <Pagination
@@ -403,9 +490,9 @@ const totalDraft = computed(() => filtered.value.filter(h => h.status === 'draft
 
         <!-- Modal Generate -->
         <Modal :show="showGenerate" @close="showGenerate = false" max-width="md">
-            <div class="overflow-hidden rounded-2xl">
+            <div class="rounded-2xl">
                 <!-- Modal Header -->
-                <div class="bg-gradient-to-br from-amber-500 to-orange-400 px-6 py-5">
+                <div class="rounded-t-2xl bg-gradient-to-br from-amber-500 to-orange-400 px-6 py-5">
                     <div class="flex items-center gap-3">
                         <div class="flex size-10 items-center justify-center rounded-xl bg-white/20">
                             <svg class="size-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
@@ -487,6 +574,76 @@ const totalDraft = computed(() => filtered.value.filter(h => h.status === 'draft
             </div>
         </Modal>
 
+        <!-- Modal Kirim Semua WA -->
+        <Modal :show="showSendAll" @close="showSendAll = false" max-width="sm">
+            <div class="p-6">
+                <div class="mb-4 flex items-center gap-3">
+                    <div class="flex size-11 items-center justify-center rounded-full bg-green-100">
+                        <svg class="size-5 text-green-600" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">Kirim Semua Slip via WA</h3>
+                        <p class="text-xs text-slate-400">PDF slip dikirim ke semua guru sekaligus</p>
+                    </div>
+                </div>
+                <form @submit.prevent="submitSendAll" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Bulan</label>
+                            <FilterSelect v-model="sendAllForm.period_month" :options="periodMonthOptions" block />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Tahun</label>
+                            <FilterSelect v-model="sendAllForm.period_year" :options="periodYearOptions" block />
+                        </div>
+                    </div>
+                    <div class="rounded-xl bg-green-50 px-4 py-3 text-xs text-green-700 flex items-start gap-2">
+                        <svg class="mt-0.5 size-3.5 shrink-0 text-green-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
+                        </svg>
+                        Semua slip periode ini akan dikirim ke WA guru masing-masing. Guru yang tidak punya nomor HP akan dilewati.
+                    </div>
+                    <div class="flex justify-end gap-2 pt-1">
+                        <button type="button" @click="showSendAll = false"
+                            class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">Batal</button>
+                        <button type="submit" :disabled="sendAllForm.processing"
+                            class="rounded-xl bg-green-500 px-5 py-2 text-sm font-semibold text-white hover:bg-green-600 disabled:opacity-50 transition-colors shadow-sm">
+                            {{ sendAllForm.processing ? 'Mengirim...' : 'Kirim Semua' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </Modal>
+
+        <!-- Modal Kirim WA -->
+        <Modal :show="!!sendTarget" @close="sendTarget = null" max-width="sm">
+            <div class="p-6">
+                <div class="mb-4 flex items-center gap-3">
+                    <div class="flex size-11 items-center justify-center rounded-full bg-green-100">
+                        <svg class="size-5 text-green-600" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">Kirim Slip ke WhatsApp</h3>
+                        <p class="text-xs text-slate-400">PDF slip akan dikirim via Fonnte</p>
+                    </div>
+                </div>
+                <p class="text-sm text-slate-600 mb-2">
+                    Kirim slip honor <strong class="text-slate-800">{{ sendTarget?.teacher.user.name }}</strong> periode <strong class="text-slate-800">{{ sendTarget ? periodLabel(sendTarget) : '' }}</strong> ke WhatsApp?
+                </p>
+                <div class="mb-5 rounded-xl bg-slate-50 px-4 py-2.5 text-xs text-slate-500">
+                    Nomor: <strong class="text-slate-700">{{ sendTarget?.teacher.phone || 'Belum ada nomor HP' }}</strong>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button @click="sendTarget = null"
+                        class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">Batal</button>
+                    <button @click="submitSend" :disabled="sendForm.processing || !sendTarget?.teacher.phone"
+                        class="rounded-xl bg-green-500 px-5 py-2 text-sm font-semibold text-white hover:bg-green-600 disabled:opacity-50 transition-colors">
+                        {{ sendForm.processing ? 'Mengirim...' : 'Kirim WA' }}
+                    </button>
+                </div>
+            </div>
+        </Modal>
+
         <!-- Modal Konfirmasi Bayar -->
         <Modal :show="!!paidTarget" @close="paidTarget = null" max-width="sm">
             <div class="p-6">
@@ -514,6 +671,117 @@ const totalDraft = computed(() => filtered.value.filter(h => h.status === 'draft
                         class="rounded-xl bg-emerald-500 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-50 transition-colors">
                         Ya, Tandai Lunas
                     </button>
+                </div>
+            </div>
+        </Modal>
+
+        <!-- Modal Bayar Semua -->
+        <Modal :show="showMarkAllPaid" @close="showMarkAllPaid = false" max-width="sm">
+            <div class="p-6">
+                <div class="mb-4 flex items-center gap-3">
+                    <div class="flex size-11 items-center justify-center rounded-full bg-emerald-100">
+                        <svg class="size-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">Bayar Semua Honor</h3>
+                        <p class="text-xs text-slate-400">Tandai semua slip periode ini sebagai lunas</p>
+                    </div>
+                </div>
+                <form @submit.prevent="submitMarkAllPaid" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Bulan</label>
+                            <FilterSelect v-model="markAllPaidForm.period_month" :options="periodMonthOptions" block />
+                            <p v-if="markAllPaidForm.errors.period_month" class="mt-1 text-xs text-red-500">{{ markAllPaidForm.errors.period_month }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Tahun</label>
+                            <FilterSelect v-model="markAllPaidForm.period_year" :options="periodYearOptions" block />
+                        </div>
+                    </div>
+                    <div class="rounded-xl bg-amber-50 px-4 py-3 text-xs text-amber-700 flex items-start gap-2">
+                        <svg class="mt-0.5 size-3.5 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                        </svg>
+                        Semua slip berstatus <strong>belum dibayar</strong> di periode ini akan ditandai lunas sekaligus. Tindakan ini tidak dapat dibatalkan.
+                    </div>
+                    <div class="flex justify-end gap-2 pt-1">
+                        <button type="button" @click="showMarkAllPaid = false"
+                            class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">Batal</button>
+                        <button type="submit" :disabled="markAllPaidForm.processing"
+                            class="rounded-xl bg-emerald-500 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-50 transition-colors shadow-sm">
+                            {{ markAllPaidForm.processing ? 'Memproses...' : 'Bayar Semua' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </Modal>
+
+        <!-- Modal Generate Semua -->
+        <Modal :show="showGenerateAll" @close="showGenerateAll = false" max-width="md">
+            <div class="rounded-2xl">
+                <div class="rounded-t-2xl bg-gradient-to-br from-amber-500 to-orange-400 px-6 py-5">
+                    <div class="flex items-center gap-3">
+                        <div class="flex size-10 items-center justify-center rounded-xl bg-white/20">
+                            <svg class="size-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-white">Generate Semua Slip Honor</h3>
+                            <p class="text-xs text-amber-100">Buat slip sekaligus untuk semua guru yang punya konfigurasi jam</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <form @submit.prevent="submitGenerateAll" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Tahun Ajaran</label>
+                            <FilterSelect
+                                v-model="generateAllForm.academic_year_id"
+                                :options="[{ value: '', label: '-- Pilih --' }, ...academicYearOptions]"
+                                :has-error="!!generateAllForm.errors.academic_year_id"
+                                block
+                            />
+                            <p v-if="generateAllForm.errors.academic_year_id" class="mt-1 text-xs text-red-500">{{ generateAllForm.errors.academic_year_id }}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1.5">Bulan</label>
+                                <FilterSelect
+                                    v-model="generateAllForm.period_month"
+                                    :options="periodMonthOptions"
+                                    :has-error="!!generateAllForm.errors.period_month"
+                                    block
+                                />
+                                <p v-if="generateAllForm.errors.period_month" class="mt-1 text-xs text-red-500">{{ generateAllForm.errors.period_month }}</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1.5">Tahun</label>
+                                <FilterSelect
+                                    v-model="generateAllForm.period_year"
+                                    :options="periodYearOptions"
+                                    block
+                                />
+                            </div>
+                        </div>
+                        <div class="rounded-xl bg-amber-50 px-4 py-3 text-xs text-amber-700 flex items-start gap-2">
+                            <svg class="mt-0.5 size-3.5 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
+                            </svg>
+                            Hanya guru yang punya konfigurasi jam pelajaran yang akan dibuatkan slip. Guru yang sudah punya slip periode ini akan dilewati secara otomatis.
+                        </div>
+                        <div class="flex justify-end gap-2 pt-1">
+                            <button type="button" @click="showGenerateAll = false"
+                                class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">Batal</button>
+                            <button type="submit" :disabled="generateAllForm.processing"
+                                class="rounded-xl bg-amber-500 px-5 py-2 text-sm font-semibold text-white hover:bg-amber-600 disabled:opacity-50 transition-colors shadow-sm">
+                                {{ generateAllForm.processing ? 'Memproses...' : 'Generate Semua' }}
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </Modal>

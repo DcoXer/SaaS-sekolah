@@ -28,11 +28,16 @@ class StudentController extends Controller
         ]);
     }
 
+    public function create(): Response
+    {
+        return Inertia::render('Operator/Student/Create');
+    }
+
     public function store(StoreStudentRequest $request)
     {
         $this->service->create($request->validated());
 
-        return redirect()->back()->with('success', 'Data siswa berhasil ditambahkan.');
+        return redirect()->route('operator.students.index')->with('success', 'Data siswa berhasil ditambahkan.');
     }
 
     public function show(Student $student): Response

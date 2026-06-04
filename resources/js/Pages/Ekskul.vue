@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import PublicHeader from '@/Components/PublicHeader.vue';
 import JsonLd from '@/Components/JsonLd.vue';
@@ -28,8 +28,11 @@ onMounted(() => {
 });
 onUnmounted(() => clearInterval(heroBgTimer));
 
-const search   = ref('');
-const selected = ref(null);
+const search = ref('');
+
+const goToDetail = (ekskul) => {
+    router.visit(route('ekskul.show', ekskul.id));
+};
 
 const filtered = computed(() => {
     if (!search.value.trim()) return props.extracurriculars;
@@ -155,7 +158,7 @@ const jsonLd = computed(() => [
                 <!-- Featured card -->
                 <div v-if="featured" v-reveal
                     class="group mb-10 cursor-pointer overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-slate-200 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 lg:flex"
-                    @click="selected = featured">
+                    @click="goToDetail(featured)">
                     <!-- Image -->
                     <div class="relative h-60 overflow-hidden lg:h-auto lg:w-1/2 xl:w-2/5">
                         <img v-if="featured.image" :src="featured.image" :alt="featured.name"
@@ -187,7 +190,7 @@ const jsonLd = computed(() => [
                     <div v-for="(ekskul, i) in rest" :key="ekskul.id"
                         v-reveal="{ delay: (i % 4) * 80 }"
                         class="group cursor-pointer overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl"
-                        @click="selected = ekskul">
+                        @click="goToDetail(ekskul)">
                         <!-- Image / Placeholder -->
                         <div class="relative aspect-[4/3] overflow-hidden">
                             <img v-if="ekskul.image" :src="ekskul.image" :alt="ekskul.name"
@@ -215,33 +218,5 @@ const jsonLd = computed(() => [
             <p class="text-center text-xs text-slate-400">&copy; {{ new Date().getFullYear() }} {{ school?.name }}</p>
         </footer>
 
-        <!-- Detail Modal -->
-        <Teleport to="body">
-            <Transition enter-from-class="opacity-0" enter-active-class="transition-opacity duration-200"
-                leave-to-class="opacity-0" leave-active-class="transition-opacity duration-150">
-                <div v-if="selected" class="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 p-4 sm:items-center" @click.self="selected = null">
-                    <Transition enter-from-class="opacity-0 translate-y-8 scale-95" enter-active-class="transition-all duration-300"
-                        leave-to-class="opacity-0 translate-y-4 scale-95" leave-active-class="transition-all duration-200">
-                        <div v-if="selected" class="w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-2xl">
-                            <div class="relative aspect-video overflow-hidden bg-slate-100">
-                                <img v-if="selected.image" :src="selected.image" :alt="selected.name"
-                                    class="size-full object-cover"/>
-                                <div v-else :class="[color(0).bg, color(0).text]"
-                                    class="flex size-full items-center justify-center text-8xl font-black opacity-20 select-none"/>
-                                <button @click="selected = null"
-                                    class="absolute right-3 top-3 flex size-9 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/60">
-                                    <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                                </button>
-                            </div>
-                            <div class="p-6">
-                                <h2 class="text-xl font-extrabold text-slate-900">{{ selected.name }}</h2>
-                                <p v-if="selected.description" class="mt-3 leading-relaxed text-slate-600">{{ selected.description }}</p>
-                                <p v-else class="mt-3 text-sm italic text-slate-400">Deskripsi belum tersedia.</p>
-                            </div>
-                        </div>
-                    </Transition>
-                </div>
-            </Transition>
-        </Teleport>
     </div>
 </template>

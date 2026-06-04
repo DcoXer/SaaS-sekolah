@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['user_id', 'nisn', 'nik', 'nis', 'name', 'gender', 'grade', 'birth_place', 'birth_date', 'address', 'father_name', 'mother_name', 'guardian_name', 'photo', 'status'])]
+#[Fillable(['user_id', 'nisn', 'nik', 'nis', 'name', 'gender', 'grade', 'birth_place', 'birth_date', 'address', 'father_name', 'mother_name', 'guardian_name', 'parent_phone', 'photo', 'status'])]
 class Student extends Model
 {
     public function user()
