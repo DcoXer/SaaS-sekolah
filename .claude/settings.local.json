@@ -52,7 +52,11 @@
       "Bash(sed -i 's/type=\"file\" accept=\"\\\\.jpg,\\\\.jpeg,\\\\.png,\\\\.pdf\" class=\"sr-only\"/type=\"file\" accept=\".jpg,.jpeg,.png,.pdf\" class=\"hidden\"/g' \"C:/laragon/www/school-management/resources/js/Pages/Keuangan/Invoice/Show.vue\")",
       "Bash(sed -n '6,15p' \"C:/laragon/www/school-management/resources/js/Pages/Galeri.vue\")",
       "Bash(sed -n '6,15p' \"C:/laragon/www/school-management/resources/js/Pages/Ekskul.vue\")",
-      "Bash(sed -n '6,20p' \"C:/laragon/www/school-management/resources/js/Pages/PpdbCheck.vue\")"
+      "Bash(sed -n '6,20p' \"C:/laragon/www/school-management/resources/js/Pages/PpdbCheck.vue\")",
+      "Bash(grep -r \"absensi\\\\|attendance\" /c/laragon/www/school-management/*.md)",
+      "Bash(php:*)",
+      "Bash(git:*)",
+      "Bash(npm install:*)"
     ]
   }
 }

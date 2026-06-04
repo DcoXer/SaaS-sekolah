@@ -21,9 +21,14 @@ class UpdateStudentRequest extends FormRequest
             'name'        => ['required', 'string', 'max:100'],
             'gender'      => ['required', 'in:L,P'],
             'grade'       => ['required', 'integer', 'between:1,6'],
-            'birth_date'  => ['nullable', 'date'],
-            'address'     => ['nullable', 'string'],
-            'parent_name' => ['nullable', 'string', 'max:100'],
+            'birth_place'   => ['nullable', 'string', 'max:100'],
+            'birth_date'    => ['nullable', 'date'],
+            'address'       => ['nullable', 'string'],
+            'nik'           => ['nullable', 'string', 'max:20'],
+            'father_name'   => ['nullable', 'string', 'max:100'],
+            'mother_name'   => ['nullable', 'string', 'max:100'],
+            'guardian_name' => ['nullable', 'string', 'max:100'],
+            'parent_name'   => ['nullable', 'string', 'max:100'],
             'password'    => ['nullable', 'string', 'min:8'],
         ];
     }

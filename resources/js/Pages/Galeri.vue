@@ -1,6 +1,6 @@
 <script setup>
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import PublicHeader from '@/Components/PublicHeader.vue';
 import JsonLd from '@/Components/JsonLd.vue';
 
@@ -11,7 +11,22 @@ const props = defineProps({
     isLoggedIn:     { type: Boolean, default: false },
     dashboardRoute: { type: String,  default: null },
     ppdbActive:     { type: Boolean, default: false },
+    heroPhotos:     { type: Array,   default: () => [] },
 });
+
+const heroPhotosList = computed(() => props.heroPhotos ?? []);
+const heroBgIndex    = ref(0);
+const heroBgUrl      = computed(() => heroPhotosList.value[heroBgIndex.value] ?? null);
+
+let heroBgTimer = null;
+onMounted(() => {
+    if (heroPhotosList.value.length > 1) {
+        heroBgTimer = setInterval(() => {
+            heroBgIndex.value = (heroBgIndex.value + 1) % heroPhotosList.value.length;
+        }, 5000);
+    }
+});
+onUnmounted(() => clearInterval(heroBgTimer));
 
 const activeTab = ref('all');
 const lightbox  = ref(null);
@@ -93,10 +108,16 @@ const jsonLd = computed(() => ({
         />
 
         <!-- ── Hero ────────────────────────────────────────────────────── -->
-        <div class="relative overflow-hidden bg-gradient-to-br from-green-900 via-green-800 to-green-700 py-20">
-            <!-- Dekorasi -->
-            <div class="absolute -right-24 -top-24 size-80 rounded-full bg-white/5"/>
-            <div class="absolute -bottom-16 -left-16 size-64 rounded-full bg-white/5"/>
+        <div
+            class="relative overflow-hidden py-20 transition-all duration-1000"
+            :class="heroBgUrl ? '' : 'bg-gradient-to-br from-green-900 via-green-800 to-green-700'"
+            :style="heroBgUrl ? `background-image:url('${heroBgUrl}');background-size:cover;background-position:center` : ''"
+        >
+            <!-- Overlay gelap saat ada foto -->
+            <div v-if="heroBgUrl" class="absolute inset-0 bg-black/55"/>
+            <!-- Dekorasi (hanya saat tidak ada foto) -->
+            <div v-if="!heroBgUrl" class="absolute -right-24 -top-24 size-80 rounded-full bg-white/5"/>
+            <div v-if="!heroBgUrl" class="absolute -bottom-16 -left-16 size-64 rounded-full bg-white/5"/>
             <!-- Grid dekorasi -->
             <div class="absolute inset-0 opacity-5" style="background-image:repeating-linear-gradient(0deg,transparent,transparent 40px,white 40px,white 41px),repeating-linear-gradient(90deg,transparent,transparent 40px,white 40px,white 41px)"/>
 

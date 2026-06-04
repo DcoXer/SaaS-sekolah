@@ -2,6 +2,7 @@
 import { Head, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import FilterSelect from '@/Components/FilterSelect.vue';
 
 const props = defineProps({
     setting:       { type: Object, default: null },
@@ -92,21 +93,26 @@ const detail = ref(null);
                 </div>
 
                 <!-- Filter -->
-                <div class="flex flex-col gap-3 sm:flex-row">
-                    <div class="relative flex-1">
-                        <svg class="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+                <div class="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
+                    <div class="relative flex-1 min-w-[180px]">
+                        <svg class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803 7.5 7.5 0 0016.803 15.803z"/>
+                        </svg>
                         <input v-model="search" type="search" placeholder="Cari nama, nomor..."
-                            class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
+                            class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"
                             @keyup.enter="applyFilter"/>
                     </div>
-                    <select v-model="status" @change="applyFilter"
-                        class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100">
-                        <option value="">Semua Status</option>
-                        <option value="pending">Menunggu</option>
-                        <option value="accepted">Diterima</option>
-                        <option value="rejected">Ditolak</option>
-                        <option value="waitlisted">Daftar Tunggu</option>
-                    </select>
+                    <FilterSelect
+                        v-model="status"
+                        @change="applyFilter"
+                        :options="[
+                            { value: '', label: 'Semua Status' },
+                            { value: 'pending', label: 'Menunggu' },
+                            { value: 'accepted', label: 'Diterima' },
+                            { value: 'rejected', label: 'Ditolak' },
+                            { value: 'waitlisted', label: 'Daftar Tunggu' },
+                        ]"
+                    />
                 </div>
 
                 <!-- Table -->

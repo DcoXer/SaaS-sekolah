@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Extracurricular;
 use App\Models\SchoolGallery;
+use App\Models\SchoolHeroPhoto;
+use App\Models\SchoolPost;
 use App\Models\SchoolSetting;
 use App\Models\PpdbSetting;
 use App\Models\Student;
@@ -62,6 +64,16 @@ class WelcomeController extends Controller
 
         $ppdb = PpdbSetting::latest()->first();
 
+        $latestPosts = SchoolPost::published()->limit(3)->get()->map(fn ($p) => [
+            'id'          => $p->id,
+            'title'       => $p->title,
+            'slug'        => $p->slug,
+            'excerpt'     => $p->excerpt,
+            'cover_image' => $p->cover_image ? Storage::disk('public')->url($p->cover_image) : null,
+            'category'    => $p->category,
+            'published_at' => $p->published_at?->locale('id')->isoFormat('D MMMM YYYY'),
+        ]);
+
         return inertia('Welcome', [
             'canLogin'         => Route::has('login'),
             'isLoggedIn'       => $user !== null,
@@ -70,6 +82,8 @@ class WelcomeController extends Controller
             'extracurriculars' => $extracurriculars,
             'galleries'        => $galleries,
             'ppdbActive'       => $ppdb?->isRegistrationOpen() ?? false,
+            'latestPosts'      => $latestPosts,
+            'heroPhotos'       => SchoolHeroPhoto::forPage('welcome')->map(fn ($p) => Storage::disk('public')->url($p->file_path))->values()->all(),
             'stats'            => [
                 'students'         => Student::where('status', 'active')->count(),
                 'teachers'         => Teacher::count(),

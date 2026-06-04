@@ -10,7 +10,10 @@ use App\Http\Controllers\GalleryPageController;
 use App\Http\Controllers\ExtracurricularPageController;
 use App\Http\Controllers\AboutPageController;
 use App\Http\Controllers\PublicPpdbController;
+use App\Http\Controllers\PublicSchoolPostController;
+use App\Http\Controllers\ManifestController;
 use App\Http\Controllers\Operator\PpdbController as OperatorPpdb;
+use App\Http\Controllers\Operator\SchoolPostController as OperatorSchoolPost;
 use App\Http\Controllers\Kamad\PpdbController as KamadPpdb;
 
 // Profile
@@ -40,6 +43,9 @@ use App\Http\Controllers\Operator\SchoolGalleryController;
 use App\Http\Controllers\Operator\LetterTypeController;
 use App\Http\Controllers\Operator\LetterTemplateController;
 use App\Http\Controllers\Operator\TeachingHourController;
+use App\Http\Controllers\Operator\SchoolHeroPhotoController;
+use App\Http\Controllers\Operator\StudentImportExportController;
+use App\Http\Controllers\Operator\TeacherImportExportController;
 
 // Keuangan
 use App\Http\Controllers\Keuangan\DashboardController as KeuanganDashboard;
@@ -62,11 +68,18 @@ use App\Http\Controllers\Siswa\InvoiceController as SiswaInvoice;
 use App\Http\Controllers\Siswa\PaymentController as SiswaPayment;
 use App\Http\Controllers\Siswa\LetterController as SiswaLetter;
 
+// PWA Manifest
+Route::get('/manifest.json', ManifestController::class)->name('pwa.manifest');
+
 // Landing page
 Route::get('/', WelcomeController::class)->name('welcome');
 Route::get('/tentang', AboutPageController::class)->name('tentang');
 Route::get('/galeri', GalleryPageController::class)->name('galeri');
 Route::get('/ekskul', ExtracurricularPageController::class)->name('ekskul');
+
+// Berita & Pengumuman public
+Route::get('/berita', [PublicSchoolPostController::class, 'index'])->name('berita.index');
+Route::get('/berita/{post:slug}', [PublicSchoolPostController::class, 'show'])->name('berita.show');
 
 // PPDB public — rate limit: 10 submit/menit per IP
 Route::get('/ppdb', [PublicPpdbController::class, 'index'])->name('ppdb.index');
@@ -132,6 +145,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/academic-years', [OperatorAcademicYear::class, 'index'])->name('academic-years.index');
         Route::post('/academic-years', [OperatorAcademicYear::class, 'store'])->name('academic-years.store');
 
+        // Teacher import/export (BEFORE resource route)
+        Route::get('teachers/export', [TeacherImportExportController::class, 'exportForm'])->name('teachers.export.form');
+        Route::post('teachers/export', [TeacherImportExportController::class, 'doExport'])->name('teachers.export');
+        Route::get('teachers/import', [TeacherImportExportController::class, 'importForm'])->name('teachers.import.form');
+        Route::get('teachers/import/template', [TeacherImportExportController::class, 'downloadTemplate'])->name('teachers.import.template');
+        Route::post('teachers/import/preview', [TeacherImportExportController::class, 'preview'])->name('teachers.import.preview');
+        Route::post('teachers/import/confirm', [TeacherImportExportController::class, 'confirm'])->name('teachers.import.confirm');
+
         // Create Guru
         Route::resource('teachers', TeacherController::class)->except(['create', 'edit']);
 
@@ -157,6 +178,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Create Mata Pelajaran
         Route::resource('subjects', SubjectController::class)->except(['create', 'edit']);
 
+        // Student import/export (BEFORE resource route)
+        Route::get('students/export', [StudentImportExportController::class, 'exportForm'])->name('students.export.form');
+        Route::post('students/export', [StudentImportExportController::class, 'doExport'])->name('students.export');
+        Route::get('students/import', [StudentImportExportController::class, 'importForm'])->name('students.import.form');
+        Route::get('students/import/template', [StudentImportExportController::class, 'downloadTemplate'])->name('students.import.template');
+        Route::post('students/import/preview', [StudentImportExportController::class, 'preview'])->name('students.import.preview');
+        Route::post('students/import/confirm', [StudentImportExportController::class, 'confirm'])->name('students.import.confirm');
+
         // Create Siswa
         Route::resource('students', StudentController::class)->except(['create', 'edit']);
         Route::patch('students/{student}/assign-classroom', [StudentController::class, 'assignClassroom'])
@@ -174,6 +203,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Letter Types & Templates Settings
         Route::get('school-settings', [SchoolSettingController::class, 'index'])->name('school-settings.index');
         Route::post('school-settings', [SchoolSettingController::class, 'save'])->name('school-settings.save');
+        Route::post('school-settings/hero-photos', [SchoolHeroPhotoController::class, 'store'])->name('hero-photos.store');
+        Route::delete('school-settings/hero-photos/{heroPhoto}', [SchoolHeroPhotoController::class, 'destroy'])->name('hero-photos.destroy');
         Route::resource('extracurriculars', ExtracurricularController::class)->except(['create', 'edit', 'show']);
         Route::resource('school-galleries', SchoolGalleryController::class)->only(['index', 'store', 'destroy']);
         Route::resource('letter-types', LetterTypeController::class)->except(['create', 'edit', 'show']);
@@ -187,6 +218,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('teaching-hours', [TeachingHourController::class, 'index'])->name('teaching-hours.index');
         Route::post('teaching-hours', [TeachingHourController::class, 'store'])->name('teaching-hours.store');
         Route::delete('teaching-hours/{teachingHour}', [TeachingHourController::class, 'destroy'])->name('teaching-hours.destroy');
+
+        // Berita & Pengumuman
+        Route::get('school-posts', [OperatorSchoolPost::class, 'index'])->name('school-posts.index');
+        Route::post('school-posts', [OperatorSchoolPost::class, 'store'])->name('school-posts.store');
+        Route::put('school-posts/{post}', [OperatorSchoolPost::class, 'update'])->name('school-posts.update');
+        Route::delete('school-posts/{post}', [OperatorSchoolPost::class, 'destroy'])->name('school-posts.destroy');
+        Route::patch('school-posts/{post}/toggle-publish', [OperatorSchoolPost::class, 'togglePublish'])->name('school-posts.toggle-publish');
 
         // PPDB
         Route::get('ppdb', [OperatorPpdb::class, 'index'])->name('ppdb.index');

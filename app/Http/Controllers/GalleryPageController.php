@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PpdbSetting;
 use App\Models\SchoolGallery;
+use App\Models\SchoolHeroPhoto;
 use App\Models\SchoolSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,7 @@ class GalleryPageController extends Controller
             'isLoggedIn'     => $user !== null,
             'dashboardRoute' => $role ? $this->resolveDashboardRoute($role) : null,
             'ppdbActive'     => $ppdb?->isRegistrationOpen() ?? false,
+            'heroPhotos'     => SchoolHeroPhoto::forPage('galeri')->map(fn ($p) => Storage::disk('public')->url($p->file_path))->values()->all(),
         ]);
     }
 

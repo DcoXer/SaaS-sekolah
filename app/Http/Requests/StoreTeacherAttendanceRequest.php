@@ -14,9 +14,11 @@ class StoreTeacherAttendanceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'date'   => ['required', 'date', 'before_or_equal:today'],
-            'status' => ['required', 'in:hadir,izin,sakit,alpha'],
-            'notes'  => ['nullable', 'string', 'max:500'],
+            'date'      => ['required', 'date', 'before_or_equal:today'],
+            'status'    => ['required', 'in:hadir,izin,sakit,alpha'],
+            'notes'     => ['nullable', 'string', 'max:500'],
+            'latitude'  => ['nullable', 'numeric', 'between:-90,90'],
+            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
         ];
     }
 

@@ -45,6 +45,8 @@ class TeacherAttendanceService
             'date'       => $data['date'],
             'status'     => $data['status'],
             'notes'      => $data['notes'] ?? null,
+            'latitude'   => $data['latitude'] ?? null,
+            'longitude'  => $data['longitude'] ?? null,
         ]);
     }
 

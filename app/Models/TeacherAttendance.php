@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['teacher_id', 'date', 'status', 'notes'])]
+#[Fillable(['teacher_id', 'date', 'status', 'notes', 'latitude', 'longitude'])]
 class TeacherAttendance extends Model
 {
     protected function casts(): array

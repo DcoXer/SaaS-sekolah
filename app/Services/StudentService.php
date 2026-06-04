@@ -30,6 +30,16 @@ class StudentService
         return $student->load(['user', 'classrooms.academicYear']);
     }
 
+    public function generateNis(): string
+    {
+        $prefix = now()->format('Ym'); // e.g., "202606"
+        $last   = Student::where('nis', 'like', $prefix . '%')
+                         ->orderByDesc('nis')
+                         ->value('nis');
+        $seq    = $last ? ((int) substr($last, strlen($prefix)) + 1) : 1;
+        return $prefix . str_pad($seq, 3, '0', STR_PAD_LEFT);
+    }
+
     public function create(array $data): Student
     {
         return DB::transaction(function () use ($data) {
@@ -47,15 +57,20 @@ class StudentService
             }
 
             $student = Student::create([
-                'user_id'    => $userId,
-                'nisn'       => $data['nisn'],
-                'nis'        => $data['nis'] ?? null,
-                'name'       => $data['name'],
-                'gender'     => $data['gender'],
-                'grade'      => $data['grade'],
-                'birth_date' => $data['birth_date'] ?? null,
-                'address'    => $data['address'] ?? null,
-                'status'     => 'active',
+                'user_id'       => $userId,
+                'nisn'          => $data['nisn'],
+                'nik'           => $data['nik'] ?? null,
+                'nis'           => !empty($data['nis']) ? $data['nis'] : $this->generateNis(),
+                'name'          => $data['name'],
+                'gender'        => $data['gender'],
+                'grade'         => $data['grade'],
+                'birth_place'   => $data['birth_place'] ?? null,
+                'birth_date'    => $data['birth_date'] ?? null,
+                'address'       => $data['address'] ?? null,
+                'father_name'   => $data['father_name'] ?? null,
+                'mother_name'   => $data['mother_name'] ?? null,
+                'guardian_name' => $data['guardian_name'] ?? null,
+                'status'        => 'active',
             ]);
 
             // Assign ke kelas kalau academic_year & classroom dipilih
@@ -73,13 +88,18 @@ class StudentService
     {
         return DB::transaction(function () use ($student, $data) {
             $student->update([
-                'nisn'       => $data['nisn'],
-                'nis'        => $data['nis'] ?? null,
-                'name'       => $data['name'],
-                'gender'     => $data['gender'],
-                'grade'      => $data['grade'],
-                'birth_date' => $data['birth_date'] ?? null,
-                'address'    => $data['address'] ?? null,
+                'nisn'          => $data['nisn'],
+                'nik'           => $data['nik'] ?? null,
+                'nis'           => $data['nis'] ?? null,
+                'name'          => $data['name'],
+                'gender'        => $data['gender'],
+                'grade'         => $data['grade'],
+                'birth_place'   => $data['birth_place'] ?? null,
+                'birth_date'    => $data['birth_date'] ?? null,
+                'address'       => $data['address'] ?? null,
+                'father_name'   => $data['father_name'] ?? null,
+                'mother_name'   => $data['mother_name'] ?? null,
+                'guardian_name' => $data['guardian_name'] ?? null,
             ]);
 
             if ($student->user && !empty($data['parent_name'])) {

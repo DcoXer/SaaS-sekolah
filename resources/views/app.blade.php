@@ -19,7 +19,7 @@
         @endphp
 
         <!-- Primary -->
-        <title inertia>{{ config('app.name') }}</title>
+        <title inertia>{{ $siteName }}</title>
         <meta name="description" content="{{ $siteDesc }}">
         <meta name="robots" content="index, follow">
         <link rel="canonical" href="{{ $canonical }}">
@@ -51,6 +51,20 @@
         <meta name="theme-color" content="#10b981">
         <meta name="application-name" content="{{ $siteName }}">
         <meta name="author" content="{{ $siteName }}">
+
+        <!-- PWA manifest (dinamis mengikuti logo sekolah) -->
+        <link rel="manifest" href="/manifest.json">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+        <meta name="apple-mobile-web-app-title" content="{{ $siteName }}">
+        <meta name="mobile-web-app-capable" content="yes">
+        @if($logoUrl)
+            <link rel="icon" type="image/png" href="{{ $logoUrl }}">
+            <link rel="apple-touch-icon" href="{{ $logoUrl }}">
+        @else
+            <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+            <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+        @endif
 
         <!-- JSON-LD: School + WebSite -->
         @php
@@ -93,11 +107,6 @@
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead
 
-        <!-- Layout containment -->
-        <style>
-            html, body { height: 100%; background: #f1f5f9; }
-            #app { height: 100%; overflow: hidden; background: #f1f5f9; }
-        </style>
     </head>
     <body class="font-sans antialiased">
         @inertia

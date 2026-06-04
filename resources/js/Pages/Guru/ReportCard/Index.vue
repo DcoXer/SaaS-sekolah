@@ -1,6 +1,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Modal from '@/Components/Modal.vue';
+import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, useForm, router } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 
@@ -147,10 +148,10 @@ const submitNotes = () => {
                 </div>
 
                 <!-- ── Toolbar: search + filter ───────────────────────────────── -->
-                <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
                     <!-- Search -->
-                    <div class="relative w-full sm:max-w-xs">
-                        <svg class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <div class="relative flex-1 min-w-[180px]">
+                        <svg class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803a7.5 7.5 0 0010.607 10.607z" />
                         </svg>
                         <input
@@ -158,28 +159,26 @@ const submitNotes = () => {
                             @input="resetPage"
                             type="search"
                             placeholder="Cari nama siswa..."
-                            class="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3.5 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+                            class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"
                         />
                     </div>
 
-                    <!-- Status filter -->
-                    <div class="flex items-center gap-2">
-                        <select
-                            v-model="filterStatus"
-                            @change="resetPage"
-                            class="rounded-lg border border-slate-200 bg-white py-2 pl-3 pr-8 text-sm text-slate-700 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
-                        >
-                            <option value="">Semua Status</option>
-                            <option value="draft">Draft</option>
-                            <option value="waiting_approval">Menunggu Kamad</option>
-                            <option value="approved">Disetujui</option>
-                        </select>
+                    <div class="h-5 w-px bg-slate-200"/>
 
-                        <!-- Result count -->
-                        <span class="shrink-0 text-sm text-slate-400">
-                            {{ filtered.length }} raport
-                        </span>
-                    </div>
+                    <!-- Status filter -->
+                    <FilterSelect
+                        v-model="filterStatus"
+                        @change="resetPage"
+                        :options="[
+                            { value: '', label: 'Semua Status' },
+                            { value: 'draft', label: 'Draft' },
+                            { value: 'waiting_approval', label: 'Menunggu Kamad' },
+                            { value: 'approved', label: 'Disetujui' },
+                        ]"
+                    />
+
+                    <!-- Result count -->
+                    <span class="shrink-0 text-sm text-slate-400">{{ filtered.length }} raport</span>
                 </div>
 
                 <!-- No report cards yet -->

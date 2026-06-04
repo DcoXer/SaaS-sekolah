@@ -2,6 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import Pagination from '@/Components/Pagination.vue';
+import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { ref, computed, watch } from 'vue';
 
@@ -150,37 +151,35 @@ const totalDraft = computed(() => filtered.value.filter(h => h.status === 'draft
             </div>
 
             <!-- Filter -->
-            <div class="space-y-2">
-                <div class="relative">
-                    <svg class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400"
-                        fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+            <div class="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
+                <div class="relative flex-1 min-w-[180px]">
+                    <svg class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803 7.5 7.5 0 0016.803 15.803z"/>
                     </svg>
                     <input v-model="search" type="search" placeholder="Cari nama guru..."
-                        class="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-3.5 text-sm text-slate-800 placeholder-slate-400 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"/>
+                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"/>
                 </div>
-                <div class="flex flex-wrap items-center gap-2">
-                    <div class="flex gap-1">
-                        <button v-for="opt in [{ value: '', label: 'Semua' }, { value: 'draft', label: 'Belum Bayar' }, { value: 'paid', label: 'Lunas' }]"
-                            :key="opt.value" @click="filterStatus = opt.value"
-                            class="rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors duration-150"
-                            :class="filterStatus === opt.value ? 'bg-emerald-500 text-white' : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50'">
-                            {{ opt.label }}
-                        </button>
-                    </div>
-                    <select v-model="filterMonth"
-                        class="rounded-lg border border-slate-200 bg-white py-1.5 pl-3 pr-7 text-xs font-semibold text-slate-600 outline-none focus:border-emerald-400">
-                        <option value="">Semua Bulan</option>
-                        <option v-for="m in monthOptions" :key="m.value" :value="m.value">{{ m.label }}</option>
-                    </select>
-                    <select v-model="filterYear"
-                        class="rounded-lg border border-slate-200 bg-white py-1.5 pl-3 pr-7 text-xs font-semibold text-slate-600 outline-none focus:border-emerald-400">
-                        <option value="">Semua Tahun</option>
-                        <option v-for="y in yearOptions" :key="y" :value="y">{{ y }}</option>
-                    </select>
-                    <button v-if="hasFilter" @click="resetFilters"
-                        class="text-xs font-semibold text-slate-400 hover:text-slate-600 transition-colors">Reset</button>
+                <div class="h-5 w-px bg-slate-200"/>
+                <div class="flex items-center gap-1 rounded-xl bg-slate-100 p-1">
+                    <button v-for="opt in [{ value: '', label: 'Semua' }, { value: 'draft', label: 'Belum Bayar' }, { value: 'paid', label: 'Lunas' }]"
+                        :key="opt.value" @click="filterStatus = opt.value"
+                        :class="filterStatus === opt.value
+                            ? 'bg-white text-slate-800 shadow-sm'
+                            : 'text-slate-500 hover:text-slate-700'"
+                        class="rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-150">
+                        {{ opt.label }}
+                    </button>
                 </div>
+                <FilterSelect
+                    v-model="filterMonth"
+                    :options="[{ value: '', label: 'Semua Bulan' }, ...monthOptions]"
+                />
+                <FilterSelect
+                    v-model="filterYear"
+                    :options="[{ value: '', label: 'Semua Tahun' }, ...yearOptions.map(y => ({ value: y, label: String(y) }))]"
+                />
+                <button v-if="hasFilter" @click="resetFilters"
+                    class="text-xs font-semibold text-slate-400 hover:text-slate-600 transition-colors">Reset</button>
             </div>
 
             <!-- Empty -->

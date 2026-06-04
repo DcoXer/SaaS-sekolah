@@ -1,6 +1,6 @@
 <script setup>
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import PublicHeader from '@/Components/PublicHeader.vue';
 import JsonLd from '@/Components/JsonLd.vue';
 
@@ -12,7 +12,22 @@ const props = defineProps({
     isLoggedIn:     { type: Boolean, default: false },
     dashboardRoute: { type: String,  default: null },
     ppdbActive:     { type: Boolean, default: false },
+    heroPhotos:     { type: Array,   default: () => [] },
 });
+
+const heroPhotosList = computed(() => props.heroPhotos ?? []);
+const heroBgIndex    = ref(0);
+const heroBgUrl      = computed(() => heroPhotosList.value[heroBgIndex.value] ?? null);
+
+let heroBgTimer = null;
+onMounted(() => {
+    if (heroPhotosList.value.length > 1) {
+        heroBgTimer = setInterval(() => {
+            heroBgIndex.value = (heroBgIndex.value + 1) % heroPhotosList.value.length;
+        }, 5000);
+    }
+});
+onUnmounted(() => clearInterval(heroBgTimer));
 
 const initials = (name) => name?.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase() ?? '?';
 
@@ -65,10 +80,16 @@ const jsonLd = computed(() => ({
         />
 
         <!-- ── Hero ──────────────────────────────────────────────────────── -->
-        <div class="relative overflow-hidden bg-gradient-to-br from-green-900 via-green-800 to-green-700">
-            <!-- Dekorasi lingkaran -->
-            <div class="absolute -right-32 -top-32 size-96 rounded-full bg-white/5"/>
-            <div class="absolute -bottom-20 -left-20 size-72 rounded-full bg-white/5"/>
+        <div
+            class="relative overflow-hidden transition-all duration-1000"
+            :class="heroBgUrl ? '' : 'bg-gradient-to-br from-green-900 via-green-800 to-green-700'"
+            :style="heroBgUrl ? `background-image:url('${heroBgUrl}');background-size:cover;background-position:center` : ''"
+        >
+            <!-- Overlay gelap saat ada foto -->
+            <div v-if="heroBgUrl" class="absolute inset-0 bg-black/55"/>
+            <!-- Dekorasi lingkaran (hanya saat tidak ada foto) -->
+            <div v-if="!heroBgUrl" class="absolute -right-32 -top-32 size-96 rounded-full bg-white/5"/>
+            <div v-if="!heroBgUrl" class="absolute -bottom-20 -left-20 size-72 rounded-full bg-white/5"/>
 
             <div class="relative mx-auto max-w-6xl px-6 py-20">
                 <div class="flex flex-col items-center gap-6 text-center lg:flex-row lg:items-center lg:text-left lg:gap-12">

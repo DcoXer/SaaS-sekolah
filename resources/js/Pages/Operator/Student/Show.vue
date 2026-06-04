@@ -15,15 +15,20 @@ const props = defineProps({
 
 // ── Edit form ─────────────────────────────────────────────────────────────────
 const editForm = useForm({
-    nisn:        props.student.nisn,
-    nis:         props.student.nis,
-    name:        props.student.name,
-    gender:      props.student.gender,
-    grade:       props.student.grade,
-    birth_date:  props.student.birth_date ?? '',
-    address:     props.student.address ?? '',
-    parent_name: props.student.user?.name ?? '',
-    password:    '',
+    nisn:          props.student.nisn,
+    nik:           props.student.nik          ?? '',
+    nis:           props.student.nis,
+    name:          props.student.name,
+    gender:        props.student.gender,
+    grade:         props.student.grade,
+    birth_place:   props.student.birth_place  ?? '',
+    birth_date:    props.student.birth_date   ?? '',
+    address:       props.student.address      ?? '',
+    father_name:   props.student.father_name  ?? '',
+    mother_name:   props.student.mother_name  ?? '',
+    guardian_name: props.student.guardian_name ?? '',
+    parent_name:   props.student.user?.name   ?? '',
+    password:      '',
 });
 
 const submitEdit = () => {
@@ -116,6 +121,36 @@ const formatDate = (d) => d
                     </svg>
                     Hapus
                 </button>
+            </div>
+
+            <!-- Info card: data lengkap -->
+            <div v-if="student.father_name || student.mother_name || student.guardian_name || student.nik || student.birth_place"
+                class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                <div class="border-b border-slate-100 px-5 py-3">
+                    <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-400">Data Keluarga</h3>
+                </div>
+                <dl class="grid grid-cols-1 divide-y divide-slate-100 sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+                    <div v-if="student.father_name" class="flex flex-col px-5 py-3">
+                        <dt class="text-xs text-slate-400">Ayah Kandung</dt>
+                        <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ student.father_name }}</dd>
+                    </div>
+                    <div v-if="student.mother_name" class="flex flex-col px-5 py-3">
+                        <dt class="text-xs text-slate-400">Ibu Kandung</dt>
+                        <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ student.mother_name }}</dd>
+                    </div>
+                    <div v-if="student.guardian_name" class="flex flex-col px-5 py-3">
+                        <dt class="text-xs text-slate-400">Wali</dt>
+                        <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ student.guardian_name }}</dd>
+                    </div>
+                    <div v-if="student.nik" class="flex flex-col px-5 py-3">
+                        <dt class="text-xs text-slate-400">NIK</dt>
+                        <dd class="mt-0.5 font-mono text-sm font-medium text-slate-800">{{ student.nik }}</dd>
+                    </div>
+                    <div v-if="student.birth_place" class="flex flex-col px-5 py-3">
+                        <dt class="text-xs text-slate-400">Tempat Lahir</dt>
+                        <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ student.birth_place }}</dd>
+                    </div>
+                </dl>
             </div>
 
             <!-- Edit form -->
@@ -217,42 +252,108 @@ const formatDate = (d) => d
                             </div>
                         </div>
 
-                        <!-- Gender + Alamat -->
+                        <!-- Gender -->
+                        <div>
+                            <label class="mb-1.5 block text-xs font-semibold text-slate-600">
+                                Jenis Kelamin <span class="text-red-500">*</span>
+                            </label>
+                            <div class="flex gap-2">
+                                <label
+                                    v-for="opt in [{ value: 'L', label: 'Laki-laki' }, { value: 'P', label: 'Perempuan' }]"
+                                    :key="opt.value"
+                                    :class="[
+                                        'flex flex-1 cursor-pointer items-center justify-center rounded-lg border px-3 py-2.5 text-xs font-medium transition-[border-color,background-color] duration-150',
+                                        editForm.gender === opt.value
+                                            ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
+                                            : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50',
+                                    ]"
+                                >
+                                    <input type="radio" :value="opt.value" v-model="editForm.gender" class="sr-only" />
+                                    {{ opt.label }}
+                                </label>
+                            </div>
+                            <p v-if="editForm.errors.gender" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.gender }}</p>
+                        </div>
+
+                        <!-- Alamat -->
+                        <div>
+                            <label for="e-address" class="mb-1.5 block text-xs font-semibold text-slate-600">Alamat</label>
+                            <textarea
+                                id="e-address"
+                                v-model="editForm.address"
+                                rows="2"
+                                :class="[
+                                    'w-full resize-none rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
+                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                    editForm.errors.address ? 'border-red-400' : 'border-slate-200',
+                                ]"
+                            />
+                            <p v-if="editForm.errors.address" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.address }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="border-t border-slate-100" />
+
+                    <!-- Data Keluarga -->
+                    <div class="space-y-3">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Data Keluarga</p>
+
                         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                             <div>
-                                <label class="mb-1.5 block text-xs font-semibold text-slate-600">
-                                    Jenis Kelamin <span class="text-red-500">*</span>
-                                </label>
-                                <div class="flex gap-2">
-                                    <label
-                                        v-for="opt in [{ value: 'L', label: 'Laki-laki' }, { value: 'P', label: 'Perempuan' }]"
-                                        :key="opt.value"
-                                        :class="[
-                                            'flex flex-1 cursor-pointer items-center justify-center rounded-lg border px-3 py-2.5 text-xs font-medium transition-[border-color,background-color] duration-150',
-                                            editForm.gender === opt.value
-                                                ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
-                                                : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50',
-                                        ]"
-                                    >
-                                        <input type="radio" :value="opt.value" v-model="editForm.gender" class="sr-only" />
-                                        {{ opt.label }}
-                                    </label>
-                                </div>
-                                <p v-if="editForm.errors.gender" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.gender }}</p>
+                                <label for="e-father" class="mb-1.5 block text-xs font-semibold text-slate-600">Nama Ayah Kandung</label>
+                                <input
+                                    id="e-father"
+                                    v-model="editForm.father_name"
+                                    type="text"
+                                    placeholder="Nama lengkap ayah"
+                                    :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.father_name ? 'border-red-400' : 'border-slate-200']"
+                                />
                             </div>
                             <div>
-                                <label for="e-address" class="mb-1.5 block text-xs font-semibold text-slate-600">Alamat</label>
-                                <textarea
-                                    id="e-address"
-                                    v-model="editForm.address"
-                                    rows="2"
-                                    :class="[
-                                        'w-full resize-none rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                        editForm.errors.address ? 'border-red-400' : 'border-slate-200',
-                                    ]"
+                                <label for="e-mother" class="mb-1.5 block text-xs font-semibold text-slate-600">Nama Ibu Kandung</label>
+                                <input
+                                    id="e-mother"
+                                    v-model="editForm.mother_name"
+                                    type="text"
+                                    placeholder="Nama lengkap ibu"
+                                    :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.mother_name ? 'border-red-400' : 'border-slate-200']"
                                 />
-                                <p v-if="editForm.errors.address" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.address }}</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="e-guardian" class="mb-1.5 block text-xs font-semibold text-slate-600">Nama Wali</label>
+                            <input
+                                id="e-guardian"
+                                v-model="editForm.guardian_name"
+                                type="text"
+                                placeholder="Nama wali (kosongkan jika sama dengan ayah/ibu)"
+                                :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.guardian_name ? 'border-red-400' : 'border-slate-200']"
+                            />
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            <div>
+                                <label for="e-nik" class="mb-1.5 block text-xs font-semibold text-slate-600">NIK</label>
+                                <input
+                                    id="e-nik"
+                                    v-model="editForm.nik"
+                                    type="text"
+                                    placeholder="16 digit NIK"
+                                    :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.nik ? 'border-red-400' : 'border-slate-200']"
+                                />
+                                <p v-if="editForm.errors.nik" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.nik }}</p>
+                            </div>
+                            <div>
+                                <label for="e-birthplace" class="mb-1.5 block text-xs font-semibold text-slate-600">Tempat Lahir</label>
+                                <input
+                                    id="e-birthplace"
+                                    v-model="editForm.birth_place"
+                                    type="text"
+                                    placeholder="Kota tempat lahir"
+                                    :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.birth_place ? 'border-red-400' : 'border-slate-200']"
+                                />
                             </div>
                         </div>
                     </div>

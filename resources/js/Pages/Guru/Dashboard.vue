@@ -48,8 +48,11 @@ const classroomColors = [
             <!-- Header -->
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 text-sm font-bold text-white shadow-sm">
-                        {{ initials }}
+                    <div class="size-11 shrink-0 overflow-hidden rounded-2xl shadow-sm">
+                        <img v-if="user.avatar_url" :src="user.avatar_url" :alt="user.name" class="size-full object-cover" />
+                        <div v-else class="flex size-full items-center justify-center bg-gradient-to-br from-amber-500 to-orange-500 text-sm font-bold text-white">
+                            {{ initials }}
+                        </div>
                     </div>
                     <div>
                         <h2 class="text-lg font-bold text-slate-900">

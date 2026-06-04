@@ -17,27 +17,32 @@ class SchoolSettingService
         $setting = SchoolSetting::first() ?? new SchoolSetting();
 
         // Simpan file baru DULU sebelum hapus yang lama — agar tidak kehilangan file jika upload crash
-        if (!empty($data['logo'])) {
-            $newLogo      = $data['logo']->store('school/logo', 'public');
-            $oldLogo      = $setting->logo;
-            $data['logo'] = $newLogo;
-        }
+        $fileFields = [
+            'logo'         => 'school/logo',
+            'stamp'        => 'school/stamp',
+            'hero_welcome' => 'school/hero',
+            'hero_tentang' => 'school/hero',
+            'hero_galeri'  => 'school/hero',
+            'hero_ekskul'  => 'school/hero',
+        ];
 
-        if (!empty($data['stamp'])) {
-            $newStamp      = $data['stamp']->store('school/stamp', 'public');
-            $oldStamp      = $setting->stamp;
-            $data['stamp'] = $newStamp;
+        $oldFiles = [];
+
+        foreach ($fileFields as $field => $folder) {
+            if (!empty($data[$field]) && is_object($data[$field])) {
+                $oldFiles[$field] = $setting->{$field};
+                $data[$field]     = $data[$field]->store($folder, 'public');
+            }
         }
 
         $setting->fill($data);
         $setting->save();
 
         // Hapus file lama setelah setting berhasil disimpan
-        if (!empty($oldLogo)) {
-            Storage::disk('public')->delete($oldLogo);
-        }
-        if (!empty($oldStamp)) {
-            Storage::disk('public')->delete($oldStamp);
+        foreach ($oldFiles as $field => $oldPath) {
+            if ($oldPath) {
+                Storage::disk('public')->delete($oldPath);
+            }
         }
 
         return $setting;

@@ -4,12 +4,16 @@
 
 html,
 body {
-    height: 100%;
     background-color: rgb(241 245 249); /* slate-100 */
+    scrollbar-width: none; /* Firefox */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
 }
 
 #app {
     height: 100%;
-    overflow: hidden;
     background-color: rgb(241 245 249);
 }

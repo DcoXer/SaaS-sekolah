@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Guru;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTeacherAttendanceRequest;
 use App\Http\Requests\UpdateTeacherAttendanceRequest;
+use App\Models\SchoolSetting;
 use App\Models\TeacherAttendance;
 use App\Services\TeacherAttendanceService;
 use Inertia\Inertia;
@@ -24,12 +25,16 @@ class AttendanceController extends Controller
 
         $calendar = $this->service->getCalendar($teacher, $month, $year);
         $summary  = $this->service->getMonthlySummary($teacher, $month, $year);
+        $school   = SchoolSetting::current();
 
         return Inertia::render('Guru/Attendance/Index', [
-            'calendar'     => array_values($calendar),
-            'summary'      => $summary,
-            'currentMonth' => $month,
-            'currentYear'  => $year,
+            'calendar'      => array_values($calendar),
+            'summary'       => $summary,
+            'currentMonth'  => $month,
+            'currentYear'   => $year,
+            'schoolLat'     => $school?->latitude ? (float) $school->latitude : null,
+            'schoolLng'     => $school?->longitude ? (float) $school->longitude : null,
+            'schoolRadius'  => $school?->attendance_radius ?? 100,
         ]);
     }
 

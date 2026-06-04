@@ -22,13 +22,20 @@ class SaveSchoolSettingRequest extends FormRequest
             'address'        => ['required', 'string'],
             'phone'          => ['nullable', 'string', 'max:20'],
             'email'          => ['nullable', 'email'],
-            'website'        => ['nullable', 'url'],
+            'website'           => ['nullable', 'url'],
+            'latitude'          => ['nullable', 'numeric', 'between:-90,90'],
+            'longitude'         => ['nullable', 'numeric', 'between:-180,180'],
+            'attendance_radius' => ['nullable', 'integer', 'min:10', 'max:5000'],
             'description'    => ['nullable', 'string'],
             'vision'         => ['nullable', 'string'],
             'mission'        => ['nullable', 'string'],
             'history'        => ['nullable', 'string'],
             'logo'           => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
             'stamp'          => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'hero_welcome'   => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
+            'hero_tentang'   => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
+            'hero_galeri'    => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
+            'hero_ekskul'    => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
         ];
     }
 

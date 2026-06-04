@@ -1,6 +1,7 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3';
 import { ref, onMounted, onUnmounted, computed } from 'vue';
+import PwaInstall from '@/Components/PwaInstall.vue';
 
 const props = defineProps({
     school:         { type: Object,  default: null },
@@ -75,6 +76,7 @@ const mobileNavClass = (page) => [
                 <Link :href="route('tentang')" :class="navClass('tentang')">Tentang</Link>
                 <Link :href="route('ekskul')"  :class="navClass('ekskul')">Ekskul</Link>
                 <Link :href="route('galeri')"  :class="navClass('galeri')">Galeri</Link>
+                <Link :href="route('berita.index')" :class="navClass('berita')">Berita</Link>
                 <a href="/#kontak" :class="navClass('kontak')">Kontak</a>
                 <Link v-if="ppdbActive" :href="route('ppdb.index')"
                     class="ml-1 inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-400"
@@ -109,6 +111,7 @@ const mobileNavClass = (page) => [
                 <Link :href="route('tentang')" :class="mobileNavClass('tentang')">Tentang</Link>
                 <Link :href="route('ekskul')"  :class="mobileNavClass('ekskul')">Ekskul</Link>
                 <Link :href="route('galeri')"  :class="mobileNavClass('galeri')">Galeri</Link>
+                <Link :href="route('berita.index')" :class="mobileNavClass('berita')">Berita</Link>
                 <a href="/#kontak" :class="mobileNavClass('kontak')">Kontak</a>
                 <Link v-if="ppdbActive" :href="route('ppdb.index')"
                     class="rounded-lg bg-amber-500 px-3 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-amber-400">
@@ -127,4 +130,6 @@ const mobileNavClass = (page) => [
             </div>
         </div>
     </header>
+
+    <PwaInstall />
 </template>

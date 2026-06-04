@@ -2,6 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import Pagination from '@/Components/Pagination.vue';
+import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref, computed, watch } from 'vue';
 
@@ -117,46 +118,71 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                         Kelola data siswa beserta akun wali murid. Penempatan kelas diatur dari halaman detail.
                     </p>
                 </div>
-                <button
-                    @click="openCreate"
-                    class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600"
-                >
-                    <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    Tambah
-                </button>
+                <div class="flex shrink-0 items-center gap-2">
+                    <Link
+                        :href="route('operator.students.export.form')"
+                        class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-[background-color,border-color] duration-150 hover:border-slate-300 hover:bg-slate-50"
+                    >
+                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        </svg>
+                        Export
+                    </Link>
+                    <Link
+                        :href="route('operator.students.import.form')"
+                        class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-[background-color,border-color] duration-150 hover:border-slate-300 hover:bg-slate-50"
+                    >
+                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M7.5 12L12 7.5m0 0l4.5 4.5M12 7.5V21" />
+                        </svg>
+                        Import
+                    </Link>
+                    <button
+                        @click="openCreate"
+                        class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600"
+                    >
+                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Tambah
+                    </button>
+                </div>
             </div>
 
             <!-- Search & Filter -->
-            <div v-if="students.length > 0" class="flex flex-wrap items-center gap-2">
-                <div class="relative flex-1 min-w-48">
+            <div v-if="students.length > 0" class="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
+                <div class="relative flex-1 min-w-[180px]">
                     <svg class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803 7.5 7.5 0 0016.803 15.803z"/>
                     </svg>
                     <input
                         v-model="search"
                         type="search"
                         placeholder="Cari nama, NISN/NIS, wali murid..."
-                        class="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3.5 text-sm text-slate-800 placeholder-slate-400 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"
                     />
                 </div>
-                <select
+                <FilterSelect
                     v-model="filterGrade"
-                    class="rounded-lg border border-slate-200 bg-white py-2 pl-3 pr-8 text-xs font-semibold text-slate-600 outline-none transition-[border-color] duration-150 focus:border-emerald-400"
-                >
-                    <option value="">Semua Kelas</option>
-                    <option v-for="g in [1,2,3,4,5,6]" :key="g" :value="String(g)">Kelas {{ g }}</option>
-                </select>
-                <select
+                    :options="[
+                        { value: '', label: 'Semua Kelas' },
+                        { value: '1', label: 'Kelas 1' },
+                        { value: '2', label: 'Kelas 2' },
+                        { value: '3', label: 'Kelas 3' },
+                        { value: '4', label: 'Kelas 4' },
+                        { value: '5', label: 'Kelas 5' },
+                        { value: '6', label: 'Kelas 6' },
+                    ]"
+                />
+                <FilterSelect
                     v-model="filterStatus"
-                    class="rounded-lg border border-slate-200 bg-white py-2 pl-3 pr-8 text-xs font-semibold text-slate-600 outline-none transition-[border-color] duration-150 focus:border-emerald-400"
-                >
-                    <option value="">Semua Status</option>
-                    <option value="active">Aktif</option>
-                    <option value="alumni">Alumni</option>
-                    <option value="mutasi">Mutasi</option>
-                </select>
+                    :options="[
+                        { value: '', label: 'Semua Status' },
+                        { value: 'active', label: 'Aktif' },
+                        { value: 'alumni', label: 'Alumni' },
+                        { value: 'mutasi', label: 'Mutasi' },
+                    ]"
+                />
             </div>
 
             <!-- Empty state -->

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Extracurricular;
 use App\Models\PpdbSetting;
+use App\Models\SchoolHeroPhoto;
 use App\Models\SchoolSetting;
 use App\Models\Student;
 use App\Models\Teacher;
@@ -68,6 +69,7 @@ class AboutPageController extends Controller
             'isLoggedIn'     => $user !== null,
             'dashboardRoute' => $role ? $this->resolveDashboardRoute($role) : null,
             'ppdbActive'     => $ppdb?->isRegistrationOpen() ?? false,
+            'heroPhotos'     => SchoolHeroPhoto::forPage('tentang')->map(fn ($p) => Storage::disk('public')->url($p->file_path))->values()->all(),
             'stats'  => [
                 'students'         => Student::where('status', 'active')->count(),
                 'teachers'         => Teacher::count(),

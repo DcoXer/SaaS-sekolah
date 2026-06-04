@@ -2,6 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import Pagination from '@/Components/Pagination.vue';
+import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { ref, computed, watch } from 'vue';
 
@@ -153,37 +154,37 @@ const viewTarget = ref(null);
             </div>
 
             <!-- Search & Filter -->
-            <div v-if="letters.length > 0" class="flex flex-wrap items-center gap-2">
-                <div class="relative flex-1 min-w-48">
+            <div v-if="letters.length > 0" class="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
+                <div class="relative flex-1 min-w-[180px]">
                     <svg class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803 7.5 7.5 0 0016.803 15.803z"/>
                     </svg>
                     <input
                         v-model="search"
                         type="search"
                         placeholder="Cari jenis surat, nama siswa..."
-                        class="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3.5 text-sm text-slate-800 placeholder-slate-400 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"
                     />
                 </div>
-                <select
+                <FilterSelect
                     v-model="filterCategory"
-                    class="rounded-lg border border-slate-200 bg-white py-2 pl-3 pr-8 text-xs font-semibold text-slate-600 outline-none transition-[border-color] duration-150 focus:border-emerald-400"
-                >
-                    <option value="">Semua Kategori</option>
-                    <option value="keterangan">Keterangan</option>
-                    <option value="pemberitahuan">Pemberitahuan</option>
-                </select>
-                <select
+                    :options="[
+                        { value: '', label: 'Semua Kategori' },
+                        { value: 'keterangan', label: 'Keterangan' },
+                        { value: 'pemberitahuan', label: 'Pemberitahuan' },
+                    ]"
+                />
+                <FilterSelect
                     v-model="filterStatus"
-                    class="rounded-lg border border-slate-200 bg-white py-2 pl-3 pr-8 text-xs font-semibold text-slate-600 outline-none transition-[border-color] duration-150 focus:border-emerald-400"
-                >
-                    <option value="">Semua Status</option>
-                    <option value="draft">Draft</option>
-                    <option value="waiting_approval">Menunggu Persetujuan</option>
-                    <option value="approved">Disetujui</option>
-                    <option value="rejected">Ditolak</option>
-                    <option value="published">Diterbitkan</option>
-                </select>
+                    :options="[
+                        { value: '', label: 'Semua Status' },
+                        { value: 'draft', label: 'Draft' },
+                        { value: 'waiting_approval', label: 'Menunggu Persetujuan' },
+                        { value: 'approved', label: 'Disetujui' },
+                        { value: 'rejected', label: 'Ditolak' },
+                        { value: 'published', label: 'Diterbitkan' },
+                    ]"
+                />
             </div>
 
             <!-- Empty state -->

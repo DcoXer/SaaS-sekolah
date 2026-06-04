@@ -1,6 +1,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
+import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { ref, computed, watch } from 'vue';
 
@@ -127,51 +128,49 @@ const partialCount = (group) => group.invoices.filter(i => i.status === 'partial
             <template v-else>
 
                 <!-- Search & Filter -->
-                <div class="space-y-2">
-                    <div class="relative">
+                <div class="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
+                    <div class="relative flex-1 min-w-[180px]">
                         <svg class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803 7.5 7.5 0 0016.803 15.803z"/>
                         </svg>
                         <input
                             v-model="search"
                             type="search"
                             placeholder="Cari nama / NIS..."
-                            class="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-3.5 text-sm text-slate-800 placeholder-slate-400 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+                            class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"
                         />
                     </div>
-
-                    <div class="flex flex-wrap items-center gap-2">
-                        <!-- Status filter -->
-                        <div class="flex items-center gap-1">
-                            <button
-                                v-for="opt in [{ value: '', label: 'Semua' }, { value: 'unpaid', label: 'Belum Bayar' }, { value: 'partial', label: 'Kurang Bayar' }]"
-                                :key="opt.value"
-                                @click="filterStatus = opt.value"
-                                :class="filterStatus === opt.value
-                                    ? 'bg-emerald-500 text-white'
-                                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'"
-                                class="rounded-lg px-3 py-1.5 text-xs font-semibold transition-[background-color,color] duration-150"
-                            >{{ opt.label }}</button>
-                        </div>
-
-                        <!-- Grade filter -->
-                        <select
-                            v-model="filterGrade"
-                            class="rounded-lg border border-slate-200 bg-white py-1.5 pl-3 pr-7 text-xs font-semibold text-slate-600 outline-none transition-[border-color] duration-150 focus:border-emerald-400"
-                        >
-                            <option value="">Semua Kelas</option>
-                            <option v-for="g in [1,2,3,4,5,6]" :key="g" :value="String(g)">Kelas {{ g }}</option>
-                        </select>
-
-                        <!-- Reset -->
+                    <div class="h-5 w-px bg-slate-200"/>
+                    <div class="flex items-center gap-1 rounded-xl bg-slate-100 p-1">
                         <button
-                            v-if="hasActiveFilter"
-                            @click="resetFilters"
-                            class="text-xs font-semibold text-slate-400 hover:text-slate-600 transition-[color] duration-150"
-                        >
-                            Reset
-                        </button>
+                            v-for="opt in [{ value: '', label: 'Semua' }, { value: 'unpaid', label: 'Belum Bayar' }, { value: 'partial', label: 'Kurang Bayar' }]"
+                            :key="opt.value"
+                            @click="filterStatus = opt.value"
+                            :class="filterStatus === opt.value
+                                ? 'bg-white text-slate-800 shadow-sm'
+                                : 'text-slate-500 hover:text-slate-700'"
+                            class="rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-150"
+                        >{{ opt.label }}</button>
                     </div>
+                    <FilterSelect
+                        v-model="filterGrade"
+                        :options="[
+                            { value: '', label: 'Semua Kelas' },
+                            { value: '1', label: 'Kelas 1' },
+                            { value: '2', label: 'Kelas 2' },
+                            { value: '3', label: 'Kelas 3' },
+                            { value: '4', label: 'Kelas 4' },
+                            { value: '5', label: 'Kelas 5' },
+                            { value: '6', label: 'Kelas 6' },
+                        ]"
+                    />
+                    <button
+                        v-if="hasActiveFilter"
+                        @click="resetFilters"
+                        class="text-xs font-semibold text-slate-400 hover:text-slate-600 transition-[color] duration-150"
+                    >
+                        Reset
+                    </button>
                 </div>
 
                 <!-- Empty state -->

@@ -12,6 +12,8 @@ const props = defineProps({
     galleries:        { type: Array,   default: () => [] },
     stats:            { type: Object,  default: () => ({}) },
     ppdbActive:       { type: Boolean, default: false },
+    latestPosts:      { type: Array,   default: () => [] },
+    heroPhotos:       { type: Array,   default: () => [] },
 });
 
 // ── navbar scroll state 
@@ -30,6 +32,7 @@ const PLACEHOLDER_SLIDES = [
 const heroSlides = computed(() => {
     const photos = props.galleries.filter(g => g.type === 'photo' && g.file_url);
     if (photos.length >= 2) return photos.map(p => ({ url: p.file_url, caption: p.caption ?? '' }));
+    if (props.heroPhotos.length > 0) return props.heroPhotos.map(url => ({ url, caption: '' }));
     return PLACEHOLDER_SLIDES;
 });
 
@@ -121,7 +124,7 @@ const jsonLd = computed(() => ({
     </Head>
     <JsonLd :data="jsonLd" />
 
-    <div class="min-h-screen overflow-x-hidden bg-white font-sans antialiased" style="font-family:'Plus Jakarta Sans',sans-serif">
+    <div class="min-h-screen overflow-x-clip bg-white font-sans antialiased" style="font-family:'Plus Jakarta Sans',sans-serif">
 
         <!-- Top Info Bar -->
         <div class="hidden bg-green-900 md:block">
@@ -166,6 +169,7 @@ const jsonLd = computed(() => ({
                     <Link :href="route('tentang')" class="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-green-50 hover:text-green-700">Tentang</Link>
                     <Link :href="route('ekskul')"  class="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-green-50 hover:text-green-700">Ekskul</Link>
                     <Link :href="route('galeri')"  class="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-green-50 hover:text-green-700">Galeri</Link>
+                    <Link :href="route('berita.index')" class="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-green-50 hover:text-green-700">Berita</Link>
                     <button @click="scrollTo('kontak')" class="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-green-50 hover:text-green-700">Kontak</button>
                     <Link v-if="ppdbActive" :href="route('ppdb.index')"
                         class="ml-1 inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-400">
@@ -204,6 +208,7 @@ const jsonLd = computed(() => ({
                     <Link :href="route('tentang')" class="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-green-700">Tentang</Link>
                     <Link :href="route('ekskul')"  class="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-green-700">Ekskul</Link>
                     <Link :href="route('galeri')"  class="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-green-700">Galeri</Link>
+                    <Link :href="route('berita.index')" class="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-green-700">Berita</Link>
                     <button @click="scrollTo('kontak')" class="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-green-700">Kontak</button>
                     <Link v-if="ppdbActive" :href="route('ppdb.index')"
                         class="rounded-lg bg-amber-500 px-3 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-amber-400">
@@ -590,6 +595,73 @@ const jsonLd = computed(() => ({
                     <Link :href="route('galeri')"
                         class="inline-flex items-center gap-2 rounded-xl border border-green-200 bg-white px-5 py-2.5 text-sm font-semibold text-green-700 shadow-sm transition-colors hover:bg-green-50">
                         Lihat Semua Galeri ({{ galleries.length }})
+                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+                    </Link>
+                </div>
+            </div>
+        </section>
+
+        <!-- Berita & Pengumuman Terbaru -->
+        <section v-if="latestPosts.length" id="berita" class="bg-slate-50 py-20">
+            <div class="mx-auto max-w-6xl px-6">
+
+                <div v-reveal class="mb-12 flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="h-1 w-10 rounded-full bg-green-600"/>
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-widest text-green-600">Informasi Sekolah</p>
+                            <h2 class="mt-0.5 text-2xl font-extrabold text-slate-900 lg:text-3xl">Berita & Pengumuman Terbaru</h2>
+                        </div>
+                    </div>
+                    <Link :href="route('berita.index')"
+                        class="hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-green-700 hover:text-green-600 transition-colors sm:flex">
+                        Lihat Semua
+                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+                    </Link>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <Link
+                        v-for="(post, i) in latestPosts" :key="post.id"
+                        :href="route('berita.show', post.slug)"
+                        v-reveal="{ delay: i * 80 }"
+                        class="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+                    >
+                        <div class="aspect-[16/9] overflow-hidden bg-slate-100">
+                            <img
+                                v-if="post.cover_image"
+                                :src="post.cover_image"
+                                :alt="post.title"
+                                class="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            />
+                            <div v-else class="flex size-full items-center justify-center">
+                                <svg class="size-12 text-slate-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-3 1.5h.008v.008H10.5V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM10.5 7.5h.008v.008H10.5V7.5zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3 9.75A.75.75 0 013.75 9h16.5a.75.75 0 01.75.75v7.5a.75.75 0 01-.75.75H3.75A.75.75 0 013 17.25v-7.5z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex flex-1 flex-col p-5">
+                            <div class="mb-3 flex items-center gap-2">
+                                <span :class="post.category === 'pengumuman' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'"
+                                    class="rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide">
+                                    {{ post.category === 'pengumuman' ? 'Pengumuman' : 'Berita' }}
+                                </span>
+                                <span class="text-xs text-slate-400">{{ post.published_at }}</span>
+                            </div>
+                            <h3 class="line-clamp-2 text-base font-bold text-slate-800 leading-snug group-hover:text-green-700 transition-colors">{{ post.title }}</h3>
+                            <p v-if="post.excerpt" class="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-slate-500">{{ post.excerpt }}</p>
+                            <span class="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-green-700">
+                                Baca selengkapnya
+                                <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+                            </span>
+                        </div>
+                    </Link>
+                </div>
+
+                <div class="mt-10 text-center sm:hidden">
+                    <Link :href="route('berita.index')"
+                        class="inline-flex items-center gap-2 rounded-xl border border-green-200 bg-white px-5 py-2.5 text-sm font-semibold text-green-700 shadow-sm transition-colors hover:bg-green-50">
+                        Lihat Semua Berita & Pengumuman
                         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                     </Link>
                 </div>

@@ -1,21 +1,26 @@
 import '../css/app.css';
 import './bootstrap';
 
-import { createInertiaApp } from '@inertiajs/vue3';
+import { createInertiaApp, router } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+let appName = import.meta.env.VITE_APP_NAME || 'Sekolah';
 
 createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
+    title: (title) => title ? `${title} - ${appName}` : appName,
     resolve: (name) =>
         resolvePageComponent(
             `./Pages/${name}.vue`,
             import.meta.glob('./Pages/**/*.vue'),
         ),
     setup({ el, App, props, plugin }) {
+        // Ambil nama sekolah dari shared props, update tiap navigasi
+        const getName = (page) => page?.props?.seo?.name || import.meta.env.VITE_APP_NAME || 'Sekolah';
+        appName = getName(props.initialPage);
+        router.on('navigate', (e) => { appName = getName(e.detail.page); });
+
         const app = createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue);
