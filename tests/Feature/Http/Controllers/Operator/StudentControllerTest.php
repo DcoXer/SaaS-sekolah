@@ -61,6 +61,7 @@ class StudentControllerTest extends TestCase
     {
         $response = $this->actingAs($this->operator)
                          ->post(route('operator.students.store'), [
+                             'nisn'   => '1234567890',
                              'nis'    => '001',
                              'name'   => 'Ahmad',
                              'gender' => 'L',
@@ -75,6 +76,7 @@ class StudentControllerTest extends TestCase
     {
         $response = $this->actingAs($this->operator)
                          ->post(route('operator.students.store'), [
+                             'nisn'        => '1234567891',
                              'nis'         => '001',
                              'name'        => 'Ahmad',
                              'gender'      => 'L',
@@ -118,6 +120,7 @@ class StudentControllerTest extends TestCase
 
         $response = $this->actingAs($this->operator)
                          ->put(route('operator.students.update', $student), [
+                             'nisn'   => '1234567890',
                              'nis'    => '001',
                              'name'   => 'Ahmad Updated',
                              'gender' => 'L',

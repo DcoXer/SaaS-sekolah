@@ -14,7 +14,10 @@ use Illuminate\Support\Str;
 
 class ReportCardService
 {
-    public function __construct(private StudentAssessmentService $assessmentService) {}
+    public function __construct(
+        private StudentAssessmentService $assessmentService,
+        private PredicateConfigService $predicateService,
+    ) {}
 
     public function getByClassroom(Classroom $classroom, int $semester): Collection
     {
@@ -112,41 +115,39 @@ class ReportCardService
     ): array {
         $subjects = \App\Models\Subject::where('grade', $classroom->grade)->get();
 
+        // Pre-load all components for this classroom+semester (1 query instead of N per subject)
+        $allComponents = \App\Models\AssessmentComponent::where('classroom_id', $classroom->id)
+            ->where('semester', $semester)
+            ->get()
+            ->groupBy('subject_id');
+
+        // Pre-load all student assessments for this student+classroom+semester (1 query instead of N×M)
+        $allAssessments = \App\Models\StudentAssessment::where('student_id', $student->id)
+            ->where('classroom_id', $classroom->id)
+            ->where('semester', $semester)
+            ->get()
+            ->keyBy('assessment_component_id');
+
         $reportData = [];
 
         foreach ($subjects as $subject) {
-            $ki3 = $this->assessmentService->calculateFinalScore(
-                $student, $classroom, $subject->id, $semester, $academicYear, 'ki3'
-            );
-            $ki4 = $this->assessmentService->calculateFinalScore(
-                $student, $classroom, $subject->id, $semester, $academicYear, 'ki4'
-            );
+            $subjectComponents = $allComponents->get($subject->id, collect());
 
-            // Fallback: gunakan hanya jika memang tidak ada komponen ki3/ki4 sama sekali
-            // (bukan sekedar belum dinilai — jika komponen ada tapi nilai kosong, biarkan null)
-            $hasKiComponents = \App\Models\AssessmentComponent::where('classroom_id', $classroom->id)
-                ->where('subject_id', $subject->id)
-                ->where('semester', $semester)
-                ->where('type', 'numeric')
-                ->whereIn('ki', ['ki3', 'ki4'])
-                ->exists();
+            $numericKi3 = $subjectComponents->filter(fn($c) => $c->type === 'numeric' && $c->ki === 'ki3');
+            $numericKi4 = $subjectComponents->filter(fn($c) => $c->type === 'numeric' && $c->ki === 'ki4');
+            $hasKiComponents = $numericKi3->isNotEmpty() || $numericKi4->isNotEmpty();
+
+            $ki3 = $this->calculateFromPreloaded($numericKi3, $allAssessments, $academicYear);
+            $ki4 = $this->calculateFromPreloaded($numericKi4, $allAssessments, $academicYear);
 
             if (!$hasKiComponents) {
-                $fallback = $this->assessmentService->calculateFinalScore(
-                    $student, $classroom, $subject->id, $semester, $academicYear
-                );
-                $ki3 = $fallback;
+                $numericAll = $subjectComponents->filter(fn($c) => $c->type === 'numeric');
+                $ki3 = $this->calculateFromPreloaded($numericAll, $allAssessments, $academicYear);
                 $ki4 = ['score' => null, 'predicate' => null];
             }
 
-            $narratives = \App\Models\StudentAssessment::whereHas('assessmentComponent', function ($q) use ($subject, $semester) {
-                $q->where('subject_id', $subject->id)
-                  ->where('semester', $semester)
-                  ->where('type', 'narrative');
-            })
-            ->where('student_id', $student->id)
-            ->where('classroom_id', $classroom->id)
-            ->get();
+            $narrativeIds = $subjectComponents->filter(fn($c) => $c->type === 'narrative')->pluck('id');
+            $narratives   = $allAssessments->filter(fn($a) => $narrativeIds->contains($a->assessment_component_id))->values();
 
             $reportData[] = [
                 'subject'       => $subject,
@@ -159,6 +160,39 @@ class ReportCardService
         }
 
         return $reportData;
+    }
+
+    private function calculateFromPreloaded(
+        \Illuminate\Support\Collection $components,
+        \Illuminate\Support\Collection $assessments,
+        AcademicYear $academicYear
+    ): array {
+        if ($components->isEmpty()) {
+            return ['score' => null, 'predicate' => null];
+        }
+
+        $totalWeight = $components->sum('weight');
+
+        if ($totalWeight === 0) {
+            return ['score' => null, 'predicate' => null];
+        }
+
+        $weightedScore = 0;
+
+        foreach ($components as $component) {
+            $assessment = $assessments->get($component->id);
+            if ($assessment?->score !== null) {
+                $weightedScore += ($assessment->score * $component->weight);
+            }
+        }
+
+        $finalScore = round($weightedScore / $totalWeight, 2);
+        $predicate  = $this->predicateService->getPredicateByScore($academicYear, (int) $finalScore);
+
+        return [
+            'score'     => $finalScore,
+            'predicate' => $predicate,
+        ];
     }
 
     public function verifyCode(string $verifyCode): ?ReportCard

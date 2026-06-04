@@ -113,6 +113,10 @@ const togglePublish = (post) => {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const INPUT_CLS  = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20';
+const categoryOptions = [
+    { value: 'berita',     label: 'Berita' },
+    { value: 'pengumuman', label: 'Pengumuman' },
+];
 </script>
 
 <template>
@@ -307,10 +311,7 @@ const INPUT_CLS  = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py
                         <!-- Category -->
                         <div>
                             <label class="mb-1.5 block text-xs font-semibold text-slate-600">Kategori <span class="text-red-500">*</span></label>
-                            <select v-model="form.category" :class="INPUT_CLS">
-                                <option value="berita">Berita</option>
-                                <option value="pengumuman">Pengumuman</option>
-                            </select>
+                            <FilterSelect v-model="form.category" :options="categoryOptions" block :hasError="!!form.errors.category" />
                             <p v-if="form.errors.category" class="mt-1 text-xs text-red-500">{{ form.errors.category }}</p>
                         </div>
 

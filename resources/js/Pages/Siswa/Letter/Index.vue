@@ -1,6 +1,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Modal from '@/Components/Modal.vue';
+import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 
@@ -36,6 +37,8 @@ const submitRequest = () => {
         },
     });
 };
+
+const templateOptions = computed(() => props.templates.map(t => ({ value: t.id, label: t.letter_type?.name ?? t.name })));
 
 // ── Search ────────────────────────────────────────────────────────────────────
 const searchLetter = ref('');
@@ -298,19 +301,12 @@ const formatDate = (val) => {
                     <label class="mb-1.5 block text-xs font-semibold text-slate-600">
                         Jenis Surat <span class="text-red-500">*</span>
                     </label>
-                    <select
+                    <FilterSelect
                         v-model="requestForm.letter_template_id"
-                        :class="[
-                            'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                            'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                            requestForm.errors.letter_template_id ? 'border-red-400' : 'border-slate-200',
-                        ]"
-                    >
-                        <option value="" disabled>Pilih jenis surat...</option>
-                        <option v-for="t in templates" :key="t.id" :value="t.id">
-                            {{ t.letter_type?.name ?? t.name }}
-                        </option>
-                    </select>
+                        :options="templateOptions"
+                        :has-error="!!requestForm.errors.letter_template_id"
+                        block
+                    />
                     <p v-if="requestForm.errors.letter_template_id" class="mt-1.5 text-xs text-red-500">
                         {{ requestForm.errors.letter_template_id }}
                     </p>

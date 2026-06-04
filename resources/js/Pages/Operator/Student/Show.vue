@@ -2,6 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import BackButton from '@/Components/BackButton.vue';
+import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import { ref, inject } from 'vue';
 
@@ -47,6 +48,15 @@ const submitDelete = () => {
         onSuccess: () => router.visit(route('operator.students.index')),
     });
 };
+
+const gradeOptions = [
+    { value: 1, label: 'Kelas 1' },
+    { value: 2, label: 'Kelas 2' },
+    { value: 3, label: 'Kelas 3' },
+    { value: 4, label: 'Kelas 4' },
+    { value: 5, label: 'Kelas 5' },
+    { value: 6, label: 'Kelas 6' },
+];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
@@ -223,17 +233,12 @@ const formatDate = (d) => d
                                 <label for="e-grade" class="mb-1.5 block text-xs font-semibold text-slate-600">
                                     Tingkat Kelas <span class="text-red-500">*</span>
                                 </label>
-                                <select
-                                    id="e-grade"
+                                <FilterSelect
                                     v-model="editForm.grade"
-                                    :class="[
-                                        'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                        editForm.errors.grade ? 'border-red-400' : 'border-slate-200',
-                                    ]"
-                                >
-                                    <option v-for="g in [1,2,3,4,5,6]" :key="g" :value="g">Kelas {{ g }}</option>
-                                </select>
+                                    :options="gradeOptions"
+                                    :has-error="!!editForm.errors.grade"
+                                    block
+                                />
                                 <p v-if="editForm.errors.grade" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.grade }}</p>
                             </div>
                             <div>

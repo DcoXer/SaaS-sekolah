@@ -58,7 +58,7 @@ class StudentService
 
             $student = Student::create([
                 'user_id'       => $userId,
-                'nisn'          => $data['nisn'],
+                'nisn'          => $data['nisn'] ?? null,
                 'nik'           => $data['nik'] ?? null,
                 'nis'           => !empty($data['nis']) ? $data['nis'] : $this->generateNis(),
                 'name'          => $data['name'],
@@ -88,7 +88,7 @@ class StudentService
     {
         return DB::transaction(function () use ($student, $data) {
             $student->update([
-                'nisn'          => $data['nisn'],
+                'nisn'          => $data['nisn'] ?? null,
                 'nik'           => $data['nik'] ?? null,
                 'nis'           => $data['nis'] ?? null,
                 'name'          => $data['name'],

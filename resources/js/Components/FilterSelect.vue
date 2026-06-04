@@ -3,7 +3,10 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps({
     modelValue: { default: '' },
-    options:    { type: Array,  default: () => [] }, // [{ value, label }]
+    options:    { type: Array,    default: () => [] }, // [{ value, label }]
+    block:      { type: Boolean,  default: false },    // full-width trigger
+    disabled:   { type: Boolean,  default: false },
+    hasError:   { type: Boolean,  default: false },
 });
 const emit = defineEmits(['update:modelValue', 'change']);
 
@@ -13,6 +16,7 @@ const el   = ref(null);
 const selected = computed(() => props.options.find(o => String(o.value) === String(props.modelValue)));
 
 const select = (val) => {
+    if (props.disabled) return;
     emit('update:modelValue', val);
     emit('change', val);
     open.value = false;
@@ -30,11 +34,16 @@ onUnmounted(() => document.removeEventListener('mousedown', handleOutside));
         <!-- Trigger button -->
         <button
             type="button"
-            @click="open = !open"
-            class="flex items-center gap-2 rounded-xl border bg-slate-50 py-2 pl-3.5 pr-3 text-sm outline-none transition-[border-color,box-shadow] hover:border-slate-300"
-            :class="open
-                ? 'border-emerald-400 bg-white ring-2 ring-emerald-400/20 text-slate-800'
-                : 'border-slate-200 text-slate-600'"
+            @click="!disabled && (open = !open)"
+            :disabled="disabled"
+            class="flex items-center gap-2 rounded-xl border bg-slate-50 py-2 pl-3.5 pr-3 text-sm outline-none transition-[border-color,box-shadow]"
+            :class="[
+                disabled  ? 'cursor-not-allowed opacity-50 border-slate-200 text-slate-400'
+                : hasError ? 'border-red-400 bg-white text-slate-800 ring-2 ring-red-400/20'
+                : open     ? 'border-emerald-400 bg-white ring-2 ring-emerald-400/20 text-slate-800'
+                :             'border-slate-200 text-slate-600 hover:border-slate-300',
+                block ? 'w-full justify-between' : '',
+            ]"
         >
             <span class="whitespace-nowrap">{{ selected ? selected.label : (options[0]?.label ?? 'Pilih') }}</span>
             <svg
@@ -54,9 +63,9 @@ onUnmounted(() => document.removeEventListener('mousedown', handleOutside));
         >
             <div
                 v-if="open"
-                class="absolute left-0 top-full z-40 mt-1.5 min-w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg ring-1 ring-black/5"
+                class="absolute left-0 top-full z-50 mt-1.5 min-w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg ring-1 ring-black/5"
             >
-                <div class="py-1">
+                <div class="max-h-60 overflow-y-auto py-1">
                     <button
                         v-for="opt in options"
                         :key="opt.value"

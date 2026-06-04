@@ -9,6 +9,7 @@ use App\Models\PaymentType;
 use App\Models\Student;
 use App\Models\User;
 use App\Services\InvoiceService;
+use App\Services\NotificationService;
 use App\Services\PaymentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -29,7 +30,7 @@ class PaymentServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->service = new PaymentService(new InvoiceService());
+        $this->service = new PaymentService(new InvoiceService(), new NotificationService());
 
         $this->academicYear = AcademicYear::create([
             'name'       => '2024/2025',

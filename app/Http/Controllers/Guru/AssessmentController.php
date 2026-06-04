@@ -32,17 +32,24 @@ class AssessmentController extends Controller
             ? $this->teacherSubjectService->getByTeacher($teacher)
             : collect();
 
-        // Sertakan assessment components per assignment agar frontend bisa navigasi ke show
-        $assignments = $assignments->map(function ($assignment) {
-            $assignment->setRelation('components',
-                AssessmentComponent::where('classroom_id', $assignment->classroom_id)
-                                   ->where('subject_id', $assignment->subject_id)
-                                   ->orderBy('semester')
-                                   ->orderBy('order')
-                                   ->get()
-            );
-            return $assignment;
-        });
+        // Batch-load all assessment components in one query to avoid N+1
+        if ($assignments->isNotEmpty()) {
+            $classroomIds = $assignments->pluck('classroom_id')->unique()->values();
+            $subjectIds   = $assignments->pluck('subject_id')->unique()->values();
+
+            $allComponents = AssessmentComponent::whereIn('classroom_id', $classroomIds)
+                ->whereIn('subject_id', $subjectIds)
+                ->orderBy('semester')
+                ->orderBy('order')
+                ->get()
+                ->groupBy(fn($c) => $c->classroom_id . '-' . $c->subject_id);
+
+            $assignments = $assignments->map(function ($assignment) use ($allComponents) {
+                $key = $assignment->classroom_id . '-' . $assignment->subject_id;
+                $assignment->setRelation('components', $allComponents->get($key, collect()));
+                return $assignment;
+            });
+        }
 
         return Inertia::render('Guru/Assessment/Index', [
             'assignments' => $assignments,

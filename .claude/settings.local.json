@@ -56,7 +56,10 @@
       "Bash(grep -r \"absensi\\\\|attendance\" /c/laragon/www/school-management/*.md)",
       "Bash(php:*)",
       "Bash(git:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(grep -n \"nisn\" /c/laragon/www/school-management/database/migrations/*.php)",
+      "Bash(grep -n '$data\\\\['\\\\''' /c/laragon/www/school-management/app/Services/StudentService.php)",
+      "Bash(grep -v \"^--$\")"
     ]
   }
 }

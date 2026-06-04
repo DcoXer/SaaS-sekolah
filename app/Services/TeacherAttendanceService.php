@@ -65,6 +65,27 @@ class TeacherAttendanceService
         $attendance->delete();
     }
 
+    public function getAllMonthlyRecap(int $month, int $year): Collection
+    {
+        $teachers = Teacher::with('user')->orderBy('id')->get();
+
+        return $teachers->map(function (Teacher $teacher) use ($month, $year) {
+            $summary = $this->getMonthlySummary($teacher, $month, $year);
+            return [
+                'id'       => $teacher->id,
+                'name'     => $teacher->user?->name ?? '-',
+                'nip'      => $teacher->nip,
+                'type'     => $teacher->type,
+                'position' => $teacher->position,
+                'hadir'    => $summary['hadir'],
+                'izin'     => $summary['izin'],
+                'sakit'    => $summary['sakit'],
+                'alpha'    => $summary['alpha'],
+                'total'    => $summary['total'],
+            ];
+        });
+    }
+
     public function countHadirInMonth(Teacher $teacher, int $month, int $year): int
     {
         return TeacherAttendance::where('teacher_id', $teacher->id)

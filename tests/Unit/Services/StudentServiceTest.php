@@ -44,6 +44,7 @@ class StudentServiceTest extends TestCase
             'nis'    => '001',
             'name'   => 'Ahmad',
             'gender' => 'L',
+            'grade'  => 1,
         ]);
 
         $this->assertInstanceOf(Student::class, $student);
@@ -56,6 +57,7 @@ class StudentServiceTest extends TestCase
             'nis'         => '001',
             'name'        => 'Ahmad',
             'gender'      => 'L',
+            'grade'       => 1,
             'parent_name' => 'Bapak Ahmad',
             'email'       => 'wali@test.com',
             'password'    => 'password',
@@ -71,6 +73,7 @@ class StudentServiceTest extends TestCase
             'nis'    => '001',
             'name'   => 'Ahmad',
             'gender' => 'L',
+            'grade'  => 1,
         ]);
 
         $this->service->assignToClassroom(
@@ -92,6 +95,7 @@ class StudentServiceTest extends TestCase
             'nis'    => '001',
             'name'   => 'Ahmad',
             'gender' => 'L',
+            'grade'  => 1,
         ]);
 
         $classroom2 = Classroom::create([
@@ -116,6 +120,7 @@ class StudentServiceTest extends TestCase
             'nis'         => '001',
             'name'        => 'Ahmad',
             'gender'      => 'L',
+            'grade'       => 1,
             'parent_name' => 'Bapak Ahmad',
             'email'       => 'wali@test.com',
             'password'    => 'password',

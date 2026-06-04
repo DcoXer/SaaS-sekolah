@@ -118,6 +118,15 @@ const doSubmit = () => {
 
 // ── View letter content ───────────────────────────────────────────────────────
 const viewTarget = ref(null);
+
+// ── Create modal select options ───────────────────────────────────────────────
+const templateOptions = computed(() =>
+    notifTemplates.value.map(t => ({ value: t.id, label: t.name }))
+);
+const targetGradeOptions = [
+    { value: '', label: 'Semua Kelas' },
+    ...([1, 2, 3, 4, 5, 6].map(g => ({ value: g, label: `Kelas ${g}` }))),
+];
 </script>
 
 <template>
@@ -323,21 +332,23 @@ const viewTarget = ref(null);
                         <!-- Template -->
                         <div>
                             <label class="mb-1.5 block text-xs font-semibold text-slate-600">Template Surat <span class="text-red-500">*</span></label>
-                            <select v-model="createForm.letter_template_id" @change="onTemplateChange"
-                                :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', createForm.errors.letter_template_id ? 'border-red-400' : 'border-slate-200']">
-                                <option value="" disabled>Pilih template</option>
-                                <option v-for="t in notifTemplates" :key="t.id" :value="t.id">{{ t.name }}</option>
-                            </select>
+                            <FilterSelect
+                                v-model="createForm.letter_template_id"
+                                :options="[{ value: '', label: 'Pilih template' }, ...templateOptions]"
+                                :has-error="!!createForm.errors.letter_template_id"
+                                @change="onTemplateChange"
+                                block
+                            />
                             <p v-if="createForm.errors.letter_template_id" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.letter_template_id }}</p>
                         </div>
                         <!-- Target grade -->
                         <div>
                             <label class="mb-1.5 block text-xs font-semibold text-slate-600">Target Kelas (opsional)</label>
-                            <select v-model="createForm.target_grade"
-                                class="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20">
-                                <option value="">Semua kelas</option>
-                                <option v-for="g in [1,2,3,4,5,6]" :key="g" :value="g">Kelas {{ g }}</option>
-                            </select>
+                            <FilterSelect
+                                v-model="createForm.target_grade"
+                                :options="targetGradeOptions"
+                                block
+                            />
                         </div>
                     </div>
 

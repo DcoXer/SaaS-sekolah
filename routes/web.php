@@ -25,6 +25,7 @@ use App\Http\Controllers\Kamad\AcademicYearController as KamadAcademicYear;
 use App\Http\Controllers\Kamad\ReportCardController as KamadReportCard;
 use App\Http\Controllers\Kamad\LetterController as KamadLetter;
 use App\Http\Controllers\Kamad\HonorariumController as KamadHonorarium;
+use App\Http\Controllers\Kamad\TeacherAttendanceRecapController as KamadTeacherAttendanceRecap;
 
 // Operator
 use App\Http\Controllers\Operator\DashboardController as OperatorDashboard;
@@ -46,6 +47,7 @@ use App\Http\Controllers\Operator\TeachingHourController;
 use App\Http\Controllers\Operator\SchoolHeroPhotoController;
 use App\Http\Controllers\Operator\StudentImportExportController;
 use App\Http\Controllers\Operator\TeacherImportExportController;
+use App\Http\Controllers\Operator\TeacherAttendanceRecapController as OperatorTeacherAttendanceRecap;
 
 // Keuangan
 use App\Http\Controllers\Keuangan\DashboardController as KeuanganDashboard;
@@ -135,6 +137,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // PPDB (view only)
         Route::get('ppdb', [KamadPpdb::class, 'index'])->name('ppdb.index');
+
+        // Rekap Absensi Guru (view only)
+        Route::get('teacher-attendances/recap', KamadTeacherAttendanceRecap::class)->name('teacher-attendances.recap');
     });
 
     // Operator Routes
@@ -225,6 +230,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('school-posts/{post}', [OperatorSchoolPost::class, 'update'])->name('school-posts.update');
         Route::delete('school-posts/{post}', [OperatorSchoolPost::class, 'destroy'])->name('school-posts.destroy');
         Route::patch('school-posts/{post}/toggle-publish', [OperatorSchoolPost::class, 'togglePublish'])->name('school-posts.toggle-publish');
+
+        // Rekap Absensi Guru
+        Route::get('teacher-attendances/recap', OperatorTeacherAttendanceRecap::class)->name('teacher-attendances.recap');
 
         // PPDB
         Route::get('ppdb', [OperatorPpdb::class, 'index'])->name('ppdb.index');

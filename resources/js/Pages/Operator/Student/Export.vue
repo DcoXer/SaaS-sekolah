@@ -1,11 +1,24 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
+import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const format      = ref('xlsx');
 const filterGrade  = ref('');
 const filterStatus = ref('');
+
+const gradeOptions = [
+    { value: '', label: 'Semua Kelas' },
+    ...([1, 2, 3, 4, 5, 6].map(g => ({ value: String(g), label: `Kelas ${g}` }))),
+];
+
+const statusOptions = [
+    { value: '',       label: 'Semua Status' },
+    { value: 'active', label: 'Aktif' },
+    { value: 'alumni', label: 'Alumni' },
+    { value: 'mutasi', label: 'Mutasi' },
+];
 
 const doExport = () => {
     const form = document.createElement('form');
@@ -78,27 +91,21 @@ const doExport = () => {
                 <!-- Filter Kelas -->
                 <div>
                     <label class="mb-2 block text-xs font-semibold text-slate-600">Filter Kelas</label>
-                    <select
+                    <FilterSelect
                         v-model="filterGrade"
-                        class="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
-                    >
-                        <option value="">Semua Kelas</option>
-                        <option v-for="g in [1,2,3,4,5,6]" :key="g" :value="String(g)">Kelas {{ g }}</option>
-                    </select>
+                        :options="gradeOptions"
+                        block
+                    />
                 </div>
 
                 <!-- Filter Status -->
                 <div>
                     <label class="mb-2 block text-xs font-semibold text-slate-600">Filter Status</label>
-                    <select
+                    <FilterSelect
                         v-model="filterStatus"
-                        class="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
-                    >
-                        <option value="">Semua Status</option>
-                        <option value="active">Aktif</option>
-                        <option value="alumni">Alumni</option>
-                        <option value="mutasi">Mutasi</option>
-                    </select>
+                        :options="statusOptions"
+                        block
+                    />
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-1">

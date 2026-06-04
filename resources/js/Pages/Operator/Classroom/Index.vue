@@ -2,6 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import Pagination from '@/Components/Pagination.vue';
+import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref, computed, watch } from 'vue';
 
@@ -74,6 +75,9 @@ watch([search, filterGrade], () => { currentPage.value = 1; });
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const gradeLabel = (grade) => `Kelas ${grade}`;
 const activeYears = props.academicYears.filter(y => y.status === 'active' || y.status === 'pending');
+
+const yearOptions = computed(() => props.academicYears.map(y => ({ value: y.id, label: y.name })));
+const gradeOptions = [1,2,3,4,5,6].map(g => ({ value: g, label: `Kelas ${g}` }));
 </script>
 
 <template>
@@ -274,27 +278,15 @@ const activeYears = props.academicYears.filter(y => y.status === 'active' || y.s
 
                     <!-- Tahun Ajaran -->
                     <div>
-                        <label for="c-year" class="mb-1.5 block text-xs font-semibold text-slate-600">
+                        <label class="mb-1.5 block text-xs font-semibold text-slate-600">
                             Tahun Ajaran <span class="text-red-500">*</span>
                         </label>
-                        <select
-                            id="c-year"
+                        <FilterSelect
                             v-model="createForm.academic_year_id"
-                            :class="[
-                                'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                createForm.errors.academic_year_id ? 'border-red-400' : 'border-slate-200',
-                            ]"
-                        >
-                            <option value="" disabled>Pilih tahun ajaran</option>
-                            <option
-                                v-for="year in academicYears"
-                                :key="year.id"
-                                :value="year.id"
-                            >
-                                {{ year.name }}
-                            </option>
-                        </select>
+                            :options="yearOptions"
+                            block
+                            :has-error="!!createForm.errors.academic_year_id"
+                        />
                         <p v-if="createForm.errors.academic_year_id" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.academic_year_id }}</p>
                     </div>
 
@@ -318,21 +310,15 @@ const activeYears = props.academicYears.filter(y => y.status === 'active' || y.s
                             <p v-if="createForm.errors.name" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.name }}</p>
                         </div>
                         <div>
-                            <label for="c-grade" class="mb-1.5 block text-xs font-semibold text-slate-600">
+                            <label class="mb-1.5 block text-xs font-semibold text-slate-600">
                                 Tingkat <span class="text-red-500">*</span>
                             </label>
-                            <select
-                                id="c-grade"
+                            <FilterSelect
                                 v-model="createForm.grade"
-                                :class="[
-                                    'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                    createForm.errors.grade ? 'border-red-400' : 'border-slate-200',
-                                ]"
-                            >
-                                <option value="" disabled>Pilih tingkat</option>
-                                <option v-for="g in [1,2,3,4,5,6]" :key="g" :value="g">Kelas {{ g }}</option>
-                            </select>
+                                :options="gradeOptions"
+                                block
+                                :has-error="!!createForm.errors.grade"
+                            />
                             <p v-if="createForm.errors.grade" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.grade }}</p>
                         </div>
                     </div>

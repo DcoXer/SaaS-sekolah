@@ -27,8 +27,10 @@ class ReportCardServiceTest extends TestCase
     {
         parent::setUp();
 
+        $predicateService = new PredicateConfigService();
         $this->service = new ReportCardService(
-            new StudentAssessmentService(new PredicateConfigService())
+            new StudentAssessmentService($predicateService),
+            $predicateService,
         );
 
         $this->academicYear = AcademicYear::create([
@@ -45,6 +47,7 @@ class ReportCardServiceTest extends TestCase
         ]);
 
         $this->student = Student::create([
+            'nisn'   => '1234567890',
             'nis'    => '001',
             'name'   => 'Ahmad',
             'gender' => 'L',
@@ -90,16 +93,17 @@ class ReportCardServiceTest extends TestCase
             'status'           => 'draft',
         ]);
 
-        $this->service->publish($reportCard, $this->kamad);
+        $this->service->approve($reportCard, $this->kamad);
 
-        $this->assertTrue($reportCard->fresh()->isPublished());
-        $this->assertNotNull($reportCard->fresh()->published_at);
-        $this->assertEquals($this->kamad->id, $reportCard->fresh()->published_by);
+        $this->assertNotNull($reportCard->fresh()->verify_code);
+        $this->assertNotNull($reportCard->fresh()->approved_at);
+        $this->assertEquals($this->kamad->id, $reportCard->fresh()->approved_by);
     }
 
     public function test_can_publish_all_in_class(): void
     {
         $student2 = Student::create([
+            'nisn'   => '9876543210',
             'nis'    => '002',
             'name'   => 'Budi',
             'gender' => 'L',
@@ -112,14 +116,17 @@ class ReportCardServiceTest extends TestCase
 
         $this->service->generateForClass($this->classroom, $this->academicYear, 1);
 
-        $this->service->publishAllInClass(
+        // Set status to waiting_approval so approveAll can process them
+        ReportCard::where('classroom_id', $this->classroom->id)->update(['status' => 'waiting_approval']);
+
+        $this->service->approveAll(
             $this->classroom,
             $this->academicYear,
             1,
             $this->kamad
         );
 
-        $this->assertCount(2, ReportCard::where('status', 'published')->get());
+        $this->assertCount(2, ReportCard::where('status', 'approved')->get());
     }
 
     public function test_can_update_notes(): void

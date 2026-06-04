@@ -2,8 +2,9 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import BackButton from '@/Components/BackButton.vue';
+import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, Link, useForm, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps({
     classroom: { type: Object, required: true },
@@ -209,6 +210,21 @@ const submitDelete = () => {
         onSuccess: () => router.visit(route('operator.classrooms.index')),
     });
 };
+
+// ── Select Options ────────────────────────────────────────────────────────────
+const gradeOptions = [1,2,3,4,5,6].map(g => ({ value: g, label: `Kelas ${g}` }));
+
+const guruBidangOptions = computed(() =>
+    availableGuruBidang.value.map(t => ({ value: String(t.id), label: t.user.name }))
+);
+
+const subjectOptions = computed(() =>
+    props.subjects.map(s => ({ value: String(s.id), label: s.name }))
+);
+
+const peerClassroomOptions = computed(() =>
+    props.peerClassrooms.map(c => ({ value: c.id, label: c.name }))
+);
 </script>
 
 <template>
@@ -366,20 +382,15 @@ const submitDelete = () => {
                             <p v-if="editForm.errors.name" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.name }}</p>
                         </div>
                         <div>
-                            <label for="e-grade" class="mb-1.5 block text-xs font-semibold text-slate-600">
+                            <label class="mb-1.5 block text-xs font-semibold text-slate-600">
                                 Tingkat <span class="text-red-500">*</span>
                             </label>
-                            <select
-                                id="e-grade"
+                            <FilterSelect
                                 v-model="editForm.grade"
-                                :class="[
-                                    'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                    editForm.errors.grade ? 'border-red-400' : 'border-slate-200',
-                                ]"
-                            >
-                                <option v-for="g in [1,2,3,4,5,6]" :key="g" :value="g">Kelas {{ g }}</option>
-                            </select>
+                                :options="gradeOptions"
+                                block
+                                :has-error="!!editForm.errors.grade"
+                            />
                             <p v-if="editForm.errors.grade" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.grade }}</p>
                         </div>
                     </div>
@@ -638,45 +649,29 @@ const submitDelete = () => {
                 <template v-else>
                     <!-- Pilih Guru -->
                     <div>
-                        <label for="gb-teacher" class="mb-1.5 block text-xs font-semibold text-slate-600">
+                        <label class="mb-1.5 block text-xs font-semibold text-slate-600">
                             Guru Bidang <span class="text-red-500">*</span>
                         </label>
-                        <select
-                            id="gb-teacher"
+                        <FilterSelect
                             v-model="assignGuruBidangForm.teacher_id"
-                            :class="[
-                                'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                assignGuruBidangForm.errors.teacher_id ? 'border-red-400' : 'border-slate-200',
-                            ]"
-                        >
-                            <option value="" disabled>Pilih guru</option>
-                            <option v-for="teacher in availableGuruBidang" :key="teacher.id" :value="String(teacher.id)">
-                                {{ teacher.user.name }}
-                            </option>
-                        </select>
+                            :options="guruBidangOptions"
+                            block
+                            :has-error="!!assignGuruBidangForm.errors.teacher_id"
+                        />
                         <p v-if="assignGuruBidangForm.errors.teacher_id" class="mt-1.5 text-xs text-red-500">{{ assignGuruBidangForm.errors.teacher_id }}</p>
                     </div>
 
                     <!-- Pilih Mapel -->
                     <div>
-                        <label for="gb-subject" class="mb-1.5 block text-xs font-semibold text-slate-600">
+                        <label class="mb-1.5 block text-xs font-semibold text-slate-600">
                             Mata Pelajaran <span class="text-red-500">*</span>
                         </label>
-                        <select
-                            id="gb-subject"
+                        <FilterSelect
                             v-model="assignGuruBidangForm.subject_id"
-                            :class="[
-                                'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                assignGuruBidangForm.errors.subject_id ? 'border-red-400' : 'border-slate-200',
-                            ]"
-                        >
-                            <option value="" disabled>Pilih mata pelajaran</option>
-                            <option v-for="subject in subjects" :key="subject.id" :value="String(subject.id)">
-                                {{ subject.name }}
-                            </option>
-                        </select>
+                            :options="subjectOptions"
+                            block
+                            :has-error="!!assignGuruBidangForm.errors.subject_id"
+                        />
                         <p v-if="assignGuruBidangForm.errors.subject_id" class="mt-1.5 text-xs text-red-500">{{ assignGuruBidangForm.errors.subject_id }}</p>
                     </div>
                 </template>
@@ -803,23 +798,15 @@ const submitDelete = () => {
                 </div>
 
                 <div>
-                    <label for="mv-target" class="mb-1.5 block text-xs font-semibold text-slate-600">
+                    <label class="mb-1.5 block text-xs font-semibold text-slate-600">
                         Kelas Tujuan <span class="text-red-500">*</span>
                     </label>
-                    <select
-                        id="mv-target"
+                    <FilterSelect
                         v-model="moveStudentsForm.target_classroom_id"
-                        :class="[
-                            'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                            'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                            moveStudentsForm.errors.target_classroom_id ? 'border-red-400' : 'border-slate-200',
-                        ]"
-                    >
-                        <option value="" disabled>Pilih kelas tujuan</option>
-                        <option v-for="cls in peerClassrooms" :key="cls.id" :value="cls.id">
-                            {{ cls.name }}
-                        </option>
-                    </select>
+                        :options="peerClassroomOptions"
+                        block
+                        :has-error="!!moveStudentsForm.errors.target_classroom_id"
+                    />
                     <p v-if="moveStudentsForm.errors.target_classroom_id" class="mt-1.5 text-xs text-red-500">{{ moveStudentsForm.errors.target_classroom_id }}</p>
                 </div>
 

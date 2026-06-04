@@ -1,6 +1,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Modal from '@/Components/Modal.vue';
+import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, useForm, router } from '@inertiajs/vue3';
 import { ref, computed, watch } from 'vue';
 
@@ -144,6 +145,20 @@ const typeColor = {
 };
 const kiLabel = { ki3: 'KI 3', ki4: 'KI 4' };
 const kiColor = { ki3: 'bg-sky-100 text-sky-700', ki4: 'bg-teal-100 text-teal-700' };
+
+const classroomOptions = computed(() => props.classrooms.map(cls => ({ value: cls.id, label: cls.name })));
+const semesterOptions  = [{ value: 1, label: 'Semester 1' }, { value: 2, label: 'Semester 2' }];
+
+const subjectOptions = computed(() => filteredSubjects.value.map(s => ({ value: s.id, label: s.name })));
+const typeOptions = [
+    { value: 'numeric',   label: 'Numerik' },
+    { value: 'predicate', label: 'Predikat' },
+    { value: 'narrative', label: 'Narasi' },
+];
+const kiOptions = [
+    { value: 'ki3', label: 'KI 3' },
+    { value: 'ki4', label: 'KI 4' },
+];
 </script>
 
 <template>
@@ -184,22 +199,11 @@ const kiColor = { ki3: 'bg-sky-100 text-sky-700', ki4: 'bg-teal-100 text-teal-70
             <div class="flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
                 <div class="flex items-center gap-2">
                     <label class="text-xs font-semibold text-slate-500">Kelas:</label>
-                    <select
-                        v-model="selectedClassroom"
-                        class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
-                    >
-                        <option v-for="cls in classrooms" :key="cls.id" :value="cls.id">{{ cls.name }}</option>
-                    </select>
+                    <FilterSelect v-model="selectedClassroom" :options="classroomOptions" />
                 </div>
                 <div class="flex items-center gap-2">
                     <label class="text-xs font-semibold text-slate-500">Semester:</label>
-                    <select
-                        v-model="selectedSemester"
-                        class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
-                    >
-                        <option :value="1">Semester 1</option>
-                        <option :value="2">Semester 2</option>
-                    </select>
+                    <FilterSelect v-model="selectedSemester" :options="semesterOptions" />
                 </div>
             </div>
 
@@ -325,11 +329,7 @@ const kiColor = { ki3: 'bg-sky-100 text-sky-700', ki4: 'bg-teal-100 text-teal-70
                     <!-- Mata pelajaran -->
                     <div class="col-span-2">
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Mata Pelajaran <span class="text-red-500">*</span></label>
-                        <select v-model="createForm.subject_id"
-                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', createForm.errors.subject_id ? 'border-red-400' : 'border-slate-200']">
-                            <option value="" disabled>Pilih mata pelajaran</option>
-                            <option v-for="s in filteredSubjects" :key="s.id" :value="s.id">{{ s.name }}</option>
-                        </select>
+                        <FilterSelect v-model="createForm.subject_id" :options="subjectOptions" block :hasError="!!createForm.errors.subject_id" />
                         <p v-if="createForm.errors.subject_id" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.subject_id }}</p>
                     </div>
 
@@ -344,12 +344,7 @@ const kiColor = { ki3: 'bg-sky-100 text-sky-700', ki4: 'bg-teal-100 text-teal-70
                     <!-- Tipe + KI -->
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Tipe <span class="text-red-500">*</span></label>
-                        <select v-model="createForm.type"
-                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', createForm.errors.type ? 'border-red-400' : 'border-slate-200']">
-                            <option value="numeric">Numerik</option>
-                            <option value="predicate">Predikat</option>
-                            <option value="narrative">Narasi</option>
-                        </select>
+                        <FilterSelect v-model="createForm.type" :options="typeOptions" block :hasError="!!createForm.errors.type" />
                         <p v-if="createForm.errors.type" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.type }}</p>
                     </div>
 
@@ -359,12 +354,7 @@ const kiColor = { ki3: 'bg-sky-100 text-sky-700', ki4: 'bg-teal-100 text-teal-70
                             Aspek Penilaian
                             <span v-if="createForm.type === 'numeric'" class="text-red-500">*</span>
                         </label>
-                        <select v-model="createForm.ki"
-                            :disabled="createForm.type !== 'numeric'"
-                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20 disabled:bg-slate-50 disabled:text-slate-400', createForm.errors.ki ? 'border-red-400' : 'border-slate-200']">
-                            <option value="ki3">Pengetahuan (KI 3)</option>
-                            <option value="ki4">Keterampilan (KI 4)</option>
-                        </select>
+                        <FilterSelect v-model="createForm.ki" :options="kiOptions" block :disabled="createForm.type !== 'numeric'" />
                         <p v-if="createForm.errors.ki" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.ki }}</p>
                     </div>
 
@@ -444,23 +434,13 @@ const kiColor = { ki3: 'bg-sky-100 text-sky-700', ki4: 'bg-teal-100 text-teal-70
                     <!-- Tipe -->
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Tipe <span class="text-red-500">*</span></label>
-                        <select v-model="editForm.type"
-                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.type ? 'border-red-400' : 'border-slate-200']">
-                            <option value="numeric">Numerik</option>
-                            <option value="predicate">Predikat</option>
-                            <option value="narrative">Narasi</option>
-                        </select>
+                        <FilterSelect v-model="editForm.type" :options="typeOptions" block :hasError="!!editForm.errors.type" />
                     </div>
 
                     <!-- KI -->
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Aspek Penilaian</label>
-                        <select v-model="editForm.ki"
-                            :disabled="editForm.type !== 'numeric'"
-                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20 disabled:bg-slate-50 disabled:text-slate-400', 'border-slate-200']">
-                            <option value="ki3">Pengetahuan (KI 3)</option>
-                            <option value="ki4">Keterampilan (KI 4)</option>
-                        </select>
+                        <FilterSelect v-model="editForm.ki" :options="kiOptions" block :disabled="editForm.type !== 'numeric'" />
                     </div>
 
                     <!-- Bobot -->

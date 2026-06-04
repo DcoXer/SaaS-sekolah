@@ -51,6 +51,7 @@ class StudentAssessmentServiceTest extends TestCase
         ]);
 
         $this->student = Student::create([
+            'nisn'   => '1234567890',
             'nis'    => '001',
             'name'   => 'Ahmad',
             'gender' => 'L',
@@ -112,6 +113,7 @@ class StudentAssessmentServiceTest extends TestCase
     public function test_can_bulk_input_scores(): void
     {
         $student2 = Student::create([
+            'nisn'   => '9876543210',
             'nis'    => '002',
             'name'   => 'Budi',
             'gender' => 'L',

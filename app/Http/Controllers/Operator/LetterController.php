@@ -42,10 +42,10 @@ class LetterController extends Controller
         );
 
         // Notifikasi in-app ke setiap siswa penerima
-        $letter->load('letterRecipients.student.user', 'letterTemplate.letterType');
+        $letter->load('recipients.student.user', 'letterTemplate.letterType');
         $typeName = $letter->letterTemplate?->letterType?->name ?? 'Pemberitahuan';
 
-        foreach ($letter->letterRecipients as $recipient) {
+        foreach ($letter->recipients as $recipient) {
             if ($recipient->student?->user) {
                 $this->notif->send(
                     $recipient->student->user,

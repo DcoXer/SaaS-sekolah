@@ -1,12 +1,18 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Modal from '@/Components/Modal.vue';
+import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const props = defineProps({
     letterTypes: { type: Array, required: true },
 });
+
+const categoryOptions = [
+    { value: 'keterangan',    label: 'Surat Keterangan' },
+    { value: 'pemberitahuan', label: 'Surat Pemberitahuan' },
+];
 
 const categoryLabel = { keterangan: 'Keterangan', pemberitahuan: 'Pemberitahuan' };
 const categoryColor = {
@@ -199,12 +205,7 @@ const submitDelete = () => {
                     </div>
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Kategori <span class="text-red-500">*</span></label>
-                        <select v-model="createForm.category"
-                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', createForm.errors.category ? 'border-red-400' : 'border-slate-200']">
-                            <option value="" disabled>Pilih kategori</option>
-                            <option value="keterangan">Keterangan (request wali murid)</option>
-                            <option value="pemberitahuan">Pemberitahuan (broadcast operator)</option>
-                        </select>
+                        <FilterSelect v-model="createForm.category" :options="categoryOptions" block :hasError="!!createForm.errors.category" />
                         <p v-if="createForm.errors.category" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.category }}</p>
                     </div>
                     <div>
@@ -250,11 +251,7 @@ const submitDelete = () => {
                     </div>
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Kategori <span class="text-red-500">*</span></label>
-                        <select v-model="editForm.category"
-                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.category ? 'border-red-400' : 'border-slate-200']">
-                            <option value="keterangan">Keterangan</option>
-                            <option value="pemberitahuan">Pemberitahuan</option>
-                        </select>
+                        <FilterSelect v-model="editForm.category" :options="categoryOptions" block :hasError="!!editForm.errors.category" />
                         <p v-if="editForm.errors.category" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.category }}</p>
                     </div>
                     <div>

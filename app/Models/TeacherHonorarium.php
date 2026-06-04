@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Model;
 ])]
 class TeacherHonorarium extends Model
 {
+    protected $table = 'teacher_honorariums';
+
     protected function casts(): array
     {
         return [

@@ -1,6 +1,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Modal from '@/Components/Modal.vue';
+import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 
@@ -81,6 +82,9 @@ const submitDelete = () => {
         onSuccess: () => { deleteTarget.value = null; },
     });
 };
+
+// ── Letter type options for FilterSelect ─────────────────────────────────────
+const letterTypeOptions = computed(() => props.letterTypes.map(t => ({ value: t.id, label: t.name })));
 
 // ── Grouped by letter type ────────────────────────────────────────────────────
 const grouped = computed(() => {
@@ -226,11 +230,7 @@ const grouped = computed(() => {
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div>
                             <label class="mb-1.5 block text-xs font-semibold text-slate-600">Jenis Surat <span class="text-red-500">*</span></label>
-                            <select v-model="createForm.letter_type_id"
-                                :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', createForm.errors.letter_type_id ? 'border-red-400' : 'border-slate-200']">
-                                <option value="" disabled>Pilih jenis surat</option>
-                                <option v-for="lt in letterTypes" :key="lt.id" :value="lt.id">{{ lt.name }}</option>
-                            </select>
+                            <FilterSelect v-model="createForm.letter_type_id" :options="letterTypeOptions" block :hasError="!!createForm.errors.letter_type_id" />
                             <p v-if="createForm.errors.letter_type_id" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.letter_type_id }}</p>
                         </div>
                         <div>

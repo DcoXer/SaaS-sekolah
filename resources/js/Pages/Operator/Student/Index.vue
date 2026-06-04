@@ -81,6 +81,9 @@ const paginated   = computed(() => {
 });
 watch([search, filterGrade, filterStatus], () => { currentPage.value = 1; });
 
+// ── Select Options ────────────────────────────────────────────────────────────
+const gradeOptions = [1,2,3,4,5,6].map(g => ({ value: g, label: `Kelas ${g}` }));
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const genderConfig = {
     L: { label: 'L', badge: 'bg-sky-50 text-sky-700 ring-sky-200' },
@@ -401,21 +404,15 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                             <!-- Grade + Tanggal Lahir -->
                             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                 <div>
-                                    <label for="c-grade" class="mb-1.5 block text-xs font-semibold text-slate-600">
+                                    <label class="mb-1.5 block text-xs font-semibold text-slate-600">
                                         Tingkat Kelas <span class="text-red-500">*</span>
                                     </label>
-                                    <select
-                                        id="c-grade"
+                                    <FilterSelect
                                         v-model="createForm.grade"
-                                        :class="[
-                                            'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                            'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                            createForm.errors.grade ? 'border-red-400' : 'border-slate-200',
-                                        ]"
-                                    >
-                                        <option value="" disabled>Pilih tingkat</option>
-                                        <option v-for="g in [1,2,3,4,5,6]" :key="g" :value="g">Kelas {{ g }}</option>
-                                    </select>
+                                        :options="gradeOptions"
+                                        block
+                                        :has-error="!!createForm.errors.grade"
+                                    />
                                     <p v-if="createForm.errors.grade" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.grade }}</p>
                                 </div>
                                 <div>

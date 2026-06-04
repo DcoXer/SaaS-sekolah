@@ -2,6 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import BackButton from '@/Components/BackButton.vue';
+import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import { ref, inject } from 'vue';
 
@@ -215,10 +216,7 @@ const positionConfig = {
                     <!-- Jabatan Struktural -->
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Jabatan Struktural</label>
-                        <select v-model="editForm.position"
-                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.position ? 'border-red-400' : 'border-slate-200']">
-                            <option v-for="opt in positionOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-                        </select>
+                        <FilterSelect v-model="editForm.position" :options="positionOptions" block :hasError="!!editForm.errors.position" />
                         <p v-if="editForm.errors.position" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.position }}</p>
                     </div>
 

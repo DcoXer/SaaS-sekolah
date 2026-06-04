@@ -56,7 +56,7 @@ class AcademicYearService
                                   ->where('grade', 6)
                                   ->when($previousYearId, fn($q) => $q->whereHas(
                                       'classrooms',
-                                      fn($q2) => $q2->where('academic_year_id', $previousYearId)
+                                      fn($q2) => $q2->where('classrooms.academic_year_id', $previousYearId)
                                   ))
                                   ->with('user')
                                   ->get();
@@ -77,7 +77,7 @@ class AcademicYearService
                    ->whereBetween('grade', [1, 5])
                    ->when($previousYearId, fn($q) => $q->whereHas(
                        'classrooms',
-                       fn($q2) => $q2->where('academic_year_id', $previousYearId)
+                       fn($q2) => $q2->where('classrooms.academic_year_id', $previousYearId)
                    ))
                    ->increment('grade');
         });
