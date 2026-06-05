@@ -39,6 +39,32 @@ const profileForm = useForm({
 
 const submitProfile = () => profileForm.patch(route('profile.update'));
 
+// ── Signature ─────────────────────────────────────────────────────────────────
+const sigInput   = ref(null);
+const sigPreview = ref(null);
+const sigForm    = useForm({ signature: null });
+
+const onSigChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    sigForm.signature = file;
+    sigPreview.value = URL.createObjectURL(file);
+};
+
+const submitSignature = () => {
+    sigForm.post(route('profile.signature'), {
+        forceFormData: true,
+        onSuccess: () => { sigPreview.value = null; sigForm.reset(); },
+    });
+};
+
+const deleteSignature = () => {
+    if (!confirm('Hapus tanda tangan?')) return;
+    sigForm.delete(route('profile.signature.delete'), {
+        onSuccess: () => { sigPreview.value = null; },
+    });
+};
+
 // ── Password ──────────────────────────────────────────────────────────────────
 const passwordForm = useForm({
     current_password:      '',
@@ -173,6 +199,60 @@ const submitPassword = () => {
                         </button>
                     </div>
                 </form>
+            </div>
+
+            <!-- ── Tanda Tangan ── -->
+            <div class="rounded-2xl border border-slate-100 bg-white shadow-sm">
+                <div class="border-b border-slate-50 px-5 py-4">
+                    <h2 class="text-sm font-semibold text-slate-800">Tanda Tangan</h2>
+                    <p class="mt-0.5 text-xs text-slate-400">Digunakan pada slip honor dan dokumen resmi. Gunakan foto TTD di atas kertas putih bersih.</p>
+                </div>
+                <div class="px-5 py-5">
+                    <div class="flex items-start gap-5">
+
+                        <!-- Preview box -->
+                        <div class="shrink-0">
+                            <div class="flex h-20 w-40 items-center justify-center overflow-hidden rounded-xl border-2 border-dashed bg-slate-50"
+                                :class="(sigPreview || user.signature_url) ? 'border-slate-200' : 'border-slate-200'">
+                                <img
+                                    v-if="sigPreview || user.signature_url"
+                                    :src="sigPreview || user.signature_url"
+                                    alt="Tanda tangan"
+                                    class="h-full w-full object-contain p-2"
+                                />
+                                <div v-else class="flex flex-col items-center gap-1 text-slate-300">
+                                    <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+                                    </svg>
+                                    <span class="text-[11px]">Belum ada</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs text-slate-500 leading-relaxed">Upload foto tanda tangan dengan latar putih bersih. Format JPG, PNG. Maks. 2 MB.</p>
+                            <div class="mt-3 flex flex-wrap gap-2">
+                                <button type="button" @click="sigInput.click()"
+                                    class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-50">
+                                    Pilih File
+                                </button>
+                                <button v-if="sigForm.signature" type="button" :disabled="sigForm.processing"
+                                    @click="submitSignature"
+                                    class="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-60">
+                                    {{ sigForm.processing ? 'Menyimpan...' : 'Simpan TTD' }}
+                                </button>
+                                <button v-if="user.signature_url && !sigForm.signature" type="button"
+                                    @click="deleteSignature"
+                                    class="rounded-lg border border-red-100 px-3 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50">
+                                    Hapus TTD
+                                </button>
+                            </div>
+                            <p v-if="sigForm.errors.signature" class="mt-1.5 text-xs text-red-500">{{ sigForm.errors.signature }}</p>
+                        </div>
+                    </div>
+
+                    <input ref="sigInput" type="file" accept="image/jpg,image/jpeg,image/png,image/webp" class="hidden" @change="onSigChange" />
+                </div>
             </div>
 
             <!-- ── Ubah Password ── -->

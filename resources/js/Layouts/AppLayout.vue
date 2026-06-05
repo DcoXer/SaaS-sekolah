@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted, onUnmounted, provide } from 'vue';
 import { Head, Link, usePage, router } from '@inertiajs/vue3';
 import PwaInstall from '@/Components/PwaInstall.vue';
+import PageLoading from '@/Components/PageLoading.vue';
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
@@ -130,22 +131,18 @@ const markRead = async (id) => {
     await fetch(`/notifications/${id}/read`, {
         method: 'PATCH',
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
             'Accept': 'application/json',
         },
     });
-    router.reload({ only: ['notifications', 'unreadCount'] });
+    router.reload({ only: ['notifications', 'unreadCount'], preserveScroll: true, preserveState: true });
 };
 
-const markAllRead = async () => {
-    await fetch('/notifications/read-all', {
-        method: 'PATCH',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            'Accept': 'application/json',
-        },
+const markAllRead = () => {
+    router.patch(route('notifications.read-all'), {}, {
+        preserveScroll: true,
+        preserveState: true,
     });
-    router.reload({ only: ['notifications', 'unreadCount'] });
 };
 
 // Close notif dropdown when clicking outside
@@ -154,8 +151,37 @@ const handleOutsideClick = (e) => {
         notifOpen.value = false;
     }
 };
-onMounted(() => document.addEventListener('click', handleOutsideClick));
-onUnmounted(() => document.removeEventListener('click', handleOutsideClick));
+
+// ── Page navigation loading ───────────────────────────────────────────────────
+const navigating = ref(false);
+let navTimeout = null;
+
+// Poll notifications every 30s so semua role dapat update real-time
+let pollTimer = null;
+const pollNotifications = () => {
+    if (!document.hidden) {
+        router.reload({ only: ['notifications', 'unreadCount'], preserveScroll: true, preserveState: true });
+    }
+};
+
+onMounted(() => {
+    document.addEventListener('click', handleOutsideClick);
+    pollTimer = setInterval(pollNotifications, 30_000);
+
+    // Tampilkan loading overlay saat navigasi Inertia (delay 120ms agar fast nav tidak flicker)
+    router.on('start', () => {
+        navTimeout = setTimeout(() => { navigating.value = true; }, 120);
+    });
+    router.on('finish', () => {
+        clearTimeout(navTimeout);
+        navigating.value = false;
+    });
+});
+onUnmounted(() => {
+    document.removeEventListener('click', handleOutsideClick);
+    clearInterval(pollTimer);
+    clearTimeout(navTimeout);
+});
 
 // ── Toast system ─────────────────────────────────────────────────────────────
 const toasts = ref([]);
@@ -539,6 +565,9 @@ const iconPaths = {
     </div>
 
     <PwaInstall />
+
+    <!-- Navigation loading overlay -->
+    <PageLoading :show="navigating" overlay variant="spinner" text="Memuat..." />
 
     <!-- ── Toast container ──────────────────────────────────────────────────── -->
     <div

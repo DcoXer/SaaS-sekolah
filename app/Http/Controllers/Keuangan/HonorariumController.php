@@ -9,9 +9,11 @@ use App\Models\Teacher;
 use App\Models\TeacherHonorarium;
 use App\Jobs\SendHonorariumSlipJob;
 use App\Services\AcademicYearService;
+use App\Services\TeacherAttendanceService;
 use App\Services\TeacherHonorariumService;
 use App\Services\TeachingHourService;
 use App\Services\WhatsAppService;
+use App\Helpers\QrCodeHelper;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -23,6 +25,7 @@ class HonorariumController extends Controller
     public function __construct(
         private TeacherHonorariumService $service,
         private AcademicYearService $academicYearService,
+        private TeacherAttendanceService $attendanceService,
         private TeachingHourService $teachingHourService,
         private WhatsAppService $whatsAppService,
     ) {}
@@ -75,6 +78,11 @@ class HonorariumController extends Controller
             return redirect()->back()->withErrors(['teacher_id' => 'Guru ini belum memiliki konfigurasi jam pelajaran untuk tahun ajaran tersebut.']);
         }
 
+        // Cek kelengkapan absensi bulan tersebut
+        if (!$this->attendanceService->isMonthComplete($teacher, $validated['period_month'], $validated['period_year'])) {
+            return redirect()->back()->withErrors(['period_month' => 'Absensi guru di bulan ini belum lengkap. Pastikan semua hari kerja sudah diisi sebelum membuat slip.']);
+        }
+
         $this->service->generate($teacher, $academicYear, $validated['period_month'], $validated['period_year']);
 
         return redirect()->back()->with('success', 'Slip honor berhasil dibuat.');
@@ -89,15 +97,22 @@ class HonorariumController extends Controller
         ]);
 
         $academicYear = AcademicYear::findOrFail($validated['academic_year_id']);
-        $result       = $this->service->generateAll($academicYear, (int) $validated['period_month'], (int) $validated['period_year']);
+        $result = $this->service->generateAll($academicYear, (int) $validated['period_month'], (int) $validated['period_year']);
 
-        if ($result['created'] === 0 && $result['skipped'] === 0) {
+        if ($result['created'] === 0 && $result['skipped'] === 0 && $result['incomplete'] === 0) {
             return redirect()->back()->withErrors(['academic_year_id' => 'Tidak ada guru dengan konfigurasi jam pelajaran untuk tahun ajaran ini.']);
+        }
+
+        if ($result['created'] === 0 && $result['incomplete'] > 0) {
+            return redirect()->back()->withErrors(['period_month' => "Tidak ada slip yang dibuat. {$result['incomplete']} guru absensinya belum lengkap di periode ini."]);
         }
 
         $msg = "Berhasil membuat {$result['created']} slip honor.";
         if ($result['skipped'] > 0) {
-            $msg .= " {$result['skipped']} guru dilewati (sudah punya slip periode ini).";
+            $msg .= " {$result['skipped']} guru dilewati (sudah punya slip).";
+        }
+        if ($result['incomplete'] > 0) {
+            $msg .= " {$result['incomplete']} guru dilewati (absensi belum lengkap).";
         }
 
         return redirect()->back()->with('success', $msg);
@@ -143,6 +158,26 @@ class HonorariumController extends Controller
         $this->service->delete($honorarium);
 
         return redirect()->back()->with('success', 'Slip honor berhasil dihapus.');
+    }
+
+    private function loadPdfAssets(?\App\Models\SchoolSetting $school, ?\App\Models\User $tuKeuangan): array
+    {
+        $logoBase64  = $logoMime  = null;
+        $stampBase64 = $stampMime = null;
+        $sigBase64   = $sigMime   = null;
+
+        $loadImage = function (?string $relativePath): array {
+            if (!$relativePath) return [null, null];
+            $abs = storage_path('app/public/' . $relativePath);
+            if (!file_exists($abs)) return [null, null];
+            return [base64_encode(file_get_contents($abs)), mime_content_type($abs) ?: 'image/png'];
+        };
+
+        [$logoBase64,  $logoMime]  = $loadImage($school?->logo);
+        [$stampBase64, $stampMime] = $loadImage($school?->stamp);
+        [$sigBase64,   $sigMime]   = $loadImage($tuKeuangan?->signature);
+
+        return [$logoBase64, $logoMime, $stampBase64, $stampMime, $sigBase64, $sigMime];
     }
 
     public function sendAllSlips(\Illuminate\Http\Request $request)
@@ -199,23 +234,23 @@ class HonorariumController extends Controller
         }
 
         $schoolSetting = \App\Models\SchoolSetting::first();
+        [$logoBase64, $logoMime, $stampBase64, $stampMime, $sigBase64, $sigMime] = $this->loadPdfAssets($schoolSetting, $honorarium->tuKeuangan);
 
-        $logoBase64 = null;
-        $logoMime   = null;
-        if ($schoolSetting?->logo) {
-            $path = storage_path('app/public/' . $schoolSetting->logo);
-            if (file_exists($path)) {
-                $logoBase64 = base64_encode(file_get_contents($path));
-                $logoMime   = mime_content_type($path);
-            }
-        }
+        $verifyUrl = route('honor.verify', $honorarium->slip_code);
+        $qrPng     = QrCodeHelper::pngBase64($verifyUrl);
 
         $pdf = Pdf::loadView('pdf.honorarium_slip', [
             'honorarium'   => $honorarium,
             'school'       => $schoolSetting,
             'logo_base64'  => $logoBase64,
             'logo_mime'    => $logoMime,
+            'stamp_base64' => $stampBase64,
+            'stamp_mime'   => $stampMime,
+            'sig_base64'   => $sigBase64,
+            'sig_mime'     => $sigMime,
             'period_label' => $honorarium->periodLabel(),
+            'qr_png'       => $qrPng,
+            'verify_url'   => $verifyUrl,
         ])->setPaper('a5', 'portrait');
 
         // Simpan PDF sementara di storage public
@@ -250,23 +285,23 @@ class HonorariumController extends Controller
         $honorarium->load(['teacher.user', 'academicYear', 'tuKeuangan']);
 
         $schoolSetting = \App\Models\SchoolSetting::first();
+        [$logoBase64, $logoMime, $stampBase64, $stampMime, $sigBase64, $sigMime] = $this->loadPdfAssets($schoolSetting, $honorarium->tuKeuangan);
 
-        $logoBase64 = null;
-        $logoMime   = null;
-        if ($schoolSetting?->logo) {
-            $path = storage_path('app/public/' . $schoolSetting->logo);
-            if (file_exists($path)) {
-                $logoBase64 = base64_encode(file_get_contents($path));
-                $logoMime   = mime_content_type($path);
-            }
-        }
+        $verifyUrl = route('honor.verify', $honorarium->slip_code);
+        $qrPng     = QrCodeHelper::pngBase64($verifyUrl);
 
         $pdf = Pdf::loadView('pdf.honorarium_slip', [
             'honorarium'    => $honorarium,
             'school'        => $schoolSetting,
             'logo_base64'   => $logoBase64,
             'logo_mime'     => $logoMime,
+            'stamp_base64'  => $stampBase64,
+            'stamp_mime'    => $stampMime,
+            'sig_base64'    => $sigBase64,
+            'sig_mime'      => $sigMime,
             'period_label'  => $honorarium->periodLabel(),
+            'qr_png'        => $qrPng,
+            'verify_url'    => $verifyUrl,
         ])->setPaper('a5', 'portrait');
 
         $filename = 'slip-honor-' . str($honorarium->teacher->user->name)->slug() . '-' . $honorarium->period_month . '-' . $honorarium->period_year . '.pdf';

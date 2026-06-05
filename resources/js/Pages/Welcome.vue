@@ -334,22 +334,29 @@ const jsonLd = computed(() => ({
 
 
         <!-- PPDB Banner -->
-        <section v-if="ppdbActive" class="bg-gradient-to-r from-amber-600 to-yellow-500 py-10">
-            <div class="mx-auto max-w-6xl px-6">
+        <section v-if="ppdbActive" class="relative overflow-hidden bg-gradient-to-r from-amber-500 via-amber-500 to-yellow-400 py-10">
+            <div class="pointer-events-none absolute -right-10 -top-10 size-52 rounded-full bg-white/10"/>
+            <div class="pointer-events-none absolute -bottom-8 -left-6 size-40 rounded-full bg-amber-600/30"/>
+            <div class="relative mx-auto max-w-6xl px-6">
                 <div v-reveal class="flex flex-col items-center justify-between gap-6 text-center sm:flex-row sm:text-left">
-                    <div>
-                        <p class="text-xs font-bold uppercase tracking-widest text-amber-100">Penerimaan Peserta Didik Baru</p>
-                        <h2 class="mt-1 text-2xl font-extrabold text-white">PPDB Sekarang Dibuka!</h2>
-                        <p class="mt-1 text-sm text-amber-100">Daftarkan putra-putri Anda sekarang. Tempat terbatas.</p>
+                    <div class="flex items-center gap-5">
+                        <div class="hidden size-14 shrink-0 items-center justify-center rounded-2xl bg-white/20 sm:flex">
+                            <svg class="size-7 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-widest text-amber-100">Penerimaan Peserta Didik Baru</p>
+                            <h2 class="mt-0.5 text-2xl font-extrabold text-white">PPDB Sekarang Dibuka!</h2>
+                            <p class="mt-1 text-sm text-amber-100/80">Daftarkan putra-putri Anda sekarang. Tempat terbatas.</p>
+                        </div>
                     </div>
                     <div class="flex shrink-0 flex-col gap-2 sm:flex-row">
                         <Link :href="route('ppdb.index')"
-                            class="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-amber-700 shadow transition-all hover:bg-amber-50 active:scale-95">
+                            class="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-amber-700 shadow-lg transition-all hover:bg-amber-50 hover:shadow-xl active:scale-95">
                             <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
                             Daftar PPDB
                         </Link>
                         <Link :href="route('ppdb.check')"
-                            class="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20 active:scale-95">
+                            class="inline-flex items-center gap-2 rounded-xl border border-white/40 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20 active:scale-95">
                             Cek Status
                         </Link>
                     </div>
@@ -358,191 +365,185 @@ const jsonLd = computed(() => ({
         </section>
 
         <!-- Tentang Sekolah -->
-        <section id="tentang" class="bg-white py-20">
+        <section id="tentang" class="bg-white py-24">
             <div class="mx-auto max-w-6xl px-6">
-                <div class="flex flex-col gap-12 lg:flex-row lg:items-center lg:gap-16">
+                <!-- Label -->
+                <div v-reveal class="mb-14">
+                    <span class="inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-green-700">
+                        <span class="size-1.5 rounded-full bg-green-500"/>
+                        Tentang Kami
+                    </span>
+                </div>
 
-                    <!-- Kolom kiri: teks -->
-                    <div v-reveal="{ from: 'left' }" class="flex-1">
-                        <p class="text-xs font-bold uppercase tracking-widest text-green-600">Tentang Kami</p>
-                        <h2 class="mt-2 text-3xl font-extrabold leading-tight text-slate-900 lg:text-4xl">
-                            Mengenal<br class="hidden lg:block"/>
+                <div class="flex flex-col gap-16 lg:flex-row lg:items-start lg:gap-20">
+                    <!-- Kiri: konten -->
+                    <div v-reveal="{ from: 'left' }" class="min-w-0 flex-1">
+                        <h2 class="text-4xl font-extrabold leading-tight text-slate-900 lg:text-5xl">
+                            Mengenal<br/>
                             <span class="text-green-700">{{ school?.name ?? 'Sekolah Kami' }}</span>
                         </h2>
 
-                        <p v-if="school?.description" class="mt-5 line-clamp-4 text-base leading-relaxed text-slate-500">
+                        <p v-if="school?.description" class="mt-6 max-w-xl text-base leading-relaxed text-slate-500">
                             {{ school.description }}
                         </p>
-                        <p v-else-if="school?.tagline" class="mt-5 text-base leading-relaxed text-slate-500 italic">
+                        <p v-else-if="school?.tagline" class="mt-6 max-w-xl text-lg italic leading-relaxed text-slate-500">
                             "{{ school.tagline }}"
                         </p>
 
-                        <!-- Feature list -->
-                        <ul class="mt-8 space-y-3">
-                            <li v-if="school?.vision" class="flex items-start gap-3">
-                                <span class="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-green-100">
-                                    <svg class="size-3.5 text-green-700" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                                </span>
-                                <span class="text-sm text-slate-600"><span class="font-semibold text-slate-800">Visi</span> — {{ school.vision.length > 80 ? school.vision.slice(0, 80) + '…' : school.vision }}</span>
-                            </li>
-                            <li v-if="school?.mission" class="flex items-start gap-3">
-                                <span class="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-green-100">
-                                    <svg class="size-3.5 text-green-700" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                                </span>
-                                <span class="text-sm text-slate-600"><span class="font-semibold text-slate-800">Misi</span> terdefinisi untuk membimbing siswa berprestasi</span>
-                            </li>
-                            <li v-if="school?.history" class="flex items-start gap-3">
-                                <span class="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-green-100">
-                                    <svg class="size-3.5 text-green-700" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                                </span>
-                                <span class="text-sm text-slate-600"><span class="font-semibold text-slate-800">Sejarah</span> panjang membangun generasi berkualitas</span>
-                            </li>
-                            <li v-if="school?.principal_name" class="flex items-start gap-3">
-                                <span class="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-green-100">
-                                    <svg class="size-3.5 text-green-700" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                                </span>
-                                <span class="text-sm text-slate-600">Dipimpin oleh <span class="font-semibold text-slate-800">{{ school.principal_name }}</span></span>
-                            </li>
-                        </ul>
+                        <div class="mt-10 space-y-5">
+                            <div v-if="school?.vision" class="group flex items-start gap-4">
+                                <div class="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl bg-green-100 transition-colors group-hover:bg-green-700">
+                                    <svg class="size-4 text-green-700 transition-colors group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold uppercase tracking-widest text-green-600">Visi</p>
+                                    <p class="mt-1 text-sm leading-relaxed text-slate-700">{{ school.vision.length > 100 ? school.vision.slice(0, 100) + '…' : school.vision }}</p>
+                                </div>
+                            </div>
+                            <div v-if="school?.mission" class="group flex items-start gap-4">
+                                <div class="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 transition-colors group-hover:bg-amber-500">
+                                    <svg class="size-4 text-amber-600 transition-colors group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold uppercase tracking-widest text-amber-600">Misi</p>
+                                    <p class="mt-1 text-sm leading-relaxed text-slate-700">Membimbing siswa berprestasi secara akademik dan berkarakter mulia</p>
+                                </div>
+                            </div>
+                            <div v-if="school?.principal_name" class="group flex items-start gap-4">
+                                <div class="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl bg-sky-100 transition-colors group-hover:bg-sky-500">
+                                    <svg class="size-4 text-sky-600 transition-colors group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold uppercase tracking-widest text-sky-600">Kepala Madrasah</p>
+                                    <p class="mt-1 text-sm font-semibold text-slate-800">{{ school.principal_name }}</p>
+                                    <p v-if="school.principal_nip" class="text-xs text-slate-500">NIP {{ school.principal_nip }}</p>
+                                </div>
+                            </div>
+                        </div>
 
                         <Link :href="route('tentang')"
-                            class="mt-8 inline-flex items-center gap-2 rounded-xl bg-green-700 px-5 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-green-600">
+                            class="mt-10 inline-flex items-center gap-2 rounded-xl bg-green-700 px-6 py-3.5 text-sm font-bold text-white shadow-md transition-all hover:bg-green-600 hover:shadow-lg active:scale-95">
                             Profil Lengkap Sekolah
                             <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                         </Link>
                     </div>
 
-                    <!-- Kolom kanan: identity card -->
-                    <div v-reveal="{ from: 'right', delay: 150 }" class="flex shrink-0 justify-center lg:w-80">
-                        <div class="relative w-full max-w-sm">
-                            <!-- Card utama -->
-                            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-green-800 to-green-600 p-8 text-center shadow-2xl">
-                                <!-- Dekorasi lingkaran -->
-                                <div class="absolute -right-10 -top-10 size-40 rounded-full bg-white/5"/>
-                                <div class="absolute -bottom-12 -left-8 size-48 rounded-full bg-white/5"/>
-
-                                <!-- Logo -->
-                                <div class="relative mb-5 inline-flex">
-                                    <img v-if="school?.logo" :src="school.logo" alt="Logo"
-                                        class="size-24 rounded-2xl object-contain ring-4 ring-white/20 shadow-xl"/>
-                                    <div v-else class="flex size-24 items-center justify-center rounded-2xl bg-white/15 ring-4 ring-white/20">
-                                        <svg class="size-12 text-white/60" fill="none" viewBox="0 0 24 24" stroke-width="1.25" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
-                                        </svg>
-                                    </div>
-                                </div>
-
-                                <!-- Nama sekolah -->
-                                <h3 class="relative text-lg font-extrabold leading-snug text-white">
-                                    {{ school?.name ?? 'Nama Sekolah' }}
-                                </h3>
-                                <p v-if="school?.tagline" class="relative mt-1.5 text-xs font-medium italic text-white/60">
-                                    "{{ school.tagline }}"
-                                </p>
-                                <div v-if="school?.npsn" class="relative mt-4 inline-flex rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold text-white/80">
-                                    NPSN {{ school.npsn }}
-                                </div>
-
-                                <!-- Separator -->
-                                <div class="relative my-5 h-px w-full bg-white/15"/>
-
-                                <!-- Stats mini -->
-                                <div class="relative grid grid-cols-3 gap-3">
-                                    <div v-for="s in [
-                                        { value: stats.students || '–',  label: 'Siswa' },
-                                        { value: stats.teachers || '–',  label: 'Guru' },
-                                        { value: stats.since    || '–',  label: 'Berdiri' },
-                                    ]" :key="s.label" class="flex flex-col items-center">
-                                        <span class="text-xl font-extrabold text-white">{{ s.value }}</span>
-                                        <span class="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-white/50">{{ s.label }}</span>
+                    <!-- Kanan: foto sekolah -->
+                    <div v-reveal="{ from: 'right', delay: 150 }" class="lg:w-96">
+                        <div class="relative overflow-hidden rounded-3xl bg-slate-100 shadow-xl" style="aspect-ratio: 4/5;">
+                            <!-- Foto dari galeri (prioritas foto, bukan video) -->
+                            <img
+                                v-if="galleries.find(g => g.type === 'photo' && g.file_url)"
+                                :src="galleries.find(g => g.type === 'photo' && g.file_url).file_url"
+                                alt="Foto Sekolah"
+                                class="size-full object-cover"
+                            />
+                            <!-- Fallback: placeholder gradient -->
+                            <div v-else class="flex size-full flex-col items-center justify-center bg-gradient-to-br from-green-100 via-green-50 to-slate-100">
+                                <svg class="size-20 text-green-300" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>
+                                <p class="mt-4 text-sm font-medium text-green-400">{{ school?.name ?? 'Foto Sekolah' }}</p>
+                            </div>
+                            <!-- Overlay badge nama sekolah di bawah -->
+                            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                                <div class="flex items-center gap-3">
+                                    <img v-if="school?.logo" :src="school.logo" alt="Logo" class="size-9 shrink-0 rounded-lg object-contain ring-2 ring-white/30"/>
+                                    <div>
+                                        <p class="text-sm font-bold leading-snug text-white">{{ school?.name ?? 'Nama Sekolah' }}</p>
+                                        <p v-if="school?.npsn" class="text-xs text-white/60">NPSN {{ school.npsn }}</p>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Shadow card bawah (depth effect) -->
-                            <div class="absolute -bottom-3 left-4 right-4 -z-10 h-full rounded-3xl bg-green-300/30 blur-sm"/>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
 
         <!-- Ekskul -->
-        <section id="ekskul" class="bg-slate-50 py-20">
+        <section id="ekskul" class="bg-green-950 py-24">
             <div class="mx-auto max-w-6xl px-6">
 
-                <div v-reveal class="mb-12 flex items-center justify-between gap-4">
-                    <div class="flex items-center gap-4">
-                        <div class="h-1 w-10 rounded-full bg-green-600"/>
-                        <div>
-                            <p class="text-xs font-bold uppercase tracking-widest text-green-600">Kegiatan Siswa</p>
-                            <h2 class="mt-0.5 text-2xl font-extrabold text-slate-900 lg:text-3xl">Ekstrakulikuler</h2>
-                        </div>
+                <div v-reveal class="mb-14 flex items-end justify-between gap-4">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-widest text-green-400">Kegiatan Siswa</p>
+                        <h2 class="mt-2 text-3xl font-extrabold text-white lg:text-4xl">Ekstrakulikuler</h2>
                     </div>
                     <Link v-if="extracurriculars.length > 4" :href="route('ekskul')"
-                        class="hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-green-700 hover:text-green-600 transition-colors sm:flex">
+                        class="hidden shrink-0 items-center gap-1.5 rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold text-white/60 transition-all hover:border-white/30 hover:text-white sm:inline-flex">
                         Lihat Semua
                         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                     </Link>
                 </div>
 
-                <!-- Grid ekskul (preview: 4 item) -->
-                <div v-if="extracurriculars.length" class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                <!-- Bento grid -->
+                <div v-if="extracurriculars.length" class="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:grid-rows-2">
+                    <!-- Featured (kiri, span 2 baris di desktop) -->
                     <div
-                        v-for="(ekskul, i) in extracurriculars.slice(0, 4)" :key="ekskul.id"
-                        v-reveal="{ delay: i * 80 }"
-                        class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+                        v-if="extracurriculars[0]"
+                        v-reveal="{ delay: 0 }"
+                        class="group relative col-span-2 overflow-hidden rounded-3xl bg-slate-800 lg:col-span-1 lg:row-span-2"
+                        style="min-height: 280px;"
                     >
-                        <div class="aspect-[4/3] overflow-hidden">
-                            <img
-                                v-if="ekskul.image"
-                                :src="ekskul.image"
-                                :alt="ekskul.name"
-                                class="size-full object-cover transition-transform duration-300 group-hover:scale-105"
-                            />
-                            <div v-else :class="ekskulColors[i % ekskulColors.length]"
-                                class="flex size-full items-center justify-center text-4xl font-black opacity-30 select-none"
-                            >
-                                {{ ekskul.name[0] }}
-                            </div>
+                        <img
+                            v-if="extracurriculars[0].image"
+                            :src="extracurriculars[0].image"
+                            :alt="extracurriculars[0].name"
+                            class="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div v-else class="absolute inset-0 flex items-center justify-center text-8xl font-black text-white/5 select-none">
+                            {{ extracurriculars[0].name[0] }}
                         </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-slate-800 text-sm">{{ ekskul.name }}</h3>
-                            <p v-if="ekskul.description" class="mt-1 line-clamp-2 text-xs leading-relaxed text-slate-500">{{ ekskul.description }}</p>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"/>
+                        <div class="absolute bottom-0 left-0 right-0 p-6">
+                            <span class="inline-block rounded-full bg-green-500/20 px-3 py-1 text-xs font-bold uppercase tracking-wide text-green-400 backdrop-blur-sm">Unggulan</span>
+                            <h3 class="mt-2 text-xl font-extrabold text-white">{{ extracurriculars[0].name }}</h3>
+                            <p v-if="extracurriculars[0].description" class="mt-1.5 line-clamp-2 text-sm text-white/60">{{ extracurriculars[0].description }}</p>
                         </div>
-                        <div :class="['h-0.5 w-0 group-hover:w-full transition-all duration-300', ekskulColors[i % ekskulColors.length].split(' ')[0].replace('bg-', 'bg-') ]"/>
+                    </div>
+
+                    <!-- Card-card kecil -->
+                    <div
+                        v-for="(ekskul, i) in extracurriculars.slice(1, 5)" :key="ekskul.id"
+                        v-reveal="{ delay: (i + 1) * 80 }"
+                        class="group relative overflow-hidden rounded-2xl border border-white/5 bg-white/5 transition-all duration-200 hover:bg-white/8 hover:border-white/10"
+                        style="min-height: 130px;"
+                    >
+                        <img
+                            v-if="ekskul.image"
+                            :src="ekskul.image"
+                            :alt="ekskul.name"
+                            class="absolute inset-0 size-full object-cover opacity-25 transition-opacity duration-300 group-hover:opacity-40"
+                        />
+                        <div class="relative flex h-full flex-col justify-end p-5">
+                            <div :class="ekskulColors[(i + 1) % ekskulColors.length].split(' ')[0]" class="mb-2 size-2 rounded-full"/>
+                            <h3 class="text-sm font-bold leading-snug text-white">{{ ekskul.name }}</h3>
+                            <p v-if="ekskul.description" class="mt-1 line-clamp-1 text-xs text-white/40">{{ ekskul.description }}</p>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Empty state -->
-                <div v-else class="rounded-2xl border-2 border-dashed border-slate-200 py-16 text-center">
-                    <svg class="mx-auto mb-3 size-10 text-slate-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
-                    <p class="text-sm text-slate-400">Belum ada data ekskul.</p>
+                <div v-else class="rounded-2xl border-2 border-dashed border-white/10 py-16 text-center">
+                    <p class="text-sm text-white/30">Belum ada data ekskul.</p>
                 </div>
 
-                <!-- Lihat semua button (mobile + overflow) -->
-                <div v-if="extracurriculars.length > 4" class="mt-8 text-center">
+                <div v-if="extracurriculars.length > 4" class="mt-8 text-center sm:hidden">
                     <Link :href="route('ekskul')"
-                        class="inline-flex items-center gap-2 rounded-xl border border-green-200 bg-white px-5 py-2.5 text-sm font-semibold text-green-700 shadow-sm transition-colors hover:bg-green-50">
+                        class="inline-flex items-center gap-2 rounded-xl border border-white/10 px-5 py-2.5 text-sm font-semibold text-white/60 transition-colors hover:border-white/30 hover:text-white">
                         Lihat Semua Ekstrakulikuler ({{ extracurriculars.length }})
-                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                     </Link>
                 </div>
             </div>
         </section>
 
         <!-- Galeri -->
-        <section id="galeri" class="bg-white py-20">
+        <section id="galeri" class="bg-white py-24">
             <div class="mx-auto max-w-6xl px-6">
 
-                <div v-reveal class="mb-12 flex items-center justify-between gap-4">
-                    <div class="flex items-center gap-4">
-                        <div class="h-1 w-10 rounded-full bg-green-600"/>
-                        <div>
-                            <p class="text-xs font-bold uppercase tracking-widest text-green-600">Dokumentasi</p>
-                            <h2 class="mt-0.5 text-2xl font-extrabold text-slate-900 lg:text-3xl">Galeri</h2>
-                        </div>
+                <div v-reveal class="mb-14 flex items-end justify-between gap-4">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-widest text-green-600">Dokumentasi</p>
+                        <h2 class="mt-2 text-3xl font-extrabold text-slate-900 lg:text-4xl">Galeri</h2>
                     </div>
                     <Link v-if="galleries.length > 6" :href="route('galeri')"
                         class="hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-green-700 hover:text-green-600 transition-colors sm:flex">
@@ -590,7 +591,6 @@ const jsonLd = computed(() => ({
                     <p class="text-sm text-slate-400">Belum ada foto atau video.</p>
                 </div>
 
-                <!-- Lihat semua button -->
                 <div v-if="galleries.length > 6" class="mt-8 text-center">
                     <Link :href="route('galeri')"
                         class="inline-flex items-center gap-2 rounded-xl border border-green-200 bg-white px-5 py-2.5 text-sm font-semibold text-green-700 shadow-sm transition-colors hover:bg-green-50">
@@ -602,16 +602,13 @@ const jsonLd = computed(() => ({
         </section>
 
         <!-- Berita & Pengumuman Terbaru -->
-        <section v-if="latestPosts.length" id="berita" class="bg-slate-50 py-20">
+        <section v-if="latestPosts.length" id="berita" class="bg-slate-50 py-24">
             <div class="mx-auto max-w-6xl px-6">
 
-                <div v-reveal class="mb-12 flex items-center justify-between gap-4">
-                    <div class="flex items-center gap-4">
-                        <div class="h-1 w-10 rounded-full bg-green-600"/>
-                        <div>
-                            <p class="text-xs font-bold uppercase tracking-widest text-green-600">Informasi Sekolah</p>
-                            <h2 class="mt-0.5 text-2xl font-extrabold text-slate-900 lg:text-3xl">Berita & Pengumuman Terbaru</h2>
-                        </div>
+                <div v-reveal class="mb-14 flex items-end justify-between gap-4">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-widest text-green-600">Informasi Sekolah</p>
+                        <h2 class="mt-2 text-3xl font-extrabold text-slate-900 lg:text-4xl">Berita & Pengumuman</h2>
                     </div>
                     <Link :href="route('berita.index')"
                         class="hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-green-700 hover:text-green-600 transition-colors sm:flex">
@@ -620,157 +617,160 @@ const jsonLd = computed(() => ({
                     </Link>
                 </div>
 
-                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <!-- Featured post -->
+                <Link v-if="latestPosts[0]"
+                    v-reveal
+                    :href="route('berita.show', latestPosts[0].slug)"
+                    class="group mb-5 flex flex-col overflow-hidden rounded-3xl bg-white shadow-sm transition-all duration-300 hover:shadow-xl sm:flex-row"
+                >
+                    <div class="aspect-[16/9] shrink-0 overflow-hidden bg-slate-100 sm:aspect-auto sm:w-2/5">
+                        <img
+                            v-if="latestPosts[0].cover_image"
+                            :src="latestPosts[0].cover_image"
+                            :alt="latestPosts[0].title"
+                            class="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div v-else class="flex size-full items-center justify-center bg-gradient-to-br from-green-100 to-green-200">
+                            <svg class="size-16 text-green-300" fill="none" viewBox="0 0 24 24" stroke-width="1.25" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-3 1.5h.008v.008H10.5V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM10.5 7.5h.008v.008H10.5V7.5zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3 9.75A.75.75 0 013.75 9h16.5a.75.75 0 01.75.75v7.5a.75.75 0 01-.75.75H3.75A.75.75 0 013 17.25v-7.5z"/></svg>
+                        </div>
+                    </div>
+                    <div class="flex flex-1 flex-col justify-center p-7 lg:p-10">
+                        <div class="mb-4 flex items-center gap-3">
+                            <span :class="latestPosts[0].category === 'pengumuman' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'"
+                                class="rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide">
+                                {{ latestPosts[0].category === 'pengumuman' ? 'Pengumuman' : 'Berita' }}
+                            </span>
+                            <span class="text-xs text-slate-400">{{ latestPosts[0].published_at }}</span>
+                        </div>
+                        <h3 class="text-xl font-extrabold leading-snug text-slate-800 transition-colors group-hover:text-green-700 lg:text-2xl">
+                            {{ latestPosts[0].title }}
+                        </h3>
+                        <p v-if="latestPosts[0].excerpt" class="mt-3 line-clamp-3 text-sm leading-relaxed text-slate-500">{{ latestPosts[0].excerpt }}</p>
+                        <span class="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-green-700">
+                            Baca selengkapnya
+                            <svg class="size-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+                        </span>
+                    </div>
+                </Link>
+
+                <!-- Post lainnya: compact rows -->
+                <div v-if="latestPosts.length > 1" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <Link
-                        v-for="(post, i) in latestPosts" :key="post.id"
+                        v-for="(post, i) in latestPosts.slice(1)" :key="post.id"
                         :href="route('berita.show', post.slug)"
                         v-reveal="{ delay: i * 80 }"
-                        class="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+                        class="group flex gap-4 overflow-hidden rounded-2xl bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md"
                     >
-                        <div class="aspect-[16/9] overflow-hidden bg-slate-100">
+                        <div class="size-20 shrink-0 overflow-hidden rounded-xl bg-slate-100">
                             <img
                                 v-if="post.cover_image"
                                 :src="post.cover_image"
                                 :alt="post.title"
                                 class="size-full object-cover transition-transform duration-300 group-hover:scale-105"
                             />
-                            <div v-else class="flex size-full items-center justify-center">
-                                <svg class="size-12 text-slate-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-3 1.5h.008v.008H10.5V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM10.5 7.5h.008v.008H10.5V7.5zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3 9.75A.75.75 0 013.75 9h16.5a.75.75 0 01.75.75v7.5a.75.75 0 01-.75.75H3.75A.75.75 0 013 17.25v-7.5z"/>
-                                </svg>
+                            <div v-else :class="post.category === 'pengumuman' ? 'bg-amber-50' : 'bg-green-50'" class="flex size-full items-center justify-center">
+                                <svg class="size-7 text-slate-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-3 1.5h.008v.008H10.5V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM10.5 7.5h.008v.008H10.5V7.5zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3 9.75A.75.75 0 013.75 9h16.5a.75.75 0 01.75.75v7.5a.75.75 0 01-.75.75H3.75A.75.75 0 013 17.25v-7.5z"/></svg>
                             </div>
                         </div>
-                        <div class="flex flex-1 flex-col p-5">
-                            <div class="mb-3 flex items-center gap-2">
+                        <div class="min-w-0 flex-1">
+                            <div class="mb-1.5 flex items-center gap-2">
                                 <span :class="post.category === 'pengumuman' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'"
-                                    class="rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide">
+                                    class="rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide">
                                     {{ post.category === 'pengumuman' ? 'Pengumuman' : 'Berita' }}
                                 </span>
                                 <span class="text-xs text-slate-400">{{ post.published_at }}</span>
                             </div>
-                            <h3 class="line-clamp-2 text-base font-bold text-slate-800 leading-snug group-hover:text-green-700 transition-colors">{{ post.title }}</h3>
-                            <p v-if="post.excerpt" class="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-slate-500">{{ post.excerpt }}</p>
-                            <span class="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-green-700">
-                                Baca selengkapnya
-                                <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
-                            </span>
+                            <h3 class="line-clamp-2 text-sm font-bold leading-snug text-slate-800 transition-colors group-hover:text-green-700">{{ post.title }}</h3>
                         </div>
                     </Link>
                 </div>
 
-                <div class="mt-10 text-center sm:hidden">
+                <div class="mt-8 text-center sm:hidden">
                     <Link :href="route('berita.index')"
                         class="inline-flex items-center gap-2 rounded-xl border border-green-200 bg-white px-5 py-2.5 text-sm font-semibold text-green-700 shadow-sm transition-colors hover:bg-green-50">
                         Lihat Semua Berita & Pengumuman
-                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                     </Link>
                 </div>
             </div>
         </section>
 
         <!-- Kontak -->
-        <section id="kontak" class="bg-green-900 py-20">
+        <section id="kontak" class="bg-green-950 py-20">
             <div class="mx-auto max-w-6xl px-6">
+                <div class="grid gap-16 lg:grid-cols-2 lg:items-center">
 
-                <div v-reveal class="mb-12 flex items-center gap-4">
-                    <div class="h-1 w-10 rounded-full bg-amber-400"/>
-                    <div>
+                    <!-- Kiri: heading + CTA -->
+                    <div v-reveal>
                         <p class="text-xs font-bold uppercase tracking-widest text-amber-400">Hubungi Kami</p>
-                        <h2 class="mt-0.5 text-2xl font-extrabold text-white lg:text-3xl">Kontak & Lokasi</h2>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
-                    <!-- Info kontak -->
-                    <div class="lg:col-span-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-
-                        <div v-if="school?.principal_name" v-reveal="{ delay: 80 }" class="flex items-start gap-4 rounded-2xl bg-white/5 p-5">
-                            <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber-400/20">
-                                <svg class="size-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
-                            </div>
-                            <div>
-                                <p class="text-xs text-green-400">Kepala Sekolah</p>
-                                <p class="mt-0.5 text-sm font-semibold text-white">{{ school.principal_name }}</p>
-                                <p v-if="school.principal_nip" class="text-xs text-white/40">NIP {{ school.principal_nip }}</p>
-                            </div>
-                        </div>
-
-                        <div v-if="school?.address" v-reveal="{ delay: 160 }" class="flex items-start gap-4 rounded-2xl bg-white/5 p-5">
-                            <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-green-500/20">
-                                <svg class="size-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
-                            </div>
-                            <div>
-                                <p class="text-xs text-green-400">Alamat</p>
-                                <p class="mt-0.5 text-sm text-white/80 leading-relaxed">{{ school.address }}</p>
-                            </div>
-                        </div>
-
-                        <div v-if="school?.phone" v-reveal="{ delay: 240 }" class="flex items-start gap-4 rounded-2xl bg-white/5 p-5">
-                            <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sky-500/20">
-                                <svg class="size-5 text-sky-400" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
-                            </div>
-                            <div>
-                                <p class="text-xs text-green-400">Telepon</p>
-                                <a :href="`tel:${school.phone}`" class="mt-0.5 text-sm font-semibold text-white hover:text-amber-400 transition-colors">{{ school.phone }}</a>
-                            </div>
-                        </div>
-
-                        <div v-if="school?.email" v-reveal="{ delay: 320 }" class="flex items-start gap-4 rounded-2xl bg-white/5 p-5">
-                            <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/20">
-                                <svg class="size-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
-                            </div>
-                            <div>
-                                <p class="text-xs text-green-400">Email</p>
-                                <a :href="`mailto:${school.email}`" class="mt-0.5 text-sm font-semibold text-white hover:text-amber-400 transition-colors">{{ school.email }}</a>
-                            </div>
-                        </div>
-
-                        <div v-if="school?.website" v-reveal="{ delay: 400 }" class="flex items-start gap-4 rounded-2xl bg-white/5 p-5 sm:col-span-2">
-                            <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-violet-500/20">
-                                <svg class="size-5 text-violet-400" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"/></svg>
-                            </div>
-                            <div>
-                                <p class="text-xs text-green-400">Website</p>
-                                <a :href="school.website" target="_blank" rel="noopener noreferrer" class="mt-0.5 text-sm font-semibold text-white hover:text-amber-400 transition-colors">{{ school.website }}</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Login card -->
-                    <div v-reveal="{ from: 'right', delay: 200 }">
-                        <div class="rounded-2xl border border-white/10 bg-white/5 p-6 text-center backdrop-blur-sm">
-                            <div class="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-green-700">
-                                <svg class="size-7 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
-                            </div>
-                            <h3 class="text-base font-bold text-white">Portal Akademik</h3>
-                            <p class="mt-2 text-xs leading-relaxed text-white/50">Akses nilai, tagihan, surat, dan laporan sekolah.</p>
-                            <Link
-                                v-if="!isLoggedIn && canLogin" :href="route('login')"
-                                class="mt-5 block w-full rounded-xl bg-amber-400 py-3 text-sm font-bold text-green-900 shadow transition-colors hover:bg-amber-300"
-                            >
-                                Masuk ke Sistem
+                        <h2 class="mt-4 text-5xl font-extrabold leading-none text-white lg:text-6xl">
+                            Kontak<br/>
+                            <span class="text-green-600">&amp; Lokasi</span>
+                        </h2>
+                        <p class="mt-6 max-w-xs text-sm leading-relaxed text-white/40">
+                            Kami terbuka untuk pertanyaan dan kunjungan. Hubungi kami kapan saja.
+                        </p>
+                        <div class="mt-10">
+                            <Link v-if="!isLoggedIn && canLogin" :href="route('login')"
+                                class="inline-flex items-center gap-2.5 rounded-2xl bg-amber-400 px-7 py-4 text-sm font-bold text-green-900 shadow-lg transition-all hover:bg-amber-300 active:scale-95">
+                                <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+                                Masuk ke Portal Akademik
                             </Link>
-                            <Link
-                                v-if="isLoggedIn && dashboardRoute" :href="dashboardRoute"
-                                class="mt-5 block w-full rounded-xl bg-amber-400 py-3 text-sm font-bold text-green-900 shadow transition-colors hover:bg-amber-300"
-                            >
+                            <Link v-if="isLoggedIn && dashboardRoute" :href="dashboardRoute"
+                                class="inline-flex items-center gap-2.5 rounded-2xl bg-amber-400 px-7 py-4 text-sm font-bold text-green-900 shadow-lg transition-all hover:bg-amber-300 active:scale-95">
                                 Buka Dashboard
+                                <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                             </Link>
-                            <p class="mt-3 text-xs text-white/30">Butuh akun? Hubungi operator sekolah.</p>
                         </div>
+                    </div>
+
+                    <!-- Kanan: info list, left-border accent, no cards -->
+                    <div v-reveal="{ delay: 150 }" class="space-y-8">
+
+                        <div v-if="school?.address" class="border-l-2 border-green-600 pl-5">
+                            <p class="text-xs font-bold uppercase tracking-widest text-white/30">Alamat</p>
+                            <p class="mt-1.5 text-sm leading-relaxed text-white/80">{{ school.address }}</p>
+                        </div>
+
+                        <div v-if="school?.principal_name" class="border-l-2 border-amber-500 pl-5">
+                            <p class="text-xs font-bold uppercase tracking-widest text-white/30">Kepala Sekolah</p>
+                            <p class="mt-1.5 text-sm font-semibold text-white">{{ school.principal_name }}</p>
+                            <p v-if="school.principal_nip" class="mt-0.5 text-xs text-white/30">NIP {{ school.principal_nip }}</p>
+                        </div>
+
+                        <div v-if="school?.phone" class="border-l-2 border-sky-500 pl-5">
+                            <p class="text-xs font-bold uppercase tracking-widest text-white/30">Telepon</p>
+                            <a :href="`tel:${school.phone}`" class="mt-1.5 block text-sm font-semibold text-white transition-colors hover:text-amber-400">{{ school.phone }}</a>
+                        </div>
+
+                        <div v-if="school?.email" class="border-l-2 border-violet-500 pl-5">
+                            <p class="text-xs font-bold uppercase tracking-widest text-white/30">Email</p>
+                            <a :href="`mailto:${school.email}`" class="mt-1.5 block text-sm font-semibold text-white transition-colors hover:text-amber-400">{{ school.email }}</a>
+                        </div>
+
+                        <div v-if="school?.website" class="border-l-2 border-rose-500 pl-5">
+                            <p class="text-xs font-bold uppercase tracking-widest text-white/30">Website</p>
+                            <a :href="school.website" target="_blank" rel="noopener noreferrer" class="mt-1.5 block text-sm font-semibold text-white transition-colors hover:text-amber-400">{{ school.website }}</a>
+                        </div>
+
+                        <p class="pt-2 text-xs text-white/20">Butuh akun? Hubungi operator sekolah.</p>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Footer -->
-        <footer class="bg-green-950 py-6">
-            <div class="mx-auto max-w-6xl px-6 text-center">
-                <p class="text-xs text-green-500">
-                    &copy; {{ new Date().getFullYear() }} {{ school?.name ?? 'Sistem Manajemen Sekolah' }}
-                    <span v-if="school?.npsn"> · NPSN {{ school.npsn }}</span>
-                    · Hak cipta dilindungi undang-undang.
-                </p>
+        <footer class="bg-green-950 py-4">
+            <div class="mx-auto max-w-6xl px-6">
+                <div class="flex flex-col items-center gap-3 text-center sm:flex-row sm:justify-between sm:text-left">
+                    <div class="flex items-center gap-2.5">
+                        <img v-if="school?.logo" :src="school.logo" alt="Logo" class="size-6 rounded object-contain opacity-70"/>
+                        <span class="text-xs font-semibold text-green-400">{{ school?.name ?? 'Sistem Manajemen Sekolah' }}</span>
+                        <span v-if="school?.npsn" class="text-xs text-green-700">· NPSN {{ school.npsn }}</span>
+                    </div>
+                    <p class="text-xs text-green-700">
+                        &copy; {{ new Date().getFullYear() }} · Hak cipta dilindungi.
+                    </p>
+                </div>
             </div>
         </footer>
 

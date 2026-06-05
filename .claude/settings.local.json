@@ -71,7 +71,10 @@
       "Bash(cp \".claude\\\\worktrees\\\\agent-aa60176c\\\\app\\\\Http\\\\Requests\\\\StoreExtracurricularAchievementRequest.php\" \"app\\\\Http\\\\Requests\\\\StoreExtracurricularAchievementRequest.php\")",
       "Bash(cp \".claude\\\\worktrees\\\\agent-aa60176c\\\\app\\\\Http\\\\Requests\\\\UpdateExtracurricularAchievementRequest.php\" \"app\\\\Http\\\\Requests\\\\UpdateExtracurricularAchievementRequest.php\")",
       "Bash(cp \".claude\\\\worktrees\\\\agent-aa60176c\\\\app\\\\Models\\\\ExtracurricularAchievement.php\" \"app\\\\Models\\\\ExtracurricularAchievement.php\")",
-      "Bash(cp \".claude\\\\worktrees\\\\agent-aa60176c\\\\database\\\\migrations\\\\2026_06_04_200000_create_extracurricular_achievements_table.php\" \"database\\\\migrations\\\\2026_06_04_200000_create_extracurricular_achievements_table.php\")"
+      "Bash(cp \".claude\\\\worktrees\\\\agent-aa60176c\\\\database\\\\migrations\\\\2026_06_04_200000_create_extracurricular_achievements_table.php\" \"database\\\\migrations\\\\2026_06_04_200000_create_extracurricular_achievements_table.php\")",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(xargs basename:*)"
     ]
   }
 }

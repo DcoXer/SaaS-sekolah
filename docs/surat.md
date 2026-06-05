@@ -1,6 +1,6 @@
 # Modul Surat
 
-Modul ini mencakup dua jenis surat: **Surat Keterangan** (request dari wali murid) dan **Surat Pemberitahuan** (dari operator ke wali murid). Dilengkapi dengan approval workflow dan TTD digital berupa barcode verifikasi.
+Modul ini mencakup dua jenis surat: **Surat Keterangan** (request dari wali murid) dan **Surat Pemberitahuan** (dari operator ke seluruh wali murid). Dilengkapi approval workflow dan QR barcode verifikasi.
 
 ---
 
@@ -8,8 +8,8 @@ Modul ini mencakup dua jenis surat: **Surat Keterangan** (request dari wali muri
 
 | Jenis | Siapa yang Buat | Flow | Contoh |
 |-------|-----------------|------|--------|
-| `keterangan` | Wali murid request, Operator proses | Request → Proses → Approval Kamad → Approved + Barcode | Surat siswa aktif, nilai rata-rata, prestasi |
-| `pemberitahuan` | Operator langsung | Buat → Langsung published | Libur sekolah, jadwal ujian |
+| `keterangan` | Wali murid request | Request → Proses Operator → Approval Kamad → Approved + Barcode | Surat siswa aktif, surat keterangan lainnya |
+| `pemberitahuan` | Operator langsung | Buat → Langsung published → Auto recipients | Libur sekolah, jadwal ujian, pengumuman |
 
 ---
 
@@ -22,13 +22,13 @@ Sistem auto-fill data siswa (nama, NIS, kelas, dll)
     ↓
 Operator review & submit ke Kamad → status: waiting_approval
     ↓
-Kamad approve → status: approved + barcode generated
+Kamad approve → status: approved + barcode_code (UUID) generated
      atau
-Kamad reject (wajib isi alasan) → status: rejected
+Kamad reject (WAJIB isi alasan min. 10 karakter) → status: rejected
     ↓
-Wali murid download PDF/Word
+Wali murid download PDF surat
     ↓
-Siapapun bisa verifikasi keaslian via scan barcode
+Siapapun bisa verifikasi keaslian via scan QR barcode
 ```
 
 ---
@@ -42,7 +42,7 @@ Pilih target: semua siswa atau grade tertentu
     ↓
 Sistem generate recipients otomatis → status: published
     ↓
-Wali murid lihat di portal
+Wali murid lihat di portal (notifikasi in-app)
 ```
 
 ---
@@ -56,9 +56,9 @@ Kategori surat yang dikelola operator. Bersifat fleksibel, tidak hardcoded.
 | Method | URL | Controller | Deskripsi |
 |--------|-----|------------|-----------|
 | GET | `/operator/letter-types` | `Operator\LetterTypeController@index` | List jenis surat |
-| POST | `/operator/letter-types` | `Operator\LetterTypeController@store` | Tambah jenis surat |
-| PUT | `/operator/letter-types/{id}` | `Operator\LetterTypeController@update` | Update jenis surat |
-| DELETE | `/operator/letter-types/{id}` | `Operator\LetterTypeController@destroy` | Hapus jenis surat |
+| POST | `/operator/letter-types` | store | Tambah jenis surat |
+| PUT | `/operator/letter-types/{id}` | update | Update jenis surat |
+| DELETE | `/operator/letter-types/{id}` | destroy | Hapus jenis surat |
 
 ### Database
 ```
@@ -72,7 +72,7 @@ letter_types
 ## 2. Template Surat (Letter Template)
 
 ### Deskripsi
-Template konten surat dengan placeholder. Operator bisa edit konten, placeholder sudah tersedia tinggal insert.
+Template konten surat dengan placeholder. Operator bisa edit konten dengan placeholder yang sudah tersedia.
 
 ### Placeholders yang Tersedia
 
@@ -89,34 +89,30 @@ Template konten surat dengan placeholder. Operator bisa edit konten, placeholder
 | `{{school.name}}` | Nama sekolah |
 | `{{school.address}}` | Alamat sekolah |
 | `{{school.phone}}` | Telepon sekolah |
-| `{{barcode}}` | Barcode verifikasi |
+| `{{barcode}}` | QR code verifikasi |
 
 ### Contoh Template
-```html
-<p>Yang bertanda tangan di bawah ini, Kepala {{school.name}}, 
-menerangkan bahwa:</p>
+```
+Yang bertanda tangan di bawah ini, Kepala {{school.name}}, menerangkan bahwa:
 
-<table>
-  <tr><td>Nama</td><td>: {{student.name}}</td></tr>
-  <tr><td>NIS</td><td>: {{student.nis}}</td></tr>
-  <tr><td>Kelas</td><td>: {{classroom.name}}</td></tr>
-</table>
+Nama    : {{student.name}}
+NIS     : {{student.nis}}
+Kelas   : {{classroom.name}}
 
-<p>adalah benar siswa aktif di {{school.name}} 
-Tahun Ajaran {{academic_year.name}}.</p>
+adalah benar siswa aktif di {{school.name}} Tahun Ajaran {{academic_year.name}}.
 
-<p>{{letter.date}}</p>
-<p>{{principal.name}}</p>
-<p>{{barcode}}</p>
+{{letter.date}}
+{{principal.name}}
+{{barcode}}
 ```
 
 ### Routes
 | Method | URL | Controller | Deskripsi |
 |--------|-----|------------|-----------|
 | GET | `/operator/letter-templates` | `Operator\LetterTemplateController@index` | List template |
-| POST | `/operator/letter-templates` | `Operator\LetterTemplateController@store` | Tambah template |
-| PUT | `/operator/letter-templates/{id}` | `Operator\LetterTemplateController@update` | Update template |
-| DELETE | `/operator/letter-templates/{id}` | `Operator\LetterTemplateController@destroy` | Hapus template |
+| POST | `/operator/letter-templates` | store | Tambah template |
+| PUT | `/operator/letter-templates/{id}` | update | Update template |
+| DELETE | `/operator/letter-templates/{id}` | destroy | Hapus template |
 
 ### Database
 ```
@@ -137,23 +133,30 @@ letter_templates
 |--------|-----------|
 | `draft` | Baru direquest wali murid |
 | `waiting_approval` | Operator submit ke Kamad |
-| `approved` | Kamad approve, barcode generated |
+| `approved` | Kamad approve, QR barcode generated |
 | `rejected` | Kamad reject, ada alasan |
-| `published` | Surat pemberitahuan yang sudah terkirim |
+| `published` | Surat pemberitahuan yang sudah terkirim ke recipients |
 
-### Barcode Verifikasi
+### QR Barcode Verifikasi
 Saat Kamad approve surat keterangan:
 - Sistem generate UUID unik sebagai `barcode_code`
-- Barcode ini bisa di-embed ke surat sebagai QR code yang link ke URL verifikasi
-- URL verifikasi: `GET /verify/{barcodeCode}`
-- Halaman verifikasi menampilkan konfirmasi bahwa surat benar ditandatangani Kamad
+- QR code di-embed ke PDF surat, mengarah ke URL verifikasi
+- URL: `GET /verify/{barcodeCode}`
+- Halaman verifikasi publik (tanpa login): konfirmasi surat benar ditandatangani Kamad
+
+### PDF Surat
+- Generate via barryvdh/dompdf
+- Kop sekolah (logo + nama + alamat)
+- Konten surat (setelah placeholder di-replace)
+- TTD Kamad (nama + NIP + stempel sekolah)
+- QR barcode verifikasi di bagian bawah
 
 ### Rules
 - Wali murid hanya bisa request surat keterangan
 - Data siswa auto-filled dari akun wali murid yang login
 - Operator tidak bisa approve/reject, hanya submit ke Kamad
 - Kamad wajib isi `rejection_note` minimal 10 karakter saat reject
-- Surat pemberitahuan auto-published saat dibuat
+- Surat pemberitahuan auto-published saat dibuat operator
 
 ### Routes
 
@@ -161,28 +164,29 @@ Saat Kamad approve surat keterangan:
 | Method | URL | Controller | Deskripsi |
 |--------|-----|------------|-----------|
 | GET | `/operator/letters` | `Operator\LetterController@index` | List semua surat |
-| POST | `/operator/letters/notification` | `Operator\LetterController@storeNotification` | Buat surat pemberitahuan |
-| PATCH | `/operator/letters/{letter}/submit` | `Operator\LetterController@submitForApproval` | Submit ke Kamad |
+| POST | `/operator/letters/notification` | storeNotification | Buat surat pemberitahuan |
+| PATCH | `/operator/letters/{letter}/submit` | submitForApproval | Submit ke Kamad |
 
 **Kamad:**
 | Method | URL | Controller | Deskripsi |
 |--------|-----|------------|-----------|
-| GET | `/kamad/letters` | `Kamad\LetterController@index` | List surat (waiting/approved/rejected) |
-| PATCH | `/kamad/letters/{letter}/approve` | `Kamad\LetterController@approve` | Approve surat |
-| PATCH | `/kamad/letters/{letter}/reject` | `Kamad\LetterController@reject` | Reject surat |
+| GET | `/kamad/letters` | `Kamad\LetterController@index` | List surat |
+| PATCH | `/kamad/letters/{letter}/approve` | approve | Approve surat |
+| PATCH | `/kamad/letters/{letter}/reject` | reject | Reject surat (wajib isi alasan) |
+| GET | `/verify/{barcodeCode}` | verify | Verifikasi publik (tanpa auth) |
 
 **Siswa/Wali:**
 | Method | URL | Controller | Deskripsi |
 |--------|-----|------------|-----------|
 | GET | `/siswa/letters` | `Siswa\LetterController@index` | List surat & pemberitahuan |
-| POST | `/siswa/letters` | `Siswa\LetterController@store` | Request surat keterangan |
-| GET | `/siswa/letters/{letter}` | `Siswa\LetterController@show` | Detail surat |
-| PATCH | `/siswa/letters/{letter}/read` | `Siswa\LetterController@markAsRead` | Tandai sudah dibaca |
+| POST | `/siswa/letters` | store | Request surat keterangan |
+| GET | `/siswa/letters/{letter}` | show | Detail surat |
+| PATCH | `/siswa/letters/{letter}/read` | markAsRead | Tandai sudah dibaca |
 
-**Public (tanpa auth):**
+**PDF:**
 | Method | URL | Controller | Deskripsi |
 |--------|-----|------------|-----------|
-| GET | `/verify/{barcodeCode}` | `Kamad\LetterController@verify` | Verifikasi keaslian surat |
+| GET | `/letters/{letter}/pdf` | `LetterPdfController@download` | Download PDF surat |
 
 ### Database
 ```
@@ -193,22 +197,28 @@ letters
   status: draft|waiting_approval|approved|rejected|published
   rejection_note (nullable)
   content (longText, final content setelah placeholder di-replace)
-  barcode_code (unique, nullable)
+  barcode_code (uuid, unique, nullable)
   approved_by (user_id, nullable), approved_at (nullable)
   published_at (nullable)
 
 letter_recipients (untuk surat pemberitahuan)
   id, letter_id, student_id, read_at (nullable)
-
-UNIQUE: letter_id + student_id
+  UNIQUE: letter_id + student_id
 ```
 
 ---
 
-## 4. Pengaturan Sekolah (School Settings)
+## 4. Pengaturan Sekolah untuk Surat
 
-Data sekolah digunakan untuk mengisi placeholder `{{school.*}}` dan `{{principal.*}}` di template surat.
+Data sekolah digunakan untuk mengisi placeholder `{{school.*}}`, `{{principal.*}}`, dan kop surat.
 
-Pastikan data sekolah sudah diisi sebelum generate surat apapun. Jika belum diisi, placeholder akan di-replace dengan tanda `-`.
+Pastikan data sekolah sudah diisi sebelum generate surat. Jika belum, placeholder di-replace dengan tanda `-`.
 
-Lihat detail di [docs/master-data.md](master-data.md#7-pengaturan-sekolah-school-settings).
+Fields yang diperlukan:
+- `school_settings.name` → nama sekolah
+- `school_settings.principal_name` + `principal_nip` → TTD
+- `school_settings.address`, `phone` → kop surat
+- `school_settings.logo` → logo di kop surat
+- `school_settings.stamp` → stempel di TTD
+
+Lihat detail di [docs/master-data.md](master-data.md#8-pengaturan-sekolah-school-settings).

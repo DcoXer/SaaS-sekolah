@@ -5,6 +5,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\LetterPdfController;
 use App\Http\Controllers\ReceiptVerifyController;
+use App\Http\Controllers\HonorariumVerifyController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\GalleryPageController;
 use App\Http\Controllers\ExtracurricularPageController;
@@ -99,6 +100,11 @@ Route::get('verify/{barcodeCode}', [KamadLetter::class, 'verify'])
 Route::get('receipt/{code}', [ReceiptVerifyController::class, 'show'])
     ->middleware('throttle:30,1')
     ->name('receipt.verify');
+
+// Verify slip honor — rate limit: 30 req/menit per IP
+Route::get('slip-honor/{code}', [HonorariumVerifyController::class, 'show'])
+    ->middleware('throttle:30,1')
+    ->name('honor.verify');
 
 // Verify raport — rate limit: 30 req/menit per IP
 Route::get('verify-raport/{verifyCode}', [KamadReportCard::class, 'verify'])
@@ -344,6 +350,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar');
+    Route::post('/profile/signature', [ProfileController::class, 'updateSignature'])->name('profile.signature');
+    Route::delete('/profile/signature', [ProfileController::class, 'deleteSignature'])->name('profile.signature.delete');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });

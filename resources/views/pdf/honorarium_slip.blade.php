@@ -11,7 +11,7 @@
         .kop .logo-cell { width: 70px; vertical-align: middle; }
         .kop .logo { width: 60px; height: 60px; object-fit: contain; }
         .kop .logo-placeholder { width: 60px; height: 60px; display: inline-block; }
-        .kop .info-cell { vertical-align: middle; padding-left: 10px; }
+        .kop .info-cell { vertical-align: middle; padding-left: 10px; text-align: center; }
         .kop .school-name { font-size: 14px; font-weight: bold; text-transform: uppercase; }
         .kop .school-sub  { font-size: 10px; color: #444; margin-top: 2px; }
 
@@ -35,16 +35,14 @@
         .status-paid  { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
         .status-draft { background: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
 
-        .ttd-section { margin-top: 20px; }
-        .ttd-table { width: 100%; }
-        .ttd-table td { vertical-align: top; padding: 4px; }
-        .ttd-box { text-align: center; }
-        .ttd-box .ttd-label { font-size: 10px; margin-bottom: 50px; }
-        .ttd-box .ttd-name  { font-size: 10.5px; font-weight: bold; border-top: 1px solid #555;
-                              padding-top: 4px; display: inline-block; min-width: 120px; }
-
-        .slip-code { margin-top: 12px; text-align: center; font-size: 9px; color: #888; }
-        .footer-note { margin-top: 6px; font-size: 9px; text-align: center; color: #aaa; }
+        .verify-section  { margin-top: 20px; border-top: 1px solid #d1d5db; padding-top: 10px; }
+        .verify-table    { width: 100%; border-collapse: collapse; }
+        .verify-left     { width: 80px; vertical-align: middle; }
+        .verify-right    { padding-left: 12px; vertical-align: middle; }
+        .verify-title    { font-size: 8.5px; font-weight: bold; text-transform: uppercase; color: #6b7280; margin-bottom: 3px; }
+        .verify-note     { font-size: 8px; color: #9ca3af; }
+        .verify-url      { font-size: 7.5px; font-family: monospace; color: #4b5563; word-break: break-all; margin: 3px 0; }
+        .footer-note     { margin-top: 10px; font-size: 8px; text-align: center; color: #aaa; border-top: 1px solid #e5e7eb; padding-top: 6px; }
     </style>
 </head>
 <body>
@@ -140,31 +138,31 @@
     </tbody>
 </table>
 
-{{-- TTD --}}
-<table class="ttd-table">
-    <tr>
-        <td style="width:50%">
-            <div class="ttd-box">
-                <div class="ttd-label">Penerima,</div>
-                <div class="ttd-name">{{ $honorarium->teacher->user->name }}</div>
-            </div>
-        </td>
-        <td style="width:50%">
-            <div class="ttd-box">
-                <div class="ttd-label">
-                    {{ $school?->city ?? '' }}, {{ now()->locale('id')->isoFormat('D MMMM Y') }}<br>
-                    TU Keuangan,
+{{-- QR Verifikasi --}}
+<div class="verify-section">
+    <table class="verify-table">
+        <tr>
+            <td class="verify-left">
+                @if(!empty($qr_png))
+                    <img src="data:image/png;base64,{{ $qr_png }}" style="width:76px; height:76px; display:block;" />
+                @endif
+            </td>
+            <td class="verify-right">
+                <div class="verify-title">Verifikasi Keaslian Slip</div>
+                <div class="verify-note">Scan QR code atau kunjungi tautan berikut untuk memverifikasi slip honor ini.</div>
+                <div class="verify-url">{{ $verify_url }}</div>
+                <div class="verify-note">
+                    Kode: <strong style="color:#374151;">{{ $honorarium->slip_code }}</strong>
+                    @if($honorarium->tuKeuangan)
+                        &middot; Diproses oleh: <strong style="color:#374151;">{{ $honorarium->tuKeuangan->name }}</strong>
+                    @endif
                 </div>
-                <div class="ttd-name">
-                    {{ $honorarium->tuKeuangan?->name ?? '...........................' }}
-                </div>
-            </div>
-        </td>
-    </tr>
-</table>
+            </td>
+        </tr>
+    </table>
+</div>
 
-<div class="slip-code">Kode Slip: {{ $honorarium->slip_code }}</div>
-<div class="footer-note">Dokumen ini dicetak dari sistem manajemen sekolah</div>
+<div class="footer-note">Dokumen ini dicetak otomatis oleh sistem manajemen sekolah</div>
 
 </body>
 </html>

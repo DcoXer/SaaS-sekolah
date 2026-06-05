@@ -11,19 +11,26 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password', 'avatar', 'alumni_expires_at'])]
+#[Fillable(['name', 'email', 'password', 'avatar', 'signature', 'alumni_expires_at'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, HasRoles;
 
-    protected $appends = ['avatar_url'];
+    protected $appends = ['avatar_url', 'signature_url'];
 
     public function getAvatarUrlAttribute(): ?string
     {
         return $this->avatar
             ? \Illuminate\Support\Facades\Storage::url($this->avatar)
+            : null;
+    }
+
+    public function getSignatureUrlAttribute(): ?string
+    {
+        return $this->signature
+            ? \Illuminate\Support\Facades\Storage::url($this->signature)
             : null;
     }
 

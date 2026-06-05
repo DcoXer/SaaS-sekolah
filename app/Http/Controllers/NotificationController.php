@@ -22,6 +22,6 @@ class NotificationController extends Controller
     {
         $this->service->markAllRead(request()->user());
 
-        return response()->json(['ok' => true]);
+        return redirect()->back();
     }
 }

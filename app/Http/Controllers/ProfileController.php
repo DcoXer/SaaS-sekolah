@@ -53,6 +53,37 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit')->with('success', 'Foto profil berhasil diperbarui.');
     }
 
+    public function updateSignature(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'signature' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ]);
+
+        $user = $request->user();
+
+        if ($user->signature) {
+            Storage::disk('public')->delete($user->signature);
+        }
+
+        $path = $request->file('signature')->store('signatures', 'public');
+
+        $user->update(['signature' => $path]);
+
+        return Redirect::route('profile.edit')->with('success', 'Tanda tangan berhasil disimpan.');
+    }
+
+    public function deleteSignature(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        if ($user->signature) {
+            Storage::disk('public')->delete($user->signature);
+            $user->update(['signature' => null]);
+        }
+
+        return Redirect::route('profile.edit')->with('success', 'Tanda tangan berhasil dihapus.');
+    }
+
     public function updatePassword(Request $request): RedirectResponse
     {
         $request->validate([

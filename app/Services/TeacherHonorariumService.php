@@ -132,8 +132,9 @@ class TeacherHonorariumService
             ->whereHas('teachingHours', fn($q) => $q->where('academic_year_id', $academicYear->id))
             ->get();
 
-        $created = 0;
-        $skipped = 0;
+        $created    = 0;
+        $skipped    = 0;
+        $incomplete = 0;
 
         foreach ($teachers as $teacher) {
             if ($this->alreadyGenerated($teacher, $month, $year)) {
@@ -141,10 +142,15 @@ class TeacherHonorariumService
                 continue;
             }
 
+            if (!$this->attendanceService->isMonthComplete($teacher, $month, $year)) {
+                $incomplete++;
+                continue;
+            }
+
             $this->generate($teacher, $academicYear, $month, $year);
             $created++;
         }
 
-        return ['created' => $created, 'skipped' => $skipped];
+        return ['created' => $created, 'skipped' => $skipped, 'incomplete' => $incomplete];
     }
 }

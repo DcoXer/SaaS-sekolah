@@ -95,6 +95,28 @@ class TeacherAttendanceService
             ->count();
     }
 
+    /**
+     * Cek apakah semua hari kerja (non-weekend) di bulan tersebut sudah ada record absensi.
+     */
+    public function isMonthComplete(Teacher $teacher, int $month, int $year): bool
+    {
+        $daysInMonth = Carbon::createFromDate($year, $month, 1)->daysInMonth;
+        $workingDays = 0;
+
+        for ($day = 1; $day <= $daysInMonth; $day++) {
+            if (!Carbon::createFromDate($year, $month, $day)->isWeekend()) {
+                $workingDays++;
+            }
+        }
+
+        $recordCount = TeacherAttendance::where('teacher_id', $teacher->id)
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->count();
+
+        return $recordCount >= $workingDays;
+    }
+
     public function getCalendar(Teacher $teacher, int $month, int $year): array
     {
         $records = $this->getMonthly($teacher, $month, $year)
