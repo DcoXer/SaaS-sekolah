@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\PpdbRegistration;
 
 #[Fillable([
-    'student_id', 'payment_type_id', 'academic_year_id',
+    'student_id', 'ppdb_registration_id', 'payment_type_id', 'academic_year_id',
     'amount', 'status', 'due_date', 'receipt_code'
 ])]
 class Invoice extends Model
@@ -21,6 +22,11 @@ class Invoice extends Model
     public function student()
     {
         return $this->belongsTo(Student::class);
+    }
+
+    public function ppdbRegistration()
+    {
+        return $this->belongsTo(PpdbRegistration::class);
     }
 
     public function paymentType()

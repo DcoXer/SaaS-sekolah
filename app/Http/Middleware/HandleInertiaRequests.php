@@ -39,8 +39,9 @@ class HandleInertiaRequests extends Middleware
                 'role' => $user?->getRoleNames()->first(),
             ],
             'flash' => [
-                'success' => $request->session()->get('success'),
-                'error'   => $request->session()->get('error'),
+                'success'           => $request->session()->get('success'),
+                'error'             => $request->session()->get('error'),
+                'registered_number' => $request->session()->get('registered_number'),
             ],
             'notifications' => fn () => $user
                 ? app(NotificationService::class)->getForUser($user, 30)->map(fn ($n) => [

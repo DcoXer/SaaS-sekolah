@@ -30,6 +30,21 @@ class PublicPpdbController extends Controller
         ]);
     }
 
+    public function create(): Response
+    {
+        $setting = $this->service->getSetting();
+        $school  = SchoolSetting::first();
+
+        return Inertia::render('PpdbDaftar', [
+            'setting'        => $setting,
+            'school'         => $school,
+            'serverDate'     => now()->toDateString(),
+            'canLogin'       => true,
+            'isLoggedIn'     => auth()->check(),
+            'dashboardRoute' => auth()->check() ? $this->dashboardRoute() : null,
+        ]);
+    }
+
     public function store(StorePpdbRegistrationRequest $request)
     {
         $setting = $this->service->getSetting();
@@ -45,7 +60,7 @@ class PublicPpdbController extends Controller
         }
 
         return redirect()->route('ppdb.index')
-            ->with('success', "Pendaftaran berhasil! Nomor pendaftaran Anda: {$reg->registration_number}");
+            ->with('registered_number', $reg->registration_number);
     }
 
     public function check()
@@ -53,6 +68,7 @@ class PublicPpdbController extends Controller
         $number = request('no');
         $result = null;
         $error  = null;
+        $invoice = null;
 
         if ($number) {
             $result = PpdbRegistration::with('ppdbSetting')
@@ -61,18 +77,24 @@ class PublicPpdbController extends Controller
 
             if (! $result) {
                 $error = 'Nomor pendaftaran tidak ditemukan.';
+            } elseif ($result->status === 'accepted') {
+                $invoice = $result->invoice;
+                if ($invoice) {
+                    $invoice->append(['total_paid', 'remaining_amount']);
+                }
             }
         }
 
         $school = SchoolSetting::first();
 
         return Inertia::render('PpdbCheck', [
-            'result'      => $result,
-            'error'       => $error,
-            'number'      => $number,
-            'school'      => $school,
-            'canLogin'    => true,
-            'isLoggedIn'  => auth()->check(),
+            'result'         => $result,
+            'invoice'        => $invoice,
+            'error'          => $error,
+            'number'         => $number,
+            'school'         => $school,
+            'canLogin'       => true,
+            'isLoggedIn'     => auth()->check(),
             'dashboardRoute' => auth()->check() ? $this->dashboardRoute() : null,
         ]);
     }

@@ -19,6 +19,8 @@ class StorePpdbSettingRequest extends FormRequest
             'announcement_date'  => 'nullable|date',
             'quota'              => 'required|integer|min:1',
             'is_open'            => 'required|boolean',
+            'uang_masuk_amount'  => 'nullable|integer|min:0',
+            'dp_amount'          => 'nullable|integer|min:0',
         ];
     }
 }

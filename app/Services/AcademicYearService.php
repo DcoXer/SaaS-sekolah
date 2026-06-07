@@ -3,12 +3,16 @@
 namespace App\Services;
 
 use App\Models\AcademicYear;
+use App\Models\Invoice;
+use App\Models\PpdbRegistration;
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class AcademicYearService
 {
+    public function __construct(private StudentService $studentService) {}
     public function getAll(): Collection
     {
         return AcademicYear::latest()->get();
@@ -44,7 +48,50 @@ class AcademicYearService
 
             // Auto promosi siswa yang terdaftar di tahun ajaran yang baru saja ditutup
             $this->promoteStudents($previousActiveYear?->id);
+
+            // Convert pendaftar PPDB yang diterima → jadi siswa baru grade 1
+            $this->convertAcceptedPpdbToStudents();
         });
+    }
+
+    private function convertAcceptedPpdbToStudents(): void
+    {
+        // Ambil semua pendaftar PPDB yang diterima dan belum diconvert jadi siswa
+        $registrations = PpdbRegistration::where('status', 'accepted')
+            ->whereNull('student_id')
+            ->get();
+
+        foreach ($registrations as $reg) {
+            // Kalau email sudah dipakai akun lain, buat siswa tanpa akun user
+            $email = $reg->parent_email;
+            if ($email && User::where('email', $email)->exists()) {
+                $email = null;
+            }
+
+            $student = $this->studentService->create([
+                'name'          => $reg->full_name,
+                'nik'           => $reg->nik_siswa,
+                'gender'        => $reg->gender,
+                'birth_place'   => $reg->birth_place,
+                'birth_date'    => $reg->birth_date?->toDateString(),
+                'address'       => $reg->address,
+                'father_name'   => $reg->father_name,
+                'mother_name'   => $reg->mother_name,
+                'guardian_name' => $reg->parent_name,
+                'grade'         => 1, // PPDB selalu masuk kelas 1
+                'email'         => $email,
+                'parent_name'   => $reg->parent_name,
+                'password'      => null,
+            ]);
+
+            $reg->update(['student_id' => $student->id]);
+
+            // Transfer invoice uang masuk dari ppdb_registration ke student
+            // ppdb_registration_id tetap dipertahankan sebagai marker invoice PPDB
+            Invoice::where('ppdb_registration_id', $reg->id)
+                ->whereNull('student_id')
+                ->update(['student_id' => $student->id]);
+        }
     }
 
     private function promoteStudents(?int $previousYearId): void

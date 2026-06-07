@@ -74,7 +74,8 @@
       "Bash(cp \".claude\\\\worktrees\\\\agent-aa60176c\\\\database\\\\migrations\\\\2026_06_04_200000_create_extracurricular_achievements_table.php\" \"database\\\\migrations\\\\2026_06_04_200000_create_extracurricular_achievements_table.php\")",
       "Bash(find:*)",
       "Bash(grep:*)",
-      "Bash(xargs basename:*)"
+      "Bash(xargs basename:*)",
+      "Bash(cat database/migrations/2*invoices*.php)"
     ]
   }
 }

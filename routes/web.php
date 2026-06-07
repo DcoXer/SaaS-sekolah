@@ -58,6 +58,7 @@ use App\Http\Controllers\Keuangan\PaymentController as KeuanganPayment;
 use App\Http\Controllers\Keuangan\PaymentTypeController;
 use App\Http\Controllers\Keuangan\ReportController as KeuanganReport;
 use App\Http\Controllers\Keuangan\HonorariumController as KeuanganHonorarium;
+use App\Http\Controllers\Keuangan\PpdbInvoiceController as KeuanganPpdbInvoice;
 
 // Guru
 use App\Http\Controllers\Guru\DashboardController as GuruDashboard;
@@ -88,6 +89,7 @@ Route::get('/berita/{post:slug}', [PublicSchoolPostController::class, 'show'])->
 
 // PPDB public — rate limit: 10 submit/menit per IP
 Route::get('/ppdb', [PublicPpdbController::class, 'index'])->name('ppdb.index');
+Route::get('/ppdb/daftar', [PublicPpdbController::class, 'create'])->name('ppdb.create');
 Route::post('/ppdb/daftar', [PublicPpdbController::class, 'store'])->middleware('throttle:10,1')->name('ppdb.store');
 Route::get('/ppdb/cek', [PublicPpdbController::class, 'check'])->middleware('throttle:30,1')->name('ppdb.check');
 
@@ -282,6 +284,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('invoices/send-spp-reminders', [KeuanganInvoice::class, 'sendSppReminders'])->name('invoices.send-spp-reminders');
 
         // Honor Guru
+        // PPDB Invoices
+        Route::get('ppdb-invoices', [KeuanganPpdbInvoice::class, 'index'])->name('ppdb-invoices.index');
+
         Route::get('honorariums', [KeuanganHonorarium::class, 'index'])->name('honorariums.index');
         Route::post('honorariums/generate', [KeuanganHonorarium::class, 'generate'])->name('honorariums.generate');
         Route::post('honorariums/generate-all', [KeuanganHonorarium::class, 'generateAll'])->name('honorariums.generate-all');

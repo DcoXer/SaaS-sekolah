@@ -67,6 +67,7 @@ const navConfig = {
         { type: 'section', label: 'Keuangan' },
         { type: 'item',    label: 'Jenis Tagihan',        href: '/keuangan/payment-types',         icon: 'tag' },
         { type: 'item',    label: 'Tagihan Siswa',        href: '/keuangan/invoices',              icon: 'credit-card' },
+        { type: 'item',    label: 'Tagihan PPDB',         href: '/keuangan/ppdb-invoices',         icon: 'user-plus' },
         { type: 'item',    label: 'Honor Guru',           href: '/keuangan/honorariums',           icon: 'banknotes' },
         { type: 'section', label: 'Akun' },
         { type: 'item',    label: 'Profil Saya',          href: '/profile',                        icon: 'user-circle' },

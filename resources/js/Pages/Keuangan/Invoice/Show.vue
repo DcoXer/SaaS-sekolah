@@ -163,7 +163,7 @@ const activeClassroom = props.student.classrooms?.[0];
                             </div>
                             <div>
                                 <div class="flex flex-wrap items-center gap-2">
-                                    <span class="text-sm font-bold text-slate-800">{{ inv.payment_type?.name }}</span>
+                                    <span class="text-sm font-bold text-slate-800">{{ inv.payment_type?.name ?? (inv.ppdb_registration_id ? 'Uang Masuk PPDB' : '-') }}</span>
                                     <span :class="['inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold', statusColor[inv.status]]">
                                         <span :class="['size-1.5 rounded-full', statusDot[inv.status]]"></span>
                                         {{ statusLabel[inv.status] }}

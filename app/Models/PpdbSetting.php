@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
     'title', 'description', 'requirements',
     'registration_start', 'registration_end', 'announcement_date',
     'quota', 'is_open',
+    'uang_masuk_amount', 'dp_amount',
 ])]
 class PpdbSetting extends Model
 {
@@ -20,6 +21,8 @@ class PpdbSetting extends Model
             'announcement_date'   => 'date',
             'is_open'             => 'boolean',
             'quota'               => 'integer',
+            'uang_masuk_amount'   => 'integer',
+            'dp_amount'           => 'integer',
         ];
     }
 

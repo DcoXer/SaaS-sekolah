@@ -6,6 +6,7 @@ import JsonLd from '@/Components/JsonLd.vue';
 
 const props = defineProps({
     result:         { type: Object,  default: null },
+    invoice:        { type: Object,  default: null },
     error:          { type: String,  default: null },
     number:         { type: String,  default: '' },
     school:         { type: Object,  default: null },
@@ -13,6 +14,14 @@ const props = defineProps({
     isLoggedIn:     { type: Boolean, default: false },
     dashboardRoute: { type: String,  default: null },
 });
+
+const formatRupiah = (val) =>
+    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(val ?? 0);
+
+const formatDate = (val) => {
+    if (!val) return '-';
+    return new Date(val).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+};
 
 const input = ref(props.number ?? '');
 
@@ -193,6 +202,60 @@ const statusIcon = {
                     <div v-if="result.status === 'rejected' && result.notes" class="py-4">
                         <p class="text-xs font-bold uppercase tracking-wide text-red-400">Keterangan</p>
                         <p class="mt-1 text-sm text-slate-700">{{ result.notes }}</p>
+                    </div>
+
+                    <!-- Info tagihan DP (hanya jika diterima & ada invoice) -->
+                    <div v-if="result.status === 'accepted' && invoice" class="py-4">
+                        <p class="mb-3 text-xs font-bold uppercase tracking-wide text-slate-400">Tagihan Uang Masuk</p>
+                        <div class="rounded-2xl border border-green-100 bg-green-50 p-4">
+                            <!-- Status lunas -->
+                            <div v-if="invoice.status === 'paid'" class="flex items-center gap-3">
+                                <div class="flex size-10 shrink-0 items-center justify-center rounded-full bg-green-100">
+                                    <svg class="size-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-green-700">Pembayaran Lunas</p>
+                                    <p class="text-sm text-green-600">{{ formatRupiah(invoice.amount) }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Status belum/kurang bayar -->
+                            <div v-else>
+                                <div class="flex items-start justify-between gap-4">
+                                    <div>
+                                        <p class="text-sm font-bold text-slate-800">Uang Masuk Sekolah</p>
+                                        <p class="mt-0.5 text-2xl font-extrabold text-green-700">{{ formatRupiah(invoice.amount) }}</p>
+                                        <p v-if="invoice.status === 'partial'" class="mt-1 text-sm text-amber-700">
+                                            Sudah dibayar {{ formatRupiah(invoice.total_paid) }} · Sisa {{ formatRupiah(invoice.remaining_amount) }}
+                                        </p>
+                                    </div>
+                                    <span class="shrink-0 rounded-full px-2.5 py-1 text-xs font-bold"
+                                        :class="invoice.status === 'partial' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'">
+                                        {{ invoice.status === 'partial' ? 'Kurang Bayar' : 'Belum Bayar' }}
+                                    </span>
+                                </div>
+                                <div v-if="invoice.due_date" class="mt-3 flex items-center gap-1.5 text-sm text-slate-500">
+                                    <svg class="size-4 shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5"/>
+                                    </svg>
+                                    Batas pembayaran: <span class="font-semibold text-slate-700">{{ formatDate(invoice.due_date) }}</span>
+                                </div>
+                                <div class="mt-4 rounded-xl border border-green-200 bg-white px-4 py-3 text-sm text-slate-600">
+                                    <p class="font-semibold text-slate-700">Cara Pembayaran</p>
+                                    <p class="mt-1">Datang ke kantor sekolah dan tunjukkan nomor pendaftaran <span class="font-mono font-bold text-slate-800">{{ result.registration_number }}</span> kepada petugas keuangan. Pembayaran dilakukan secara tunai.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Info tidak ada invoice (diterima tapi uang masuk belum dikonfigurasi) -->
+                    <div v-else-if="result.status === 'accepted' && !invoice" class="py-4">
+                        <div class="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+                            <p class="font-semibold">Selamat, pendaftaran Anda diterima!</p>
+                            <p class="mt-1 text-blue-600">Hubungi sekolah untuk informasi lebih lanjut mengenai proses pendaftaran.</p>
+                        </div>
                     </div>
                 </div>
 

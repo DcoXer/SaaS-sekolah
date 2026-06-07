@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Student;
 
 #[Fillable([
     'ppdb_setting_id', 'registration_number',
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'father_name', 'father_nik', 'father_phone',
     'mother_name', 'mother_nik', 'mother_phone',
     'photo', 'document_kk', 'document_akta',
-    'status', 'notes', 'reviewed_at', 'reviewed_by',
+    'status', 'notes', 'reviewed_at', 'reviewed_by', 'student_id',
 ])]
 class PpdbRegistration extends Model
 {
@@ -36,5 +37,15 @@ class PpdbRegistration extends Model
     public function reviewer()
     {
         return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class);
+    }
+
+    public function invoice()
+    {
+        return $this->hasOne(\App\Models\Invoice::class, 'ppdb_registration_id');
     }
 }

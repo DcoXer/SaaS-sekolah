@@ -100,10 +100,10 @@ class PaymentService
             ],
             'item_details' => [
                 [
-                    'id'       => $invoice->payment_type_id,
+                    'id'       => $invoice->payment_type_id ?? 'ppdb',
                     'price'    => $invoice->remaining_amount,
                     'quantity' => 1,
-                    'name'     => $invoice->paymentType->name,
+                    'name'     => $invoice->paymentType?->name ?? 'Uang Masuk PPDB',
                 ],
             ],
             'callbacks' => [

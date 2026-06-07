@@ -1,6 +1,6 @@
 <script setup>
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
-import { ref, computed, watch } from 'vue';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import PublicHeader from '@/Components/PublicHeader.vue';
 import JsonLd from '@/Components/JsonLd.vue';
 
@@ -14,8 +14,9 @@ const props = defineProps({
     dashboardRoute: { type: String,  default: null },
 });
 
-const page  = usePage();
-const flash = computed(() => page.props.flash ?? {});
+const page             = usePage();
+const flash            = computed(() => page.props.flash ?? {});
+const registeredNumber = computed(() => flash.value.registered_number ?? null);
 
 const baseUrl = page.props.ziggy?.url ?? '';
 const jsonLd  = computed(() => ({
@@ -36,188 +37,11 @@ const jsonLd  = computed(() => ({
     },
 }));
 
-const showForm = ref(false);
-
-// ── Wilayah API 
-const API = 'https://www.emsifa.com/api-wilayah-indonesia/api';
-
-const provinces = ref([]);
-const regencies = ref([]);
-const districts = ref([]);
-const villages  = ref([]);
-
-const selectedProvince = ref('');
-const selectedRegency  = ref('');
-const selectedDistrict = ref('');
-
-const loadingRegency  = ref(false);
-const loadingDistrict = ref(false);
-const loadingVillage  = ref(false);
-
-const fetchProvinces = async () => {
-    const res = await fetch(`${API}/provinces.json`);
-    provinces.value = await res.json();
-};
-fetchProvinces();
-
-// Fix #14: AbortController + onCleanup mencegah race condition saat user ganti pilihan cepat
-watch(selectedProvince, async (id, _, onCleanup) => {
-    form.province = provinces.value.find(p => p.id === id)?.name ?? '';
-    form.regency  = ''; form.district = ''; form.village = '';
-    selectedRegency.value = ''; selectedDistrict.value = '';
-    regencies.value = []; districts.value = []; villages.value = [];
-    if (!id) return;
-
-    const controller = new AbortController();
-    onCleanup(() => controller.abort());
-
-    loadingRegency.value = true;
-    try {
-        const res = await fetch(`${API}/regencies/${id}.json`, { signal: controller.signal });
-        regencies.value = await res.json();
-    } catch (e) {
-        if (e.name !== 'AbortError') console.error('Gagal memuat kabupaten:', e);
-    } finally {
-        loadingRegency.value = false;
-    }
-});
-
-watch(selectedRegency, async (id, _, onCleanup) => {
-    form.regency  = regencies.value.find(r => r.id === id)?.name ?? '';
-    form.district = ''; form.village = '';
-    selectedDistrict.value = '';
-    districts.value = []; villages.value = [];
-    if (!id) return;
-
-    const controller = new AbortController();
-    onCleanup(() => controller.abort());
-
-    loadingDistrict.value = true;
-    try {
-        const res = await fetch(`${API}/districts/${id}.json`, { signal: controller.signal });
-        districts.value = await res.json();
-    } catch (e) {
-        if (e.name !== 'AbortError') console.error('Gagal memuat kecamatan:', e);
-    } finally {
-        loadingDistrict.value = false;
-    }
-});
-
-watch(selectedDistrict, async (id, _, onCleanup) => {
-    form.district = districts.value.find(d => d.id === id)?.name ?? '';
-    form.village  = '';
-    villages.value = [];
-    if (!id) return;
-
-    const controller = new AbortController();
-    onCleanup(() => controller.abort());
-
-    loadingVillage.value = true;
-    try {
-        const res = await fetch(`${API}/villages/${id}.json`, { signal: controller.signal });
-        villages.value = await res.json();
-    } catch (e) {
-        if (e.name !== 'AbortError') console.error('Gagal memuat desa:', e);
-    } finally {
-        loadingVillage.value = false;
-    }
-});
-
-// ── Form 
-const form = useForm({
-    // Data siswa
-    full_name:       '',
-    nik_siswa:       '',
-    no_kk:           '',
-    birth_place:     '',
-    birth_date:      '',
-    gender:          '',
-    religion:        '',
-    previous_school: '',
-    // Alamat
-    province:        '',
-    regency:         '',
-    district:        '',
-    village:         '',
-    address:         '',
-    // Data ayah
-    father_name:     '',
-    father_nik:      '',
-    father_phone:    '',
-    // Data ibu
-    mother_name:     '',
-    mother_nik:      '',
-    mother_phone:    '',
-    // Kontak
-    parent_phone:    '',
-    parent_email:    '',
-    // Dokumen
-    photo:           null,
-    document_kk:     null,
-    document_akta:   null,
-});
-
-const submit = () => {
-    form.post(route('ppdb.store'), {
-        forceFormData: true,
-        onSuccess: () => {
-            form.reset();
-            selectedProvince.value = '';
-            selectedRegency.value  = '';
-            selectedDistrict.value = '';
-            showForm.value = false;
-        },
-    });
-};
-
-// Fix #6: pakai serverDate dari backend supaya konsisten dengan timezone server
 const isOpen = computed(() => {
     if (!props.setting?.is_open) return false;
     const now = props.serverDate;
     return now >= props.setting.registration_start && now <= props.setting.registration_end;
 });
-
-// ── File upload helpers (Fix #15)
-const fileNames   = ref({ photo: null, document_kk: null, document_akta: null });
-const fileErrors  = ref({ photo: null, document_kk: null, document_akta: null });
-
-const fileLimits = { photo: 2, document_kk: 5, document_akta: 5 };
-
-const handleFileChange = (field, event) => {
-    const file = event.target.files[0];
-    fileNames.value[field]  = null;
-    fileErrors.value[field] = null;
-    form[field] = null;
-
-    if (!file) return;
-
-    const maxBytes = fileLimits[field] * 1024 * 1024;
-    if (file.size > maxBytes) {
-        fileErrors.value[field] = `Ukuran file (${(file.size / 1024 / 1024).toFixed(1)}MB) melebihi batas ${fileLimits[field]}MB.`;
-        event.target.value = '';
-        return;
-    }
-
-    fileNames.value[field] = file.name;
-    form[field] = file;
-};
-
-// ── Helpers
-const inputClass = (field) => [
-    'w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors focus:border-amber-400 focus:ring-2 focus:ring-amber-100',
-    form.errors[field] ? 'border-red-300 bg-red-50' : 'border-slate-200',
-];
-const selectClass = (field) => [
-    'w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors focus:border-amber-400 focus:ring-2 focus:ring-amber-100 bg-white',
-    form.errors[field] ? 'border-red-300 bg-red-50' : 'border-slate-200',
-];
-const selectWilayahClass = (field, disabled) => [
-    'w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-colors bg-white',
-    disabled
-        ? 'border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed opacity-60'
-        : 'focus:border-amber-400 focus:ring-2 focus:ring-amber-100 cursor-pointer',
-    !disabled && form.errors[field] ? 'border-red-300 bg-red-50' : 'border-slate-200',
-];
 </script>
 
 <template>
@@ -276,11 +100,11 @@ const selectWilayahClass = (field, disabled) => [
 
                 <!-- CTA -->
                 <div v-reveal="{ delay: 200 }" class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                    <button v-if="isOpen" @click="showForm = true"
+                    <Link v-if="isOpen" :href="route('ppdb.create')"
                         class="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-sm font-bold text-amber-700 shadow-xl transition-all hover:bg-amber-50 active:scale-95">
                         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
                         Daftar Sekarang
-                    </button>
+                    </Link>
                     <Link :href="route('ppdb.check')"
                         class="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20 active:scale-95">
                         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
@@ -290,11 +114,37 @@ const selectWilayahClass = (field, disabled) => [
             </div>
         </div>
 
-        <!-- Flash -->
-        <div v-if="flash.success" class="border-b border-green-200 bg-green-50 px-6 py-4">
-            <div class="mx-auto flex max-w-5xl items-start gap-3">
-                <svg class="mt-0.5 size-5 shrink-0 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                <p class="text-sm font-medium text-green-700">{{ flash.success }}</p>
+        <!-- Success Card setelah berhasil mendaftar -->
+        <div v-if="registeredNumber" class="border-b border-emerald-100 bg-emerald-50 px-6 py-8">
+            <div class="mx-auto max-w-2xl text-center">
+                <!-- Icon check -->
+                <div class="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-emerald-100 ring-8 ring-emerald-50">
+                    <svg class="size-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-extrabold text-emerald-800">Pendaftaran Berhasil Dikirim!</h2>
+                <p class="mt-1.5 text-sm text-emerald-700">Simpan nomor pendaftaran berikut untuk memantau status pendaftaran.</p>
+
+                <!-- Nomor Pendaftaran -->
+                <div class="mx-auto mt-5 w-fit rounded-2xl border-2 border-emerald-300 bg-white px-8 py-5 shadow-sm">
+                    <p class="mb-1 text-xs font-bold uppercase tracking-widest text-slate-400">Nomor Pendaftaran</p>
+                    <p class="font-mono text-2xl font-black tracking-widest text-slate-900">{{ registeredNumber }}</p>
+                </div>
+
+                <p class="mt-4 text-xs text-emerald-600">Screenshot atau catat nomor ini — dibutuhkan untuk cek status pendaftaran.</p>
+
+                <div class="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                    <Link :href="`${route('ppdb.check')}?no=${registeredNumber}`"
+                        class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-6 py-2.5 text-sm font-bold text-white shadow transition-all hover:bg-emerald-500 active:scale-95">
+                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+                        Cek Status Pendaftaran
+                    </Link>
+                    <Link :href="route('ppdb.index')"
+                        class="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-white px-6 py-2.5 text-sm font-semibold text-emerald-700 transition-colors hover:bg-emerald-50">
+                        Kembali ke Halaman PPDB
+                    </Link>
+                </div>
             </div>
         </div>
 
@@ -364,6 +214,94 @@ const selectWilayahClass = (field, disabled) => [
                     </div>
                 </div>
 
+                <!-- Alur Pendaftaran -->
+                <div v-reveal>
+                    <div class="mb-6 flex items-center gap-4">
+                        <div class="h-1 w-10 rounded-full bg-amber-500"/>
+                        <p class="text-xs font-bold uppercase tracking-widest text-amber-600">Alur Pendaftaran</p>
+                    </div>
+
+                    <!-- Desktop: horizontal stepper — Mobile: vertical list -->
+                    <div class="hidden sm:block">
+                        <div class="relative">
+                            <!-- Garis penghubung -->
+                            <div class="absolute left-0 right-0 top-8 h-0.5 bg-gradient-to-r from-amber-200 via-amber-400 to-emerald-400" style="margin: 0 5%"/>
+
+                            <div class="relative grid grid-cols-6 gap-2">
+                                <div v-for="(step, i) in [
+                                    { no:1, color:'amber',  bg:'bg-amber-500',   ring:'ring-amber-100',   icon:'M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125',      title:'Isi Formulir',         desc:'Lengkapi data calon siswa secara online melalui formulir pendaftaran.' },
+                                    { no:2, color:'amber',  bg:'bg-amber-500',   ring:'ring-amber-100',   icon:'M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5',                                                         title:'Upload Berkas',        desc:'Unggah foto, fotokopi KK, dan akta kelahiran dalam satu langkah.' },
+                                    { no:3, color:'sky',    bg:'bg-sky-500',     ring:'ring-sky-100',     icon:'M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z',                                                                                    title:'Pantau Status',        desc:'Gunakan nomor pendaftaran untuk memantau status verifikasi berkas.' },
+                                    { no:4, color:'violet', bg:'bg-violet-500',  ring:'ring-violet-100',  icon:'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z',                                                                                                   title:'Pengumuman',           desc:'Sekolah mengumumkan hasil seleksi sesuai tanggal yang telah ditetapkan.' },
+                                    { no:5, color:'emerald',bg:'bg-emerald-500', ring:'ring-emerald-100', icon:'M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z', title:'Bayar Uang Pangkal (DP)', desc:'Siswa yang diterima wajib membayar DP ke sekolah sebagai konfirmasi pendaftaran.' },
+                                    { no:6, color:'emerald',bg:'bg-emerald-600', ring:'ring-emerald-100', icon:'M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5',                title:'Resmi Terdaftar',      desc:'Selamat! Siswa resmi terdaftar dan akan masuk kelas 1 di tahun ajaran baru.' },
+                                ]" :key="i" class="flex flex-col items-center text-center">
+                                    <!-- Bubble -->
+                                    <div class="relative z-10 mb-4 flex size-16 items-center justify-center rounded-full ring-4"
+                                        :class="[step.bg, step.ring]">
+                                        <svg class="size-7 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" :d="step.icon"/>
+                                        </svg>
+                                        <span class="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-white text-[10px] font-black shadow"
+                                            :class="`text-${step.color}-600`">{{ step.no }}</span>
+                                    </div>
+                                    <p class="text-xs font-bold leading-snug text-slate-800">{{ step.title }}</p>
+                                    <p class="mt-1 text-[11px] leading-relaxed text-slate-400">{{ step.desc }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mobile: vertical -->
+                    <div class="sm:hidden space-y-0">
+                        <div v-for="(step, i) in [
+                            { no:1, color:'amber',   bg:'bg-amber-500',   border:'border-amber-200',  textColor:'text-amber-700',  badgeBg:'bg-amber-50',   icon:'M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125',      title:'Isi Formulir Online',      desc:'Lengkapi data calon siswa melalui formulir pendaftaran online.' },
+                            { no:2, color:'amber',   bg:'bg-amber-500',   border:'border-amber-200',  textColor:'text-amber-700',  badgeBg:'bg-amber-50',   icon:'M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5',                                                         title:'Upload Berkas Pendukung',  desc:'Unggah foto siswa, fotokopi KK, dan akta kelahiran.' },
+                            { no:3, color:'sky',     bg:'bg-sky-500',     border:'border-sky-200',    textColor:'text-sky-700',    badgeBg:'bg-sky-50',     icon:'M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z',                                                                                    title:'Pantau Status Pendaftaran', desc:'Gunakan nomor pendaftaran untuk cek status verifikasi berkas.' },
+                            { no:4, color:'violet',  bg:'bg-violet-500',  border:'border-violet-200', textColor:'text-violet-700', badgeBg:'bg-violet-50',  icon:'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z',                                                                                                   title:'Pengumuman Hasil Seleksi',  desc:'Hasil seleksi diumumkan sesuai tanggal yang telah ditetapkan.' },
+                            { no:5, color:'emerald', bg:'bg-emerald-500', border:'border-emerald-200',textColor:'text-emerald-700',badgeBg:'bg-emerald-50', icon:'M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z', title:'Bayar Uang Pangkal (DP)',   desc:'Siswa yang diterima wajib membayar DP ke sekolah sebagai konfirmasi pendaftaran.' },
+                            { no:6, color:'emerald', bg:'bg-emerald-600', border:'border-emerald-300',textColor:'text-emerald-800',badgeBg:'bg-emerald-50', icon:'M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5', title:'Resmi Terdaftar',           desc:'Siswa resmi terdaftar dan akan masuk kelas 1 di tahun ajaran baru.' },
+                        ]" :key="i" class="flex gap-4">
+                            <!-- Garis kiri -->
+                            <div class="flex flex-col items-center">
+                                <div class="flex size-10 shrink-0 items-center justify-center rounded-full text-white" :class="step.bg">
+                                    <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" :d="step.icon"/>
+                                    </svg>
+                                </div>
+                                <div v-if="i < 5" class="mt-1 w-0.5 flex-1 bg-slate-200" style="min-height:2rem"/>
+                            </div>
+                            <!-- Konten -->
+                            <div class="pb-6 pt-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="rounded-full px-2 py-0.5 text-[10px] font-bold" :class="[step.badgeBg, step.textColor]">
+                                        Langkah {{ step.no }}
+                                    </span>
+                                </div>
+                                <p class="mt-1 text-sm font-bold text-slate-800">{{ step.title }}</p>
+                                <p class="mt-0.5 text-xs leading-relaxed text-slate-500">{{ step.desc }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Catatan DP -->
+                    <div class="mt-6 flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+                        <div class="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-100">
+                            <svg class="size-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-emerald-800">Tentang Pembayaran Uang Pangkal (DP)</p>
+                            <p class="mt-1 text-xs leading-relaxed text-emerald-700">
+                                Setelah dinyatakan diterima, orang tua/wali wajib melakukan pembayaran uang pangkal (DP) sebagai konfirmasi bahwa siswa akan benar-benar mendaftar.
+                                Pembayaran dilakukan langsung ke bagian keuangan sekolah atau melalui sistem pembayaran online yang akan diberitahukan saat pengumuman.
+                                <strong>Siswa yang tidak membayar DP dalam batas waktu yang ditentukan dianggap mengundurkan diri.</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Persyaratan -->
                 <div v-if="setting.requirements" v-reveal>
                     <div class="mb-4 flex items-center gap-4">
@@ -395,259 +333,5 @@ const selectWilayahClass = (field, disabled) => [
             <p class="text-center text-xs text-slate-400">&copy; {{ new Date().getFullYear() }} {{ school?.name }}</p>
         </footer>
 
-        <!-- Modal Form Pendaftaran -->
-        <Teleport to="body">
-            <Transition enter-from-class="opacity-0" enter-active-class="transition-opacity duration-200"
-                leave-to-class="opacity-0" leave-active-class="transition-opacity duration-150">
-                <div v-if="showForm"
-                    class="fixed inset-0 z-[100] flex items-end justify-center overflow-y-auto bg-black/60 p-4 sm:items-center"
-                    @click.self="showForm = false">
-                    <Transition enter-from-class="opacity-0 translate-y-8" enter-active-class="transition-all duration-300"
-                        leave-to-class="opacity-0 translate-y-4" leave-active-class="transition-all duration-200">
-                        <div v-if="showForm" class="relative my-4 w-full max-w-2xl overflow-hidden rounded-3xl bg-white shadow-2xl">
-
-                            <!-- Header -->
-                            <div class="flex items-center justify-between border-b border-slate-100 bg-amber-50 px-6 py-5">
-                                <div>
-                                    <h2 class="text-lg font-extrabold text-slate-900">Form Pendaftaran PPDB</h2>
-                                    <p class="text-xs text-slate-500">{{ setting?.title }}</p>
-                                </div>
-                                <button @click="showForm = false"
-                                    class="flex size-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200">
-                                    <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                                </button>
-                            </div>
-
-                            <!-- Body -->
-                            <form @submit.prevent="submit" class="max-h-[75vh] overflow-y-auto">
-                                <div class="space-y-8 p-6">
-
-                                    <!-- Error global -->
-                                    <div v-if="form.errors.form" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-                                        {{ form.errors.form }}
-                                    </div>
-
-                                    <!-- Data Calon Siswa -->
-                                    <fieldset>
-                                        <legend class="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-amber-600">
-                                            <span class="flex size-5 items-center justify-center rounded-full bg-amber-100 text-amber-700 text-[10px] font-black">1</span>
-                                            Data Calon Siswa
-                                        </legend>
-                                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                            <div class="sm:col-span-2">
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">Nama Lengkap <span class="text-red-500">*</span></label>
-                                                <input v-model="form.full_name" type="text" placeholder="Sesuai akta lahir" :class="inputClass('full_name')"/>
-                                                <p v-if="form.errors.full_name" class="mt-1 text-xs text-red-500">{{ form.errors.full_name }}</p>
-                                            </div>
-                                            <div>
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">NIK Siswa</label>
-                                                <input v-model="form.nik_siswa" type="text" maxlength="16" placeholder="16 digit NIK" :class="inputClass('nik_siswa')"/>
-                                                <p v-if="form.errors.nik_siswa" class="mt-1 text-xs text-red-500">{{ form.errors.nik_siswa }}</p>
-                                            </div>
-                                            <div>
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">No. Kartu Keluarga <span class="text-red-500">*</span></label>
-                                                <input v-model="form.no_kk" type="text" maxlength="16" placeholder="16 digit No. KK" :class="inputClass('no_kk')"/>
-                                                <p v-if="form.errors.no_kk" class="mt-1 text-xs text-red-500">{{ form.errors.no_kk }}</p>
-                                            </div>
-                                            <div>
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">Tempat Lahir <span class="text-red-500">*</span></label>
-                                                <input v-model="form.birth_place" type="text" placeholder="Kota kelahiran" :class="inputClass('birth_place')"/>
-                                                <p v-if="form.errors.birth_place" class="mt-1 text-xs text-red-500">{{ form.errors.birth_place }}</p>
-                                            </div>
-                                            <div>
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">Tanggal Lahir <span class="text-red-500">*</span></label>
-                                                <input v-model="form.birth_date" type="date" :class="inputClass('birth_date')"/>
-                                                <p v-if="form.errors.birth_date" class="mt-1 text-xs text-red-500">{{ form.errors.birth_date }}</p>
-                                            </div>
-                                            <div>
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">Jenis Kelamin <span class="text-red-500">*</span></label>
-                                                <select v-model="form.gender" :class="selectClass('gender')">
-                                                    <option value="">-- Pilih --</option>
-                                                    <option value="male">Laki-laki</option>
-                                                    <option value="female">Perempuan</option>
-                                                </select>
-                                                <p v-if="form.errors.gender" class="mt-1 text-xs text-red-500">{{ form.errors.gender }}</p>
-                                            </div>
-                                            <div>
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">Agama</label>
-                                                <select v-model="form.religion" :class="selectClass('religion')">
-                                                    <option value="">-- Pilih --</option>
-                                                    <option>Islam</option><option>Kristen</option><option>Katolik</option>
-                                                    <option>Hindu</option><option>Buddha</option><option>Konghucu</option>
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">Asal TK/RA</label>
-                                                <input v-model="form.previous_school" type="text" placeholder="Nama sekolah asal" :class="inputClass('previous_school')"/>
-                                            </div>
-                                        </div>
-                                    </fieldset>
-
-                                    <!-- Alamat -->
-                                    <fieldset>
-                                        <legend class="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-amber-600">
-                                            <span class="flex size-5 items-center justify-center rounded-full bg-amber-100 text-amber-700 text-[10px] font-black">2</span>
-                                            Alamat Tempat Tinggal
-                                        </legend>
-                                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                            <div>
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">Provinsi <span class="text-red-500">*</span></label>
-                                                <select v-model="selectedProvince" :class="selectClass('province')">
-                                                    <option value="">-- Pilih Provinsi --</option>
-                                                    <option v-for="p in provinces" :key="p.id" :value="p.id">{{ p.name }}</option>
-                                                </select>
-                                                <p v-if="form.errors.province" class="mt-1 text-xs text-red-500">{{ form.errors.province }}</p>
-                                            </div>
-                                            <div>
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">Kabupaten / Kota <span class="text-red-500">*</span></label>
-                                                <select v-model="selectedRegency" :disabled="!selectedProvince || loadingRegency" :class="selectClass('regency')">
-                                                    <option value="">{{ loadingRegency ? 'Memuat...' : '-- Pilih Kab/Kota --' }}</option>
-                                                    <option v-for="r in regencies" :key="r.id" :value="r.id">{{ r.name }}</option>
-                                                </select>
-                                                <p v-if="form.errors.regency" class="mt-1 text-xs text-red-500">{{ form.errors.regency }}</p>
-                                            </div>
-                                            <div>
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">Kecamatan <span class="text-red-500">*</span></label>
-                                                <select v-model="selectedDistrict" :disabled="!selectedRegency || loadingDistrict" :class="selectClass('district')">
-                                                    <option value="">{{ loadingDistrict ? 'Memuat...' : '-- Pilih Kecamatan --' }}</option>
-                                                    <option v-for="d in districts" :key="d.id" :value="d.id">{{ d.name }}</option>
-                                                </select>
-                                                <p v-if="form.errors.district" class="mt-1 text-xs text-red-500">{{ form.errors.district }}</p>
-                                            </div>
-                                            <div>
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">Kelurahan / Desa <span class="text-red-500">*</span></label>
-                                                <select v-model="form.village" :disabled="!selectedDistrict || loadingVillage" :class="selectClass('village')">
-                                                    <option value="">{{ loadingVillage ? 'Memuat...' : '-- Pilih Kelurahan --' }}</option>
-                                                    <option v-for="v in villages" :key="v.id" :value="v.name">{{ v.name }}</option>
-                                                </select>
-                                                <p v-if="form.errors.village" class="mt-1 text-xs text-red-500">{{ form.errors.village }}</p>
-                                            </div>
-                                            <div class="sm:col-span-2">
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">Detail Alamat (Jalan / RT / RW / No. Rumah) <span class="text-red-500">*</span></label>
-                                                <textarea v-model="form.address" rows="2" placeholder="Contoh: Jl. Mawar No. 12, RT 03/RW 05" :class="[...inputClass('address'), 'resize-none']"/>
-                                                <p v-if="form.errors.address" class="mt-1 text-xs text-red-500">{{ form.errors.address }}</p>
-                                            </div>
-                                        </div>
-                                    </fieldset>
-
-                                    <!-- Data Ayah -->
-                                    <fieldset>
-                                        <legend class="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-amber-600">
-                                            <span class="flex size-5 items-center justify-center rounded-full bg-amber-100 text-amber-700 text-[10px] font-black">3</span>
-                                            Data Ayah
-                                        </legend>
-                                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                                            <div class="sm:col-span-2">
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">Nama Ayah <span class="text-red-500">*</span></label>
-                                                <input v-model="form.father_name" type="text" :class="inputClass('father_name')"/>
-                                                <p v-if="form.errors.father_name" class="mt-1 text-xs text-red-500">{{ form.errors.father_name }}</p>
-                                            </div>
-                                            <div>
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">No. HP Ayah</label>
-                                                <input v-model="form.father_phone" type="tel" placeholder="08xx-xxxx-xxxx" :class="inputClass('father_phone')"/>
-                                            </div>
-                                            <div class="sm:col-span-3">
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">NIK Ayah <span class="text-red-500">*</span></label>
-                                                <input v-model="form.father_nik" type="text" maxlength="16" placeholder="16 digit NIK" :class="inputClass('father_nik')"/>
-                                                <p v-if="form.errors.father_nik" class="mt-1 text-xs text-red-500">{{ form.errors.father_nik }}</p>
-                                            </div>
-                                        </div>
-                                    </fieldset>
-
-                                    <!-- ④ Data Ibu -->
-                                    <fieldset>
-                                        <legend class="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-amber-600">
-                                            <span class="flex size-5 items-center justify-center rounded-full bg-amber-100 text-amber-700 text-[10px] font-black">4</span>
-                                            Data Ibu
-                                        </legend>
-                                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                                            <div class="sm:col-span-2">
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">Nama Ibu <span class="text-red-500">*</span></label>
-                                                <input v-model="form.mother_name" type="text" :class="inputClass('mother_name')"/>
-                                                <p v-if="form.errors.mother_name" class="mt-1 text-xs text-red-500">{{ form.errors.mother_name }}</p>
-                                            </div>
-                                            <div>
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">No. HP Ibu</label>
-                                                <input v-model="form.mother_phone" type="tel" placeholder="08xx-xxxx-xxxx" :class="inputClass('mother_phone')"/>
-                                            </div>
-                                            <div class="sm:col-span-3">
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">NIK Ibu <span class="text-red-500">*</span></label>
-                                                <input v-model="form.mother_nik" type="text" maxlength="16" placeholder="16 digit NIK" :class="inputClass('mother_nik')"/>
-                                                <p v-if="form.errors.mother_nik" class="mt-1 text-xs text-red-500">{{ form.errors.mother_nik }}</p>
-                                            </div>
-                                        </div>
-                                    </fieldset>
-
-                                    <!-- ⑤ Kontak -->
-                                    <fieldset>
-                                        <legend class="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-amber-600">
-                                            <span class="flex size-5 items-center justify-center rounded-full bg-amber-100 text-amber-700 text-[10px] font-black">5</span>
-                                            Kontak Utama
-                                        </legend>
-                                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                            <div>
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">No. WhatsApp Aktif <span class="text-red-500">*</span></label>
-                                                <input v-model="form.parent_phone" type="tel" placeholder="08xx-xxxx-xxxx" :class="inputClass('parent_phone')"/>
-                                                <p v-if="form.errors.parent_phone" class="mt-1 text-xs text-red-500">{{ form.errors.parent_phone }}</p>
-                                            </div>
-                                            <div>
-                                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">Email Kontak</label>
-                                                <input v-model="form.parent_email" type="email" :class="inputClass('parent_email')"/>
-                                                <p v-if="form.errors.parent_email" class="mt-1 text-xs text-red-500">{{ form.errors.parent_email }}</p>
-                                            </div>
-                                        </div>
-                                    </fieldset>
-
-                                    <!-- ⑥ Dokumen -->
-                                    <fieldset>
-                                        <legend class="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-amber-600">
-                                            <span class="flex size-5 items-center justify-center rounded-full bg-amber-100 text-amber-700 text-[10px] font-black">6</span>
-                                            Dokumen
-                                            <span class="ml-1 rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-600">Wajib diunggah</span>
-                                        </legend>
-                                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                                            <div v-for="doc in [
-                                                { field: 'photo',         label: 'Foto Siswa',     accept: 'image/*',               hint: 'JPG/PNG, maks 2MB' },
-                                                { field: 'document_kk',   label: 'Kartu Keluarga', accept: '.pdf,image/*',           hint: 'PDF/Gambar, maks 5MB' },
-                                                { field: 'document_akta', label: 'Akta Lahir',     accept: '.pdf,image/*',           hint: 'PDF/Gambar, maks 5MB' },
-                                            ]" :key="doc.field">
-                                                <div class="rounded-xl border-2 border-dashed p-4 transition-colors"
-                                                    :class="form.errors[doc.field] ? 'border-red-300 bg-red-50' : 'border-slate-200 hover:border-amber-300'">
-                                                    <label class="mb-2 block text-xs font-semibold text-slate-700">
-                                                        {{ doc.label }} <span class="text-red-500">*</span>
-                                                    </label>
-                                                    <input type="file" :accept="doc.accept"
-                                                        @change="handleFileChange(doc.field, $event)"
-                                                        class="w-full text-xs text-slate-600 file:mr-2 file:rounded-lg file:border-0 file:bg-amber-50 file:px-2 file:py-1 file:text-xs file:font-semibold file:text-amber-700 cursor-pointer"/>
-                                                    <p v-if="fileNames[doc.field]" class="mt-1.5 flex items-center gap-1 text-[10px] text-emerald-600">
-                                                        <span>✓</span> {{ fileNames[doc.field] }}
-                                                    </p>
-                                                    <p v-else class="mt-1.5 text-[10px] text-slate-400">{{ doc.hint }}</p>
-                                                    <p v-if="fileErrors[doc.field]" class="mt-1 text-xs text-red-500">{{ fileErrors[doc.field] }}</p>
-                                                    <p v-else-if="form.errors[doc.field]" class="mt-1 text-xs text-red-500">{{ form.errors[doc.field] }}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </fieldset>
-                                </div>
-
-                                <!-- Footer modal -->
-                                <div class="flex items-center justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
-                                    <button type="button" @click="showForm = false"
-                                        class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50">
-                                        Batal
-                                    </button>
-                                    <button type="submit" :disabled="form.processing"
-                                        class="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-6 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-amber-400 disabled:opacity-60 active:scale-95">
-                                        <svg v-if="form.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
-                                        {{ form.processing ? 'Mengirim...' : 'Kirim Pendaftaran' }}
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </Transition>
-                </div>
-            </Transition>
-        </Teleport>
     </div>
 </template>

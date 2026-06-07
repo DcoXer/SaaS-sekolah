@@ -79,7 +79,7 @@ const formatDate = (val) => {
                             </svg>
                         </div>
                         <div>
-                            <p class="text-sm font-medium text-white/75">{{ payment_type?.name }}</p>
+                            <p class="text-sm font-medium text-white/75">{{ payment_type?.name ?? 'Uang Masuk PPDB' }}</p>
                             <h1 class="text-2xl font-bold text-white">{{ student?.name }}</h1>
                             <div class="mt-1.5 flex flex-wrap items-center gap-2">
                                 <span class="inline-flex items-center rounded-full bg-white/20 px-3 py-0.5 text-xs font-semibold text-white ring-1 ring-white/30">

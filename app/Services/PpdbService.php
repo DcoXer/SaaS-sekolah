@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\AcademicYear;
+use App\Models\Invoice;
 use App\Models\PpdbRegistration;
 use App\Models\PpdbSetting;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -129,7 +131,7 @@ class PpdbService
 
     public function accept(PpdbRegistration $reg, int $userId): void
     {
-        // Fix #4: Guard status — hanya pending atau waitlisted yang bisa diterima
+        // Guard status — hanya pending atau waitlisted yang bisa diterima
         if (! in_array($reg->status, ['pending', 'waitlisted'])) {
             throw new \RuntimeException(
                 'Hanya pendaftar berstatus pending atau daftar tunggu yang dapat diterima.'
@@ -156,7 +158,36 @@ class PpdbService
                 'reviewed_at' => now(),
                 'reviewed_by' => $userId,
             ]);
+
+            // Auto-generate invoice uang masuk jika sudah dikonfigurasi
+            $this->generateInvoiceForRegistration($reg, $setting);
         });
+    }
+
+    private function generateInvoiceForRegistration(PpdbRegistration $reg, PpdbSetting $setting): void
+    {
+        // Hanya buat invoice jika uang_masuk_amount sudah diset
+        if (! $setting->uang_masuk_amount) {
+            return;
+        }
+
+        // Hindari duplikat
+        if (Invoice::where('ppdb_registration_id', $reg->id)->exists()) {
+            return;
+        }
+
+        $academicYear = AcademicYear::where('status', 'active')->first();
+        if (! $academicYear) return;
+
+        Invoice::create([
+            'student_id'           => null,
+            'ppdb_registration_id' => $reg->id,
+            'payment_type_id'      => null,
+            'academic_year_id'     => $academicYear->id,
+            'amount'               => $setting->uang_masuk_amount,
+            'status'               => 'unpaid',
+            'due_date'             => $setting->announcement_date ?? now()->addDays(14),
+        ]);
     }
 
     public function reject(PpdbRegistration $reg, int $userId, string $notes): void

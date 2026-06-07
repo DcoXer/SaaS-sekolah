@@ -24,6 +24,8 @@ const settingForm = useForm({
     announcement_date:  props.setting?.announcement_date?.slice(0,10) ?? '',
     quota:              props.setting?.quota ?? 30,
     is_open:            props.setting?.is_open ?? false,
+    uang_masuk_amount:  props.setting?.uang_masuk_amount ?? '',
+    dp_amount:          props.setting?.dp_amount ?? '',
 });
 
 const saveSetting = () => {
@@ -154,6 +156,14 @@ const statusLabel = {
                             <div>
                                 <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Kuota</p>
                                 <p class="mt-0.5 font-medium text-slate-700">{{ setting.quota }} siswa</p>
+                            </div>
+                            <div v-if="setting.uang_masuk_amount">
+                                <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Uang Masuk</p>
+                                <p class="mt-0.5 font-medium text-slate-700">{{ Number(setting.uang_masuk_amount).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }) }}</p>
+                            </div>
+                            <div v-if="setting.dp_amount">
+                                <p class="text-xs font-bold uppercase tracking-wide text-slate-400">DP (Uang Muka)</p>
+                                <p class="mt-0.5 font-medium text-emerald-700">{{ Number(setting.dp_amount).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }) }}</p>
                             </div>
                         </div>
                     </div>
@@ -327,6 +337,32 @@ const statusLabel = {
                                 class="w-full rounded-xl border px-4 py-2.5 text-sm outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
                                 :class="settingForm.errors.quota ? 'border-red-300 bg-red-50' : 'border-slate-200'"/>
                             <p v-if="settingForm.errors.quota" class="mt-1 text-xs text-red-500">{{ settingForm.errors.quota }}</p>
+                        </div>
+                    </div>
+                    <!-- Uang Masuk & DP -->
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-4">
+                        <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Pengaturan Pembayaran (Opsional)</p>
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div>
+                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">Nominal Uang Masuk (Total)</label>
+                                <div class="relative">
+                                    <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400">Rp</span>
+                                    <input v-model="settingForm.uang_masuk_amount" type="number" min="0" placeholder="misal: 10000000"
+                                        class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
+                                        :class="settingForm.errors.uang_masuk_amount ? 'border-red-300 bg-red-50' : ''"/>
+                                </div>
+                                <p v-if="settingForm.errors.uang_masuk_amount" class="mt-1 text-xs text-red-500">{{ settingForm.errors.uang_masuk_amount }}</p>
+                            </div>
+                            <div>
+                                <label class="mb-1.5 block text-xs font-semibold text-slate-700">Nominal DP (Uang Muka)</label>
+                                <div class="relative">
+                                    <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400">Rp</span>
+                                    <input v-model="settingForm.dp_amount" type="number" min="0" placeholder="misal: 2000000"
+                                        class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
+                                        :class="settingForm.errors.dp_amount ? 'border-red-300 bg-red-50' : ''"/>
+                                </div>
+                                <p v-if="settingForm.errors.dp_amount" class="mt-1 text-xs text-red-500">{{ settingForm.errors.dp_amount }}</p>
+                            </div>
                         </div>
                     </div>
                     <div>
