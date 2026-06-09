@@ -63,6 +63,19 @@ class StudentController extends Controller
         return redirect()->back()->with('success', 'Data siswa berhasil dihapus.');
     }
 
+    public function generateAccount(Request $request, Student $student)
+    {
+        $request->validate([
+            'parent_name' => ['required', 'string', 'max:100'],
+            'email'       => ['required', 'email', 'unique:users,email'],
+            'password'    => ['required', 'string', 'min:8'],
+        ]);
+
+        $this->service->generateAccount($student, $request->only('parent_name', 'email', 'password'));
+
+        return redirect()->back()->with('success', 'Akun wali murid berhasil dibuat.');
+    }
+
     public function assignClassroom(Request $request, Student $student)
     {
         $request->validate([

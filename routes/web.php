@@ -50,6 +50,7 @@ use App\Http\Controllers\Operator\SchoolHeroPhotoController;
 use App\Http\Controllers\Operator\StudentImportExportController;
 use App\Http\Controllers\Operator\TeacherImportExportController;
 use App\Http\Controllers\Operator\TeacherAttendanceRecapController as OperatorTeacherAttendanceRecap;
+use App\Http\Controllers\Operator\StaffController;
 
 // Keuangan
 use App\Http\Controllers\Keuangan\DashboardController as KeuanganDashboard;
@@ -205,6 +206,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('students', StudentController::class)->except(['edit']);
         Route::patch('students/{student}/assign-classroom', [StudentController::class, 'assignClassroom'])
             ->name('students.assign-classroom');
+        Route::post('students/{student}/generate-account', [StudentController::class, 'generateAccount'])
+            ->name('students.generate-account');
 
         // Teacher-Subject Assignment
         Route::resource('teacher-subjects', TeacherSubjectController::class)
@@ -261,6 +264,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('ppdb/registrations/{registration}/accept', [OperatorPpdb::class, 'accept'])->name('ppdb.accept');
         Route::patch('ppdb/registrations/{registration}/reject', [OperatorPpdb::class, 'reject'])->name('ppdb.reject');
         Route::patch('ppdb/registrations/{registration}/waitlist', [OperatorPpdb::class, 'waitlist'])->name('ppdb.waitlist');
+
+        // Staff management (kamad & keuangan accounts)
+        Route::get('staff', [StaffController::class, 'index'])->name('staff.index');
+        Route::post('staff', [StaffController::class, 'store'])->name('staff.store');
+        Route::put('staff/{user}', [StaffController::class, 'update'])->name('staff.update');
+        Route::delete('staff/{user}', [StaffController::class, 'destroy'])->name('staff.destroy');
     });
 
     // TU Keuangan Routes

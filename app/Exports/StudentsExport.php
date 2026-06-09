@@ -19,7 +19,7 @@ class StudentsExport implements FromCollection, WithHeadings, WithMapping, WithS
 
     public function collection()
     {
-        $query = Student::query()->orderBy('grade')->orderBy('name');
+        $query = Student::with('user')->orderBy('grade')->orderBy('name');
 
         if ($this->grade) {
             $query->where('grade', $this->grade);
@@ -48,6 +48,8 @@ class StudentsExport implements FromCollection, WithHeadings, WithMapping, WithS
             'Nama Ibu',
             'Nama Wali',
             'Status',
+            'Email Wali',
+            'Status Akun',
         ];
     }
 
@@ -72,6 +74,8 @@ class StudentsExport implements FromCollection, WithHeadings, WithMapping, WithS
                 'mutasi' => 'Mutasi',
                 default  => $student->status,
             },
+            $student->user?->email ?? '',
+            $student->user ? 'Ada' : 'Belum Ada',
         ];
     }
 

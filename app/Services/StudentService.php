@@ -145,6 +145,21 @@ class StudentService
         }
     }
 
+    public function generateAccount(Student $student, array $data): void
+    {
+        abort_if($student->user_id !== null, 422, 'Siswa ini sudah memiliki akun.');
+
+        DB::transaction(function () use ($student, $data) {
+            $user = User::create([
+                'name'     => $data['parent_name'],
+                'email'    => $data['email'],
+                'password' => Hash::make($data['password']),
+            ]);
+            $user->assignRole('siswa');
+            $student->update(['user_id' => $user->id]);
+        });
+    }
+
     public function delete(Student $student): void
     {
         DB::transaction(function () use ($student) {

@@ -21,6 +21,7 @@ class TeachersExport implements FromCollection, WithHeadings, WithMapping, WithS
     {
         return [
             'NIP',
+            'Email',
             'Nama',
             'Jenis Kelamin',
             'No. HP',
@@ -33,6 +34,7 @@ class TeachersExport implements FromCollection, WithHeadings, WithMapping, WithS
     {
         return [
             $teacher->nip,
+            $teacher->user?->email ?? '',
             $teacher->user?->name ?? '',
             $teacher->gender === 'L' ? 'Laki-laki' : ($teacher->gender === 'P' ? 'Perempuan' : ''),
             $teacher->phone,

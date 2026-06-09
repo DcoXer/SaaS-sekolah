@@ -46,6 +46,7 @@ const navConfig = {
         { type: 'item',    label: 'Berita & Pengumuman',    href: '/operator/school-posts',          icon: 'newspaper' },
         { type: 'section', label: 'Pengaturan' },
         { type: 'item',    label: 'Setting Sekolah',      href: '/operator/school-settings',       icon: 'cog' },
+        { type: 'item',    label: 'Kelola Staff',         href: '/operator/staff',                 icon: 'shield-check' },
         { type: 'section', label: 'Akun' },
         { type: 'item',    label: 'Profil Saya',          href: '/profile',                        icon: 'user-circle' },
     ],
@@ -242,6 +243,8 @@ const iconPaths = {
     logout:         'M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75',
     menu:           'M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5',
     chevron:        'M15.75 19.5L8.25 12l7.5-7.5',
+    'shield-check': 'M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z',
+    'user-plus':    'M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z',
 };
 </script>
 

@@ -2,6 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20';
 
@@ -19,12 +20,29 @@ const form = useForm({
     password:     '',
 });
 
+const showPassword = ref(false);
+
 const genderOptions = [
     { value: 'L', label: 'Laki-laki' },
     { value: 'P', label: 'Perempuan' },
 ];
 
 const gradeOptions = [1, 2, 3, 4, 5, 6].map(g => ({ value: String(g), label: `Kelas ${g}` }));
+
+const slug = (str) => str.toLowerCase().replace(/\s+/g, '.').replace(/[^a-z0-9.]/g, '');
+
+const generateEmail = () => {
+    const base = form.nisn ? form.nisn.trim() : slug(form.name || 'siswa');
+    form.email = `${base}@siswa.sekolah.id`;
+};
+
+const PASS_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+const generatePassword = () => {
+    let pwd = '';
+    for (let i = 0; i < 10; i++) pwd += PASS_CHARS[Math.floor(Math.random() * PASS_CHARS.length)];
+    form.password = pwd;
+    showPassword.value = true;
+};
 
 const submit = () => {
     form.post(route('operator.students.store'), { onError: () => {} });
@@ -208,9 +226,14 @@ const submit = () => {
                         <!-- Email + Password -->
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
-                                <label for="email" class="mb-1.5 block text-xs font-semibold text-slate-600">
-                                    Email Login <span class="text-red-500">*</span>
-                                </label>
+                                <div class="mb-1.5 flex items-center justify-between">
+                                    <label for="email" class="text-xs font-semibold text-slate-600">
+                                        Email Login <span class="text-red-500">*</span>
+                                    </label>
+                                    <button type="button" @click="generateEmail" class="text-xs font-medium text-amber-600 hover:text-amber-700 underline cursor-pointer">
+                                        ⚡ Generate
+                                    </button>
+                                </div>
                                 <input
                                     id="email"
                                     v-model="form.email"
@@ -222,13 +245,18 @@ const submit = () => {
                                 <p v-if="form.errors.email" class="mt-1 text-xs text-red-500">{{ form.errors.email }}</p>
                             </div>
                             <div>
-                                <label for="password" class="mb-1.5 block text-xs font-semibold text-slate-600">
-                                    Password <span class="text-red-500">*</span>
-                                </label>
+                                <div class="mb-1.5 flex items-center justify-between">
+                                    <label for="password" class="text-xs font-semibold text-slate-600">
+                                        Password <span class="text-red-500">*</span>
+                                    </label>
+                                    <button type="button" @click="generatePassword" class="text-xs font-medium text-amber-600 hover:text-amber-700 underline cursor-pointer">
+                                        ⚡ Generate
+                                    </button>
+                                </div>
                                 <input
                                     id="password"
                                     v-model="form.password"
-                                    type="password"
+                                    :type="showPassword ? 'text' : 'password'"
                                     placeholder="Min. 8 karakter"
                                     autocomplete="new-password"
                                     :class="[INPUT_CLS, form.errors.password ? '!border-red-400' : '']"
