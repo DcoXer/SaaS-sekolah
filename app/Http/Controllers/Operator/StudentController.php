@@ -63,6 +63,13 @@ class StudentController extends Controller
         return redirect()->back()->with('success', 'Data siswa berhasil dihapus.');
     }
 
+    public function bulkGenerateAccounts()
+    {
+        $count = $this->service->bulkGenerateAccounts();
+
+        return redirect()->back()->with('success', "Berhasil membuat {$count} akun wali murid.");
+    }
+
     public function generateAccount(Request $request, Student $student)
     {
         $request->validate([

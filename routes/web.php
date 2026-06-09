@@ -203,6 +203,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('students/import/confirm', [StudentImportExportController::class, 'confirm'])->name('students.import.confirm');
 
         // Create Siswa
+        Route::post('students/bulk-generate-accounts', [StudentController::class, 'bulkGenerateAccounts'])
+            ->name('students.bulk-generate-accounts');
         Route::resource('students', StudentController::class)->except(['edit']);
         Route::patch('students/{student}/assign-classroom', [StudentController::class, 'assignClassroom'])
             ->name('students.assign-classroom');

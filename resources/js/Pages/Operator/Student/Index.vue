@@ -4,11 +4,26 @@ import Modal from '@/Components/Modal.vue';
 import Pagination from '@/Components/Pagination.vue';
 import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, inject } from 'vue';
+
+const addToast = inject('addToast');
 
 const props = defineProps({
     students: { type: Array, required: true },
 });
+
+// ── Bulk generate accounts ────────────────────────────────────────────────────
+const showBulkGenerate   = ref(false);
+const bulkGenerateForm   = useForm({});
+const withoutAccountCount = computed(() => props.students.filter(s => !s.user).length);
+
+const submitBulkGenerate = () => {
+    bulkGenerateForm.post(route('operator.students.bulk-generate-accounts'), {
+        onSuccess: () => {
+            showBulkGenerate.value = false;
+        },
+    });
+};
 
 // ── Delete ────────────────────────────────────────────────────────────────────
 const deleteTarget = ref(null);
@@ -119,6 +134,27 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                         Tambah
                     </Link>
                 </div>
+            </div>
+
+            <!-- Banner: siswa tanpa akun -->
+            <div
+                v-if="withoutAccountCount > 0"
+                class="flex items-center justify-between gap-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3"
+            >
+                <div class="flex items-center gap-3">
+                    <svg class="size-5 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                    </svg>
+                    <p class="text-sm text-amber-800">
+                        <span class="font-semibold">{{ withoutAccountCount }} siswa</span> belum punya akun wali murid.
+                    </p>
+                </div>
+                <button
+                    @click="showBulkGenerate = true"
+                    class="shrink-0 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white transition-[background-color] duration-150 hover:bg-amber-600"
+                >
+                    Generate Semua Akun
+                </button>
             </div>
 
             <!-- Search & Filter -->
@@ -288,6 +324,56 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
             </template>
 
         </div>
+
+        <!-- ── Bulk Generate Confirm ──────────────────────────────────────────── -->
+        <Modal :show="showBulkGenerate" max-width="sm" @close="showBulkGenerate = false">
+            <div class="px-6 py-5">
+                <div class="mb-4 flex size-10 items-center justify-center rounded-full bg-amber-100">
+                    <svg class="size-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                </div>
+                <h3 class="text-balance text-base font-bold text-slate-900">Generate Akun Wali Murid</h3>
+                <p class="mt-1.5 text-pretty text-sm text-slate-500">
+                    Sistem akan otomatis membuat akun untuk
+                    <span class="font-semibold text-slate-700">{{ withoutAccountCount }} siswa</span>
+                    yang belum punya akun wali murid.
+                </p>
+                <ul class="mt-3 space-y-1 text-xs text-slate-500">
+                    <li class="flex items-center gap-1.5">
+                        <svg class="size-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                        Email: dari NISN/NIS siswa + <span class="font-mono">@siswa.sekolah.id</span>
+                    </li>
+                    <li class="flex items-center gap-1.5">
+                        <svg class="size-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                        Password: di-generate acak (bisa diubah di detail siswa)
+                    </li>
+                    <li class="flex items-center gap-1.5">
+                        <svg class="size-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                        Siswa yang sudah punya akun tidak akan terpengaruh
+                    </li>
+                </ul>
+            </div>
+            <div class="flex items-center justify-end gap-3 border-t border-slate-100 px-6 py-4">
+                <button
+                    type="button"
+                    @click="showBulkGenerate = false"
+                    class="rounded-lg px-4 py-2 text-sm font-semibold text-slate-600 transition-[background-color] duration-150 hover:bg-slate-100"
+                >
+                    Batal
+                </button>
+                <button
+                    @click="submitBulkGenerate"
+                    :disabled="bulkGenerateForm.processing"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-amber-600 disabled:opacity-60"
+                >
+                    <svg v-if="bulkGenerateForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                    {{ bulkGenerateForm.processing ? 'Memproses...' : 'Ya, Generate Sekarang' }}
+                </button>
+            </div>
+        </Modal>
 
         <!-- ── Delete Confirm ──────────────────────────────────────────────────── -->
         <Modal :show="!!deleteTarget" max-width="sm" @close="deleteTarget = null">

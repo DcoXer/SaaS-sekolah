@@ -160,6 +160,51 @@ class StudentService
         });
     }
 
+    public function bulkGenerateAccounts(): int
+    {
+        $students = Student::whereNull('user_id')->get();
+        $count    = 0;
+
+        DB::transaction(function () use ($students, &$count) {
+            foreach ($students as $student) {
+                // Buat base email dari NISN, NIS, atau ID
+                $base  = $student->nisn ?? $student->nis ?? 'siswa' . $student->id;
+                $base  = Str::slug($base, '.');
+                $email = $base . '@siswa.sekolah.id';
+
+                // Pastikan email unik
+                $suffix = 1;
+                while (User::where('email', $email)->exists()) {
+                    $email = $base . $suffix . '@siswa.sekolah.id';
+                    $suffix++;
+                }
+
+                // Generate password random
+                $chars    = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+                $password = '';
+                for ($i = 0; $i < 10; $i++) {
+                    $password .= $chars[random_int(0, strlen($chars) - 1)];
+                }
+
+                // Nama wali: pakai guardian_name, atau father_name, atau nama siswa
+                $parentName = $student->guardian_name
+                    ?? $student->father_name
+                    ?? $student->name;
+
+                $user = User::create([
+                    'name'     => $parentName,
+                    'email'    => $email,
+                    'password' => Hash::make($password),
+                ]);
+                $user->assignRole('siswa');
+                $student->update(['user_id' => $user->id]);
+                $count++;
+            }
+        });
+
+        return $count;
+    }
+
     public function delete(Student $student): void
     {
         DB::transaction(function () use ($student) {
