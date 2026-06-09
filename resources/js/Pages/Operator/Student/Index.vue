@@ -3,7 +3,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import Pagination from '@/Components/Pagination.vue';
 import FilterSelect from '@/Components/FilterSelect.vue';
-import { Head, Link, useForm, router } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref, computed, watch, inject } from 'vue';
 
 const addToast = inject('addToast');
@@ -13,82 +13,47 @@ const props = defineProps({
 });
 
 // ── Bulk reset (existing accounts) ───────────────────────────────────────────
-const showBulkReset   = ref(false);
-const bulkResetting   = ref(false);
+const showBulkReset    = ref(false);
 const withAccountCount = computed(() => props.students.filter(s => s.user).length);
 
-const submitBulkReset = async () => {
-    bulkResetting.value = true;
-    try {
-        const res = await fetch(route('operator.students.bulk-reset-accounts'), {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf-token"]')?.content ?? '',
-            },
-        });
+const submitBulkReset = () => {
+    showBulkReset.value = false;
 
-        const contentType = res.headers.get('Content-Type') ?? '';
+    const form     = document.createElement('form');
+    form.method    = 'POST';
+    form.action    = route('operator.students.bulk-reset-accounts');
+    form.style.display = 'none';
 
-        if (contentType.includes('application/json')) {
-            showBulkReset.value = false;
-            addToast?.('Belum ada siswa dengan akun.', 'success');
-        } else {
-            const blob = await res.blob();
-            const url  = URL.createObjectURL(blob);
-            const a    = document.createElement('a');
-            a.href     = url;
-            a.download = 'kredensial_siswa.xlsx';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showBulkReset.value = false;
-        }
-    } catch {
-        addToast?.('Terjadi kesalahan. Silakan coba lagi.', 'error');
-    } finally {
-        bulkResetting.value = false;
-    }
+    const csrf     = document.createElement('input');
+    csrf.type      = 'hidden';
+    csrf.name      = '_token';
+    csrf.value     = document.head.querySelector('meta[name="csrf-token"]')?.content ?? '';
+
+    form.appendChild(csrf);
+    document.body.appendChild(form);
+    form.submit();
 };
 
 // ── Bulk generate accounts ────────────────────────────────────────────────────
 const showBulkGenerate    = ref(false);
-const bulkGenerating      = ref(false);
 const withoutAccountCount = computed(() => props.students.filter(s => !s.user).length);
 
-const submitBulkGenerate = async () => {
-    bulkGenerating.value = true;
-    try {
-        const res = await fetch(route('operator.students.bulk-generate-accounts'), {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf-token"]')?.content ?? '',
-            },
-        });
+const submitBulkGenerate = () => {
+    showBulkGenerate.value = false;
 
-        const contentType = res.headers.get('Content-Type') ?? '';
+    const form     = document.createElement('form');
+    form.method    = 'POST';
+    form.action    = route('operator.students.bulk-generate-accounts');
+    form.style.display = 'none';
 
-        if (contentType.includes('application/json')) {
-            showBulkGenerate.value = false;
-            addToast?.('Semua siswa sudah memiliki akun.', 'success');
-        } else {
-            const blob = await res.blob();
-            const url  = URL.createObjectURL(blob);
-            const a    = document.createElement('a');
-            a.href     = url;
-            a.download = 'akun_wali_murid.csv';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showBulkGenerate.value = false;
-            router.reload({ only: ['students'] });
-        }
-    } catch {
-        addToast?.('Terjadi kesalahan. Silakan coba lagi.', 'error');
-    } finally {
-        bulkGenerating.value = false;
-    }
+    const csrf     = document.createElement('input');
+    csrf.type      = 'hidden';
+    csrf.name      = '_token';
+    csrf.value     = document.head.querySelector('meta[name="csrf-token"]')?.content ?? '';
+
+    form.appendChild(csrf);
+    document.body.appendChild(form);
+    form.submit();
 };
 
 // ── Delete ────────────────────────────────────────────────────────────────────
@@ -441,13 +406,9 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                 </button>
                 <button
                     @click="submitBulkReset"
-                    :disabled="bulkResetting"
-                    class="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-amber-600 disabled:opacity-60"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-amber-600"
                 >
-                    <svg v-if="bulkResetting" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                    </svg>
-                    {{ bulkResetting ? 'Memproses...' : 'Ya, Reset & Download' }}
+                    Ya, Reset & Download
                 </button>
             </div>
         </Modal>
@@ -491,13 +452,9 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                 </button>
                 <button
                     @click="submitBulkGenerate"
-                    :disabled="bulkGenerating"
-                    class="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-amber-600 disabled:opacity-60"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-amber-600"
                 >
-                    <svg v-if="bulkGenerating" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                    </svg>
-                    {{ bulkGenerating ? 'Memproses...' : 'Ya, Generate & Download' }}
+                    Ya, Generate & Download
                 </button>
             </div>
         </Modal>
