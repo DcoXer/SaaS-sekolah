@@ -37,7 +37,7 @@ const submitBulkReset = async () => {
             const url  = URL.createObjectURL(blob);
             const a    = document.createElement('a');
             a.href     = url;
-            a.download = 'kredensial_siswa.csv';
+            a.download = 'kredensial_siswa.xlsx';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -180,7 +180,7 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
-                        Download Kredensial
+                        Download Akun
                     </button>
                     <Link
                         :href="route('operator.students.export.form')"
@@ -420,7 +420,7 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                     </li>
                     <li class="flex items-center gap-1.5">
                         <svg class="size-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
-                        Hasil langsung terunduh sebagai <span class="font-mono">kredensial_siswa.csv</span>
+                        Hasil langsung terunduh sebagai <span class="font-mono">kredensial_siswa.xlsx</span> (per sheet per kelas)
                     </li>
                     <li class="flex items-center gap-1.5">
                         <svg class="size-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>

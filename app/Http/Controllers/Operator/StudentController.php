@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Operator;
 
+use App\Exports\StudentAccountsExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use Illuminate\Http\Request;
 use App\Models\Student;
 use App\Services\AcademicYearService;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Services\ClassroomService;
 use App\Services\StudentService;
 use Inertia\Inertia;
@@ -90,27 +92,17 @@ class StudentController extends Controller
 
     public function bulkResetAccounts()
     {
-        $credentials = $this->service->bulkResetAccounts();
+        $grouped = $this->service->bulkResetAccounts();
 
-        if (empty($credentials)) {
+        if (empty($grouped)) {
             return response()->json(['count' => 0]);
         }
 
-        return response()->streamDownload(function () use ($credentials) {
-            $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['Nama Siswa', 'Nama Wali Murid', 'Email', 'Password']);
-            foreach ($credentials as $cred) {
-                fputcsv($handle, [
-                    $cred['student_name'],
-                    $cred['parent_name'],
-                    $cred['email'],
-                    $cred['password'],
-                ]);
-            }
-            fclose($handle);
-        }, 'kredensial_siswa.csv', [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-        ]);
+        return Excel::download(
+            new StudentAccountsExport($grouped),
+            'kredensial_siswa.xlsx',
+            \Maatwebsite\Excel\Excel::XLSX
+        );
     }
 
     public function generateAccount(Request $request, Student $student)

@@ -207,11 +207,20 @@ class StudentService
 
     public function bulkResetAccounts(): array
     {
-        $students    = Student::whereNotNull('user_id')->with('user')->get();
-        $credentials = [];
-        $chars       = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+        $activeYearId = AcademicYear::where('status', 'active')->value('id');
 
-        DB::transaction(function () use ($students, $chars, &$credentials) {
+        $students = Student::whereNotNull('user_id')
+            ->with(['user', 'classrooms' => function ($q) use ($activeYearId) {
+                if ($activeYearId) {
+                    $q->wherePivot('academic_year_id', $activeYearId);
+                }
+            }])
+            ->get();
+
+        $grouped = [];
+        $chars   = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+
+        DB::transaction(function () use ($students, $chars, &$grouped) {
             foreach ($students as $student) {
                 if (!$student->user) continue;
 
@@ -222,7 +231,11 @@ class StudentService
 
                 $student->user->update(['password' => Hash::make($password)]);
 
-                $credentials[] = [
+                // Kelompokkan per rombel, fallback ke "Kelas {grade}"
+                $classroom  = $student->classrooms->first();
+                $sheetName  = $classroom?->name ?? 'Kelas ' . $student->grade;
+
+                $grouped[$sheetName][] = [
                     'student_name' => $student->name,
                     'parent_name'  => $student->user->name,
                     'email'        => $student->user->email,
@@ -231,7 +244,15 @@ class StudentService
             }
         });
 
-        return $credentials;
+        // Urutkan sheet: nama rombel ascending, "Kelas X" tanpa rombel di akhir
+        uksort($grouped, function ($a, $b) {
+            $aIsRombel = !preg_match('/^Kelas \d+$/', $a);
+            $bIsRombel = !preg_match('/^Kelas \d+$/', $b);
+            if ($aIsRombel !== $bIsRombel) return $aIsRombel ? -1 : 1;
+            return strnatcmp($a, $b);
+        });
+
+        return $grouped;
     }
 
     public function delete(Student $student): void
