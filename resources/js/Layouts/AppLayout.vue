@@ -107,8 +107,9 @@ const userInitials = computed(() => {
 const logout = () => router.post(route('logout'));
 
 // ── Notifications ─────────────────────────────────────────────────────────────
-const notifications  = computed(() => page.props.notifications ?? []);
-const unreadCount    = computed(() => page.props.unreadCount ?? 0);
+const notifData   = ref(null); // null = pakai data dari Inertia props (initial load)
+const notifications  = computed(() => notifData.value?.notifications ?? page.props.notifications ?? []);
+const unreadCount    = computed(() => notifData.value?.unreadCount   ?? page.props.unreadCount   ?? 0);
 const notifOpen      = ref(false);
 
 const typeIcon = {
@@ -129,22 +130,31 @@ const typeColor = {
     payment_recorded:'bg-emerald-100 text-emerald-600',
 };
 
+const csrfToken = () => document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+
+const fetchNotifications = async () => {
+    try {
+        const res = await fetch('/notifications/poll', {
+            headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken() },
+        });
+        if (res.ok) notifData.value = await res.json();
+    } catch { /* silent fail */ }
+};
+
 const markRead = async (id) => {
     await fetch(`/notifications/${id}/read`, {
         method: 'PATCH',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
-            'Accept': 'application/json',
-        },
+        headers: { 'X-CSRF-TOKEN': csrfToken(), 'Accept': 'application/json' },
     });
-    router.reload({ only: ['notifications', 'unreadCount'], preserveScroll: true, preserveState: true });
+    await fetchNotifications();
 };
 
-const markAllRead = () => {
-    router.patch(route('notifications.read-all'), {}, {
-        preserveScroll: true,
-        preserveState: true,
+const markAllRead = async () => {
+    await fetch('/notifications/read-all', {
+        method: 'PATCH',
+        headers: { 'X-CSRF-TOKEN': csrfToken(), 'Accept': 'application/json' },
     });
+    await fetchNotifications();
 };
 
 // Close notif dropdown when clicking outside
@@ -158,12 +168,10 @@ const handleOutsideClick = (e) => {
 const navigating = ref(false);
 let navTimeout = null;
 
-// Poll notifications every 30s so semua role dapat update real-time
+// Poll notifications every 30s — pakai fetch biasa agar tidak trigger Inertia progress bar
 let pollTimer = null;
 const pollNotifications = () => {
-    if (!document.hidden) {
-        router.reload({ only: ['notifications', 'unreadCount'], preserveScroll: true, preserveState: true });
-    }
+    if (!document.hidden) fetchNotifications();
 };
 
 onMounted(() => {

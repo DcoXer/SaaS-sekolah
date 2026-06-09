@@ -290,7 +290,7 @@ function handleCellClick(entry) {
                     :class="locationPermission === 'denied'
                         ? 'border-red-200 bg-red-50'
                         : 'border-amber-200 bg-amber-50'">
-                    <div class="flex items-start gap-3.5 px-5 py-4">
+                    <div class="flex flex-wrap items-start gap-3 px-5 py-4">
                         <!-- Icon -->
                         <div class="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl"
                             :class="locationPermission === 'denied' ? 'bg-red-100' : 'bg-amber-100'">
@@ -331,7 +331,7 @@ function handleCellClick(entry) {
             <div v-if="isCurrentMonth && todayEntry && !todayEntry.is_weekend"
                 class="overflow-hidden rounded-2xl border bg-white shadow-sm"
                 :class="todayEntry.attendance ? 'border-slate-100' : 'border-emerald-200 shadow-emerald-100'">
-                <div class="flex items-center gap-4 px-5 py-4">
+                <div class="flex flex-wrap items-center gap-3 px-5 py-4">
                     <div class="flex size-11 shrink-0 items-center justify-center rounded-2xl"
                         :class="todayEntry.attendance
                             ? (statusConfig[todayEntry.attendance.status]?.light ?? 'bg-slate-100')

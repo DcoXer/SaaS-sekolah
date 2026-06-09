@@ -9,33 +9,17 @@ class SubjectService
 {
     public function getAll(): Collection
     {
-        return Subject::orderBy('grade')->orderBy('name')->get();
-    }
-
-    public function getByGrade(int $grade): Collection
-    {
-        return Subject::where('grade', $grade)->orderBy('name')->get();
-    }
-
-    public function getById(Subject $subject): Subject
-    {
-        return $subject;
+        return Subject::orderBy('name')->get();
     }
 
     public function create(array $data): Subject
     {
-        return Subject::create([
-            'name'  => $data['name'],
-            'grade' => $data['grade'],
-        ]);
+        return Subject::create(['name' => $data['name']]);
     }
 
     public function update(Subject $subject, array $data): Subject
     {
-        $subject->update([
-            'name'  => $data['name'],
-            'grade' => $data['grade'],
-        ]);
+        $subject->update(['name' => $data['name']]);
 
         return $subject->fresh();
     }

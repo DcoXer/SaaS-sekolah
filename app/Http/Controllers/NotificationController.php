@@ -24,4 +24,24 @@ class NotificationController extends Controller
 
         return redirect()->back();
     }
+
+    public function poll()
+    {
+        $user = request()->user();
+
+        $notifications = $this->service->getForUser($user, 30)->map(fn ($n) => [
+            'id'         => $n->id,
+            'type'       => $n->type,
+            'title'      => $n->title,
+            'message'    => $n->message,
+            'data'       => $n->data,
+            'read_at'    => $n->read_at?->toISOString(),
+            'created_at' => $n->created_at->diffForHumans(),
+        ]);
+
+        return response()->json([
+            'notifications' => $notifications,
+            'unreadCount'   => $this->service->getUnreadCount($user),
+        ]);
+    }
 }

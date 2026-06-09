@@ -69,20 +69,22 @@ const formatDate = (val) => {
         <div class="space-y-5">
 
             <!-- Heading + request button -->
-            <div class="flex items-start justify-between gap-4">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                     <h2 class="text-balance text-lg font-bold text-slate-900">Surat</h2>
                     <p class="text-pretty text-sm text-slate-500">Permohonan surat keterangan dan notifikasi sekolah.</p>
                 </div>
-                <button
-                    @click="showRequest = true"
-                    class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600"
-                >
-                    <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    Minta Surat
-                </button>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button
+                        @click="showRequest = true"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600"
+                    >
+                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Minta Surat
+                    </button>
+                </div>
             </div>
 
             <!-- Tabs -->

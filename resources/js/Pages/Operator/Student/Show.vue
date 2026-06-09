@@ -72,7 +72,6 @@ const submitCreateAccount = () => {
     });
 };
 
-// ── Assign classroom ──────────────────────────────────────────────────────────
 // ── Delete ────────────────────────────────────────────────────────────────────
 const showDelete = ref(false);
 const deleteForm  = useForm({});
@@ -123,398 +122,454 @@ const formatDate = (d) => d
             </div>
         </template>
 
-        <div class="mx-auto max-w-2xl space-y-5">
+        <div class="mx-auto max-w-5xl space-y-5">
             <BackButton href="/operator/students" />
 
-            <!-- Header card -->
-            <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div class="flex items-center gap-4">
-                    <div class="flex size-14 items-center justify-center rounded-full bg-sky-100 text-lg font-bold text-sky-700">
-                        {{ initials(student.name) }}
-                    </div>
-                    <div>
-                        <h2 class="text-balance text-base font-bold text-slate-900">{{ student.name }}</h2>
-                        <p class="tabular-nums text-sm text-slate-500">
-                            NISN: {{ student.nisn ?? 'â€”' }}<span v-if="student.nis"> â€¢ NIS: {{ student.nis }}</span>
-                        </p>
-                        <div class="mt-1.5 flex flex-wrap items-center gap-1.5">
-                            <span
-                                class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ring-1"
-                                :class="genderConfig[student.gender]?.badge"
-                            >
-                                {{ genderConfig[student.gender]?.label }}
-                            </span>
-                            <span
-                                class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ring-1"
-                                :class="statusConfig[student.status]?.badge"
-                            >
-                                {{ statusConfig[student.status]?.label }}
-                            </span>
-                            <span v-if="student.birth_date" class="text-xs text-slate-400">
-                                {{ formatDate(student.birth_date) }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <button
-                    @click="showDelete = true"
-                    class="inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 transition-[background-color,border-color] duration-150 hover:bg-red-50"
-                >
-                    <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                    </svg>
-                    Hapus
-                </button>
-            </div>
+            <div class="grid grid-cols-1 gap-5 lg:grid-cols-[320px,1fr] lg:items-start">
 
-            <!-- Info card: data lengkap -->
-            <div v-if="student.father_name || student.mother_name || student.guardian_name || student.nik || student.birth_place"
-                class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-                <div class="border-b border-slate-100 px-5 py-3">
-                    <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-400">Data Keluarga</h3>
-                </div>
-                <dl class="grid grid-cols-1 divide-y divide-slate-100 sm:grid-cols-2 sm:divide-x sm:divide-y-0">
-                    <div v-if="student.father_name" class="flex flex-col px-5 py-3">
-                        <dt class="text-xs text-slate-400">Ayah Kandung</dt>
-                        <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ student.father_name }}</dd>
-                    </div>
-                    <div v-if="student.mother_name" class="flex flex-col px-5 py-3">
-                        <dt class="text-xs text-slate-400">Ibu Kandung</dt>
-                        <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ student.mother_name }}</dd>
-                    </div>
-                    <div v-if="student.guardian_name" class="flex flex-col px-5 py-3">
-                        <dt class="text-xs text-slate-400">Wali</dt>
-                        <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ student.guardian_name }}</dd>
-                    </div>
-                    <div v-if="student.nik" class="flex flex-col px-5 py-3">
-                        <dt class="text-xs text-slate-400">NIK</dt>
-                        <dd class="mt-0.5 font-mono text-sm font-medium text-slate-800">{{ student.nik }}</dd>
-                    </div>
-                    <div v-if="student.birth_place" class="flex flex-col px-5 py-3">
-                        <dt class="text-xs text-slate-400">Tempat Lahir</dt>
-                        <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ student.birth_place }}</dd>
-                    </div>
-                </dl>
-            </div>
+                <!-- ── Kolom Kiri ──────────────────────────────────────────── -->
+                <div class="space-y-4 lg:sticky lg:top-6">
 
-            <!-- Edit form -->
-            <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-                <div class="border-b border-slate-100 px-5 py-4">
-                    <h3 class="text-sm font-semibold text-slate-800">Edit Data Siswa</h3>
-                </div>
-
-                <form @submit.prevent="submitEdit" class="space-y-5 p-5">
-
-                    <!-- Data Siswa -->
-                    <div class="space-y-3">
-                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Data Siswa</p>
-
-                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                            <div>
-                                <label for="e-nisn" class="mb-1.5 block text-xs font-semibold text-slate-600">
-                                    NISN <span class="text-red-500">*</span>
-                                </label>
-                                <input
-                                    id="e-nisn"
-                                    v-model="editForm.nisn"
-                                    type="text"
-                                    :class="[
-                                        'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                        editForm.errors.nisn ? 'border-red-400' : 'border-slate-200',
-                                    ]"
-                                />
-                                <p v-if="editForm.errors.nisn" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.nisn }}</p>
-                            </div>
-                            <div>
-                                <label for="e-name" class="mb-1.5 block text-xs font-semibold text-slate-600">
-                                    Nama Lengkap <span class="text-red-500">*</span>
-                                </label>
-                                <input
-                                    id="e-name"
-                                    v-model="editForm.name"
-                                    type="text"
-                                    :class="[
-                                        'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                        editForm.errors.name ? 'border-red-400' : 'border-slate-200',
-                                    ]"
-                                />
-                                <p v-if="editForm.errors.name" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.name }}</p>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label for="e-nis" class="mb-1.5 block text-xs font-semibold text-slate-600">
-                                NIS <span class="text-slate-400">(opsional)</span>
-                            </label>
-                            <input
-                                id="e-nis"
-                                v-model="editForm.nis"
-                                type="text"
-                                :class="[
-                                    'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                    editForm.errors.nis ? 'border-red-400' : 'border-slate-200',
-                                ]"
-                            />
-                            <p v-if="editForm.errors.nis" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.nis }}</p>
-                        </div>
-
-                        <!-- Grade + Tanggal Lahir -->
-                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                            <div>
-                                <label for="e-grade" class="mb-1.5 block text-xs font-semibold text-slate-600">
-                                    Tingkat Kelas <span class="text-red-500">*</span>
-                                </label>
-                                <FilterSelect
-                                    v-model="editForm.grade"
-                                    :options="gradeOptions"
-                                    :has-error="!!editForm.errors.grade"
-                                    block
-                                />
-                                <p v-if="editForm.errors.grade" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.grade }}</p>
-                            </div>
-                            <div>
-                                <label for="e-birth" class="mb-1.5 block text-xs font-semibold text-slate-600">Tanggal Lahir</label>
-                                <input
-                                    id="e-birth"
-                                    v-model="editForm.birth_date"
-                                    type="date"
-                                    :class="[
-                                        'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                        editForm.errors.birth_date ? 'border-red-400' : 'border-slate-200',
-                                    ]"
-                                />
-                                <p v-if="editForm.errors.birth_date" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.birth_date }}</p>
-                            </div>
-                        </div>
-
-                        <!-- Gender -->
-                        <div>
-                            <label class="mb-1.5 block text-xs font-semibold text-slate-600">
-                                Jenis Kelamin <span class="text-red-500">*</span>
-                            </label>
-                            <div class="flex gap-2">
-                                <label
-                                    v-for="opt in [{ value: 'L', label: 'Laki-laki' }, { value: 'P', label: 'Perempuan' }]"
-                                    :key="opt.value"
-                                    :class="[
-                                        'flex flex-1 cursor-pointer items-center justify-center rounded-lg border px-3 py-2.5 text-xs font-medium transition-[border-color,background-color] duration-150',
-                                        editForm.gender === opt.value
-                                            ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
-                                            : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50',
-                                    ]"
+                    <!-- Profile card -->
+                    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                        <!-- Banner -->
+                        <div class="h-20 bg-gradient-to-br from-sky-400 to-blue-500" />
+                        <div class="px-5 pb-5">
+                            <!-- Avatar overlapping banner -->
+                            <div class="-mt-8 mb-3 flex items-end justify-between">
+                                <div class="flex size-16 items-center justify-center rounded-full border-4 border-white bg-sky-100 text-xl font-bold text-sky-700 shadow">
+                                    {{ initials(student.name) }}
+                                </div>
+                                <button
+                                    @click="showDelete = true"
+                                    class="inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-2.5 py-1.5 text-xs font-semibold text-red-600 transition-[background-color,border-color] duration-150 hover:bg-red-50"
                                 >
-                                    <input type="radio" :value="opt.value" v-model="editForm.gender" class="sr-only" />
-                                    {{ opt.label }}
-                                </label>
+                                    <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                    </svg>
+                                    Hapus
+                                </button>
                             </div>
-                            <p v-if="editForm.errors.gender" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.gender }}</p>
-                        </div>
 
-                        <!-- Alamat -->
-                        <div>
-                            <label for="e-address" class="mb-1.5 block text-xs font-semibold text-slate-600">Alamat</label>
-                            <textarea
-                                id="e-address"
-                                v-model="editForm.address"
-                                rows="2"
-                                :class="[
-                                    'w-full resize-none rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                    editForm.errors.address ? 'border-red-400' : 'border-slate-200',
-                                ]"
-                            />
-                            <p v-if="editForm.errors.address" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.address }}</p>
+                            <h2 class="text-base font-bold text-slate-900">{{ student.name }}</h2>
+                            <p class="mt-0.5 font-mono text-xs text-slate-400">
+                                NISN: {{ student.nisn ?? '—' }}
+                                <span v-if="student.nis"> · NIS: {{ student.nis }}</span>
+                            </p>
+
+                            <div class="mt-2.5 flex flex-wrap gap-1.5">
+                                <span
+                                    class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ring-1"
+                                    :class="genderConfig[student.gender]?.badge"
+                                >
+                                    {{ genderConfig[student.gender]?.label }}
+                                </span>
+                                <span
+                                    class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ring-1"
+                                    :class="statusConfig[student.status]?.badge"
+                                >
+                                    {{ statusConfig[student.status]?.label }}
+                                </span>
+                                <span class="inline-flex items-center rounded-full bg-violet-50 px-2 py-0.5 text-xs font-semibold text-violet-700 ring-1 ring-violet-200">
+                                    Kelas {{ student.grade }}
+                                </span>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Divider -->
-                    <div class="border-t border-slate-100" />
+                    <!-- Data Pribadi -->
+                    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                        <div class="border-b border-slate-100 px-4 py-3">
+                            <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-400">Data Pribadi</h3>
+                        </div>
+                        <dl class="divide-y divide-slate-100">
+                            <div class="flex items-start justify-between px-4 py-2.5">
+                                <dt class="text-xs text-slate-400 shrink-0 w-28">Tanggal Lahir</dt>
+                                <dd class="text-xs font-medium text-slate-700 text-right">{{ formatDate(student.birth_date) }}</dd>
+                            </div>
+                            <div class="flex items-start justify-between px-4 py-2.5">
+                                <dt class="text-xs text-slate-400 shrink-0 w-28">Tempat Lahir</dt>
+                                <dd class="text-xs font-medium text-slate-700 text-right">{{ student.birth_place || '—' }}</dd>
+                            </div>
+                            <div class="flex items-start justify-between px-4 py-2.5">
+                                <dt class="text-xs text-slate-400 shrink-0 w-28">NIK</dt>
+                                <dd class="font-mono text-xs font-medium text-slate-700 text-right">{{ student.nik || '—' }}</dd>
+                            </div>
+                            <div v-if="student.address" class="flex items-start justify-between px-4 py-2.5">
+                                <dt class="text-xs text-slate-400 shrink-0 w-28">Alamat</dt>
+                                <dd class="text-xs font-medium text-slate-700 text-right">{{ student.address }}</dd>
+                            </div>
+                        </dl>
+                    </div>
 
                     <!-- Data Keluarga -->
-                    <div class="space-y-3">
-                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Data Keluarga</p>
-
-                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                            <div>
-                                <label for="e-father" class="mb-1.5 block text-xs font-semibold text-slate-600">Nama Ayah Kandung</label>
-                                <input
-                                    id="e-father"
-                                    v-model="editForm.father_name"
-                                    type="text"
-                                    placeholder="Nama lengkap ayah"
-                                    :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.father_name ? 'border-red-400' : 'border-slate-200']"
-                                />
-                            </div>
-                            <div>
-                                <label for="e-mother" class="mb-1.5 block text-xs font-semibold text-slate-600">Nama Ibu Kandung</label>
-                                <input
-                                    id="e-mother"
-                                    v-model="editForm.mother_name"
-                                    type="text"
-                                    placeholder="Nama lengkap ibu"
-                                    :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.mother_name ? 'border-red-400' : 'border-slate-200']"
-                                />
-                            </div>
+                    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                        <div class="border-b border-slate-100 px-4 py-3">
+                            <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-400">Data Keluarga</h3>
                         </div>
-
-                        <div>
-                            <label for="e-guardian" class="mb-1.5 block text-xs font-semibold text-slate-600">Nama Wali</label>
-                            <input
-                                id="e-guardian"
-                                v-model="editForm.guardian_name"
-                                type="text"
-                                placeholder="Nama wali (kosongkan jika sama dengan ayah/ibu)"
-                                :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.guardian_name ? 'border-red-400' : 'border-slate-200']"
-                            />
-                        </div>
-
-                        <div>
-                            <label for="e-parent-phone" class="mb-1.5 block text-xs font-semibold text-slate-600">No. HP Orang Tua/Wali</label>
-                            <input
-                                id="e-parent-phone"
-                                v-model="editForm.parent_phone"
-                                type="text"
-                                placeholder="08xxxxxxxxxx"
-                                :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.parent_phone ? 'border-red-400' : 'border-slate-200']"
-                            />
-                            <p v-if="editForm.errors.parent_phone" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.parent_phone }}</p>
-                        </div>
-
-                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                            <div>
-                                <label for="e-nik" class="mb-1.5 block text-xs font-semibold text-slate-600">NIK</label>
-                                <input
-                                    id="e-nik"
-                                    v-model="editForm.nik"
-                                    type="text"
-                                    placeholder="16 digit NIK"
-                                    :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.nik ? 'border-red-400' : 'border-slate-200']"
-                                />
-                                <p v-if="editForm.errors.nik" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.nik }}</p>
+                        <dl class="divide-y divide-slate-100">
+                            <div class="flex items-start justify-between px-4 py-2.5">
+                                <dt class="text-xs text-slate-400 shrink-0 w-28">Ayah Kandung</dt>
+                                <dd class="text-xs font-medium text-slate-700 text-right">{{ student.father_name || '—' }}</dd>
                             </div>
-                            <div>
-                                <label for="e-birthplace" class="mb-1.5 block text-xs font-semibold text-slate-600">Tempat Lahir</label>
-                                <input
-                                    id="e-birthplace"
-                                    v-model="editForm.birth_place"
-                                    type="text"
-                                    placeholder="Kota tempat lahir"
-                                    :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.birth_place ? 'border-red-400' : 'border-slate-200']"
-                                />
+                            <div class="flex items-start justify-between px-4 py-2.5">
+                                <dt class="text-xs text-slate-400 shrink-0 w-28">Ibu Kandung</dt>
+                                <dd class="text-xs font-medium text-slate-700 text-right">{{ student.mother_name || '—' }}</dd>
                             </div>
-                        </div>
+                            <div class="flex items-start justify-between px-4 py-2.5">
+                                <dt class="text-xs text-slate-400 shrink-0 w-28">Wali</dt>
+                                <dd class="text-xs font-medium text-slate-700 text-right">{{ student.guardian_name || '—' }}</dd>
+                            </div>
+                            <div class="flex items-start justify-between px-4 py-2.5">
+                                <dt class="text-xs text-slate-400 shrink-0 w-28">No. HP</dt>
+                                <dd class="text-xs font-medium text-slate-700 text-right">{{ student.parent_phone || '—' }}</dd>
+                            </div>
+                        </dl>
                     </div>
 
-                    <!-- Divider -->
-                    <div class="border-t border-slate-100" />
-
                     <!-- Akun Wali Murid -->
-                    <div class="space-y-3">
-                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Akun Wali Murid</p>
-
-                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                            <div>
-                                <label for="e-parent" class="mb-1.5 block text-xs font-semibold text-slate-600">Nama Wali Murid</label>
-                                <input
-                                    id="e-parent"
-                                    v-model="editForm.parent_name"
-                                    type="text"
-                                    :placeholder="student.user ? '' : 'Belum ada akun'"
-                                    :disabled="!student.user"
-                                    :class="[
-                                        'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                        !student.user ? 'cursor-not-allowed bg-slate-50 text-slate-400' : '',
-                                        editForm.errors.parent_name ? 'border-red-400' : 'border-slate-200',
-                                    ]"
-                                />
-                                <p v-if="editForm.errors.parent_name" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.parent_name }}</p>
+                    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                        <div class="border-b border-slate-100 px-4 py-3">
+                            <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-400">Akun Wali Murid</h3>
+                        </div>
+                        <div v-if="student.user" class="divide-y divide-slate-100">
+                            <div class="flex items-start justify-between px-4 py-2.5">
+                                <dt class="text-xs text-slate-400 shrink-0 w-24">Nama</dt>
+                                <dd class="text-xs font-medium text-slate-700 text-right">{{ student.user.name }}</dd>
                             </div>
-                            <div>
-                                <label for="e-pass" class="mb-1.5 block text-xs font-semibold text-slate-600">Password Baru</label>
-                                <input
-                                    id="e-pass"
-                                    v-model="editForm.password"
-                                    type="password"
-                                    placeholder="Kosongkan jika tidak diubah"
-                                    autocomplete="new-password"
-                                    :disabled="!student.user"
-                                    :class="[
-                                        'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150',
-                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                        !student.user ? 'cursor-not-allowed bg-slate-50' : '',
-                                        editForm.errors.password ? 'border-red-400' : 'border-slate-200',
-                                    ]"
-                                />
-                                <p v-if="editForm.errors.password" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.password }}</p>
+                            <div class="flex items-start justify-between px-4 py-2.5">
+                                <dt class="text-xs text-slate-400 shrink-0 w-24">Email</dt>
+                                <dd class="text-xs font-medium text-slate-700 text-right break-all">{{ student.user.email }}</dd>
+                            </div>
+                            <div class="flex items-center justify-between px-4 py-2.5">
+                                <dt class="text-xs text-slate-400">Status</dt>
+                                <dd>
+                                    <span class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">
+                                        Aktif
+                                    </span>
+                                </dd>
                             </div>
                         </div>
-
-                        <div v-if="!student.user" class="rounded-lg border border-amber-200 bg-amber-50 p-4">
-                            <p class="text-sm font-semibold text-amber-800">Akun wali murid belum ada.</p>
-                            <p class="mt-0.5 text-xs text-amber-600">Buat akun agar wali murid bisa login dan melihat tagihan, nilai, serta rapor.</p>
+                        <div v-else class="px-4 py-4">
+                            <p class="text-xs text-slate-500">Belum ada akun. Wali murid tidak dapat login.</p>
                             <button
                                 type="button"
                                 @click="showCreateAccount = true"
                                 class="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-600"
                             >
+                                <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
                                 Buat Akun Wali Murid
                             </button>
                         </div>
                     </div>
 
-                    <!-- Submit -->
-                    <div class="flex justify-end border-t border-slate-100 pt-4">
-                        <button
-                            type="submit"
-                            :disabled="editForm.processing"
-                            class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60"
-                        >
-                            <svg v-if="editForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                            </svg>
-                            {{ editForm.processing ? 'Menyimpan...' : 'Simpan Perubahan' }}
-                        </button>
+                    <!-- Riwayat Kelas -->
+                    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                        <div class="border-b border-slate-100 px-4 py-3">
+                            <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-400">Riwayat Kelas</h3>
+                        </div>
+                        <div v-if="student.classrooms?.length > 0">
+                            <ul class="divide-y divide-slate-100">
+                                <li
+                                    v-for="classroom in student.classrooms"
+                                    :key="classroom.id"
+                                    class="flex items-center justify-between px-4 py-3"
+                                >
+                                    <div>
+                                        <p class="text-sm font-medium text-slate-800">{{ classroom.name }}</p>
+                                        <p class="text-xs text-slate-400">{{ classroom.academic_year?.name }}</p>
+                                    </div>
+                                    <span class="inline-flex items-center rounded-full bg-violet-50 px-2 py-0.5 text-xs font-semibold text-violet-700 ring-1 ring-violet-200">
+                                        Kelas {{ classroom.grade }}
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div v-else class="px-4 py-5 text-center">
+                            <p class="text-xs text-slate-400">Belum pernah ditempatkan di kelas manapun.</p>
+                            <p class="mt-0.5 text-xs text-slate-400">
+                                Kelola dari menu
+                                <Link href="/operator/classrooms" class="font-semibold text-emerald-600 hover:underline">Kelas</Link>.
+                            </p>
+                        </div>
                     </div>
 
-                </form>
-            </div>
-
-            <!-- Riwayat Kelas -->
-            <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-                <div class="border-b border-slate-100 px-5 py-4">
-                    <h3 class="text-sm font-semibold text-slate-800">Riwayat Kelas</h3>
-                    <p class="mt-0.5 text-xs text-slate-400">
-                        Penempatan/mutasi kelas dikelola dari menu <Link href="/operator/classrooms" class="font-semibold text-emerald-600 hover:underline">Kelas</Link>.
-                    </p>
                 </div>
 
-                <div v-if="student.classrooms?.length > 0">
-                    <ul class="divide-y divide-slate-100">
-                        <li
-                            v-for="classroom in student.classrooms"
-                            :key="classroom.id"
-                            class="flex items-center justify-between px-5 py-3"
-                        >
-                            <div>
-                                <p class="text-sm font-medium text-slate-800">{{ classroom.name }}</p>
-                                <p class="text-xs text-slate-400">{{ classroom.academic_year?.name }}</p>
+                <!-- ── Kolom Kanan: Edit Form ───────────────────────────────── -->
+                <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                    <div class="border-b border-slate-100 px-5 py-4">
+                        <h3 class="text-sm font-semibold text-slate-800">Edit Data Siswa</h3>
+                    </div>
+
+                    <form @submit.prevent="submitEdit" class="space-y-5 p-5">
+
+                        <!-- Data Siswa -->
+                        <div class="space-y-3">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Data Siswa</p>
+
+                            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                <div>
+                                    <label for="e-nisn" class="mb-1.5 block text-xs font-semibold text-slate-600">
+                                        NISN <span class="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        id="e-nisn"
+                                        v-model="editForm.nisn"
+                                        type="text"
+                                        :class="[
+                                            'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
+                                            'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                            editForm.errors.nisn ? 'border-red-400' : 'border-slate-200',
+                                        ]"
+                                    />
+                                    <p v-if="editForm.errors.nisn" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.nisn }}</p>
+                                </div>
+                                <div>
+                                    <label for="e-name" class="mb-1.5 block text-xs font-semibold text-slate-600">
+                                        Nama Lengkap <span class="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        id="e-name"
+                                        v-model="editForm.name"
+                                        type="text"
+                                        :class="[
+                                            'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
+                                            'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                            editForm.errors.name ? 'border-red-400' : 'border-slate-200',
+                                        ]"
+                                    />
+                                    <p v-if="editForm.errors.name" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.name }}</p>
+                                </div>
                             </div>
-                            <span class="inline-flex items-center rounded-full bg-violet-50 px-2 py-0.5 text-xs font-semibold text-violet-700 ring-1 ring-violet-200">
-                                Kelas {{ classroom.grade }}
-                            </span>
-                        </li>
-                    </ul>
-                </div>
-                <div v-else class="px-5 py-6 text-center">
-                    <p class="text-sm text-slate-400">Belum pernah ditempatkan di kelas manapun.</p>
-                </div>
-            </div>
 
+                            <div>
+                                <label for="e-nis" class="mb-1.5 block text-xs font-semibold text-slate-600">
+                                    NIS <span class="text-slate-400">(opsional)</span>
+                                </label>
+                                <input
+                                    id="e-nis"
+                                    v-model="editForm.nis"
+                                    type="text"
+                                    :class="[
+                                        'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
+                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                        editForm.errors.nis ? 'border-red-400' : 'border-slate-200',
+                                    ]"
+                                />
+                                <p v-if="editForm.errors.nis" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.nis }}</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                <div>
+                                    <label class="mb-1.5 block text-xs font-semibold text-slate-600">
+                                        Tingkat Kelas <span class="text-red-500">*</span>
+                                    </label>
+                                    <FilterSelect
+                                        v-model="editForm.grade"
+                                        :options="gradeOptions"
+                                        :has-error="!!editForm.errors.grade"
+                                        block
+                                    />
+                                    <p v-if="editForm.errors.grade" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.grade }}</p>
+                                </div>
+                                <div>
+                                    <label for="e-birth" class="mb-1.5 block text-xs font-semibold text-slate-600">Tanggal Lahir</label>
+                                    <input
+                                        id="e-birth"
+                                        v-model="editForm.birth_date"
+                                        type="date"
+                                        :class="[
+                                            'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
+                                            'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                            editForm.errors.birth_date ? 'border-red-400' : 'border-slate-200',
+                                        ]"
+                                    />
+                                    <p v-if="editForm.errors.birth_date" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.birth_date }}</p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="mb-1.5 block text-xs font-semibold text-slate-600">
+                                    Jenis Kelamin <span class="text-red-500">*</span>
+                                </label>
+                                <div class="flex gap-2">
+                                    <label
+                                        v-for="opt in [{ value: 'L', label: 'Laki-laki' }, { value: 'P', label: 'Perempuan' }]"
+                                        :key="opt.value"
+                                        :class="[
+                                            'flex flex-1 cursor-pointer items-center justify-center rounded-lg border px-3 py-2.5 text-xs font-medium transition-[border-color,background-color] duration-150',
+                                            editForm.gender === opt.value
+                                                ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
+                                                : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50',
+                                        ]"
+                                    >
+                                        <input type="radio" :value="opt.value" v-model="editForm.gender" class="sr-only" />
+                                        {{ opt.label }}
+                                    </label>
+                                </div>
+                                <p v-if="editForm.errors.gender" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.gender }}</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                <div>
+                                    <label for="e-birthplace" class="mb-1.5 block text-xs font-semibold text-slate-600">Tempat Lahir</label>
+                                    <input
+                                        id="e-birthplace"
+                                        v-model="editForm.birth_place"
+                                        type="text"
+                                        placeholder="Kota tempat lahir"
+                                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.birth_place ? 'border-red-400' : 'border-slate-200']"
+                                    />
+                                </div>
+                                <div>
+                                    <label for="e-nik" class="mb-1.5 block text-xs font-semibold text-slate-600">NIK</label>
+                                    <input
+                                        id="e-nik"
+                                        v-model="editForm.nik"
+                                        type="text"
+                                        placeholder="16 digit NIK"
+                                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.nik ? 'border-red-400' : 'border-slate-200']"
+                                    />
+                                    <p v-if="editForm.errors.nik" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.nik }}</p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="e-address" class="mb-1.5 block text-xs font-semibold text-slate-600">Alamat</label>
+                                <textarea
+                                    id="e-address"
+                                    v-model="editForm.address"
+                                    rows="2"
+                                    :class="[
+                                        'w-full resize-none rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
+                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                        editForm.errors.address ? 'border-red-400' : 'border-slate-200',
+                                    ]"
+                                />
+                                <p v-if="editForm.errors.address" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.address }}</p>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-slate-100" />
+
+                        <!-- Data Keluarga -->
+                        <div class="space-y-3">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Data Keluarga</p>
+
+                            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                <div>
+                                    <label for="e-father" class="mb-1.5 block text-xs font-semibold text-slate-600">Nama Ayah Kandung</label>
+                                    <input
+                                        id="e-father"
+                                        v-model="editForm.father_name"
+                                        type="text"
+                                        placeholder="Nama lengkap ayah"
+                                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.father_name ? 'border-red-400' : 'border-slate-200']"
+                                    />
+                                </div>
+                                <div>
+                                    <label for="e-mother" class="mb-1.5 block text-xs font-semibold text-slate-600">Nama Ibu Kandung</label>
+                                    <input
+                                        id="e-mother"
+                                        v-model="editForm.mother_name"
+                                        type="text"
+                                        placeholder="Nama lengkap ibu"
+                                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.mother_name ? 'border-red-400' : 'border-slate-200']"
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                <div>
+                                    <label for="e-guardian" class="mb-1.5 block text-xs font-semibold text-slate-600">Nama Wali</label>
+                                    <input
+                                        id="e-guardian"
+                                        v-model="editForm.guardian_name"
+                                        type="text"
+                                        placeholder="Kosongkan jika sama dengan ayah/ibu"
+                                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.guardian_name ? 'border-red-400' : 'border-slate-200']"
+                                    />
+                                </div>
+                                <div>
+                                    <label for="e-parent-phone" class="mb-1.5 block text-xs font-semibold text-slate-600">No. HP Orang Tua/Wali</label>
+                                    <input
+                                        id="e-parent-phone"
+                                        v-model="editForm.parent_phone"
+                                        type="text"
+                                        placeholder="08xxxxxxxxxx"
+                                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.parent_phone ? 'border-red-400' : 'border-slate-200']"
+                                    />
+                                    <p v-if="editForm.errors.parent_phone" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.parent_phone }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-slate-100" />
+
+                        <!-- Akun Wali Murid -->
+                        <div class="space-y-3">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Akun Wali Murid</p>
+
+                            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                <div>
+                                    <label for="e-parent" class="mb-1.5 block text-xs font-semibold text-slate-600">Nama Wali Murid</label>
+                                    <input
+                                        id="e-parent"
+                                        v-model="editForm.parent_name"
+                                        type="text"
+                                        :placeholder="student.user ? '' : 'Belum ada akun'"
+                                        :disabled="!student.user"
+                                        :class="[
+                                            'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
+                                            'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                            !student.user ? 'cursor-not-allowed bg-slate-50 text-slate-400' : '',
+                                            editForm.errors.parent_name ? 'border-red-400' : 'border-slate-200',
+                                        ]"
+                                    />
+                                    <p v-if="editForm.errors.parent_name" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.parent_name }}</p>
+                                </div>
+                                <div>
+                                    <label for="e-pass" class="mb-1.5 block text-xs font-semibold text-slate-600">Password Baru</label>
+                                    <input
+                                        id="e-pass"
+                                        v-model="editForm.password"
+                                        type="password"
+                                        placeholder="Kosongkan jika tidak diubah"
+                                        autocomplete="new-password"
+                                        :disabled="!student.user"
+                                        :class="[
+                                            'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150',
+                                            'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                            !student.user ? 'cursor-not-allowed bg-slate-50' : '',
+                                            editForm.errors.password ? 'border-red-400' : 'border-slate-200',
+                                        ]"
+                                    />
+                                    <p v-if="editForm.errors.password" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.password }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="flex justify-end border-t border-slate-100 pt-4">
+                            <button
+                                type="submit"
+                                :disabled="editForm.processing"
+                                class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60"
+                            >
+                                <svg v-if="editForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                </svg>
+                                {{ editForm.processing ? 'Menyimpan...' : 'Simpan Perubahan' }}
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
         </div>
 
         <!-- ── Create Account Modal ──────────────────────────────────────────────── -->
@@ -539,7 +594,7 @@ const formatDate = (d) => d
                 <div>
                     <div class="mb-1.5 flex items-center justify-between">
                         <label class="text-xs font-semibold text-slate-600">Email <span class="text-red-500">*</span></label>
-                        <button type="button" @click="generateEmail" class="text-xs font-medium text-amber-600 hover:text-amber-700 underline cursor-pointer">⚡ Generate</button>
+                        <button type="button" @click="generateEmail" class="cursor-pointer text-xs font-medium text-amber-600 underline hover:text-amber-700">⚡ Generate</button>
                     </div>
                     <input
                         v-model="createAccountForm.email"
@@ -553,7 +608,7 @@ const formatDate = (d) => d
                 <div>
                     <div class="mb-1.5 flex items-center justify-between">
                         <label class="text-xs font-semibold text-slate-600">Password <span class="text-red-500">*</span></label>
-                        <button type="button" @click="generatePassword" class="text-xs font-medium text-amber-600 hover:text-amber-700 underline cursor-pointer">⚡ Generate</button>
+                        <button type="button" @click="generatePassword" class="cursor-pointer text-xs font-medium text-amber-600 underline hover:text-amber-700">⚡ Generate</button>
                     </div>
                     <input
                         v-model="createAccountForm.password"
@@ -566,11 +621,7 @@ const formatDate = (d) => d
                 </div>
             </form>
             <div class="flex items-center justify-end gap-3 border-t border-slate-100 px-6 py-4">
-                <button
-                    type="button"
-                    @click="showCreateAccount = false"
-                    class="rounded-lg px-4 py-2 text-sm font-semibold text-slate-600 transition-[background-color] duration-150 hover:bg-slate-100"
-                >
+                <button type="button" @click="showCreateAccount = false" class="rounded-lg px-4 py-2 text-sm font-semibold text-slate-600 transition-[background-color] duration-150 hover:bg-slate-100">
                     Batal
                 </button>
                 <button
@@ -601,11 +652,7 @@ const formatDate = (d) => d
                 </p>
             </div>
             <div class="flex items-center justify-end gap-3 border-t border-slate-100 px-6 py-4">
-                <button
-                    type="button"
-                    @click="showDelete = false"
-                    class="rounded-lg px-4 py-2 text-sm font-semibold text-slate-600 transition-[background-color] duration-150 hover:bg-slate-100"
-                >
+                <button type="button" @click="showDelete = false" class="rounded-lg px-4 py-2 text-sm font-semibold text-slate-600 transition-[background-color] duration-150 hover:bg-slate-100">
                     Batal
                 </button>
                 <button

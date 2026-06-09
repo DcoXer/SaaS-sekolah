@@ -115,7 +115,7 @@ const submitReminder = () => {
                 <div class="pointer-events-none absolute -right-8 -top-8 size-40 rounded-full bg-white/10"></div>
                 <div class="pointer-events-none absolute -bottom-10 right-16 size-28 rounded-full bg-white/8"></div>
 
-                <div class="relative flex items-center justify-between gap-4">
+                <div class="relative flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div class="flex items-center gap-4">
                         <div class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm ring-1 ring-white/30">
                             <svg class="size-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
@@ -130,16 +130,18 @@ const submitReminder = () => {
                             </p>
                         </div>
                     </div>
-                    <button
-                        v-if="activeYear && paymentTypes.length > 0"
-                        @click="openReminder"
-                        class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-white/20 px-3.5 py-2 text-sm font-semibold text-white ring-1 ring-white/30 backdrop-blur-sm transition-[background-color] duration-150 hover:bg-white/30"
-                    >
-                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 8.25h3m-3 3h3m-3 3h3" />
-                        </svg>
-                        Kirim Reminder WA
-                    </button>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button
+                            v-if="activeYear && paymentTypes.length > 0"
+                            @click="openReminder"
+                            class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-white/20 px-3.5 py-2 text-sm font-semibold text-white ring-1 ring-white/30 backdrop-blur-sm transition-[background-color] duration-150 hover:bg-white/30"
+                        >
+                            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 8.25h3m-3 3h3m-3 3h3" />
+                            </svg>
+                            <span class="hidden sm:inline">Kirim Reminder WA</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 

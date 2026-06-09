@@ -34,6 +34,8 @@ class InvoiceService
     {
         return Invoice::with(['student.classrooms', 'paymentType'])
             ->where('academic_year_id', $academicYear->id)
+            ->whereNotNull('student_id')
+            ->whereNotNull('payment_type_id')
             ->whereIn('status', ['unpaid', 'partial'])
             ->orderBy('due_date')
             ->get();
@@ -109,6 +111,8 @@ class InvoiceService
     {
         $invoices = Invoice::with('paymentType')
             ->where('academic_year_id', $academicYear->id)
+            ->whereNotNull('student_id')
+            ->whereNotNull('payment_type_id')
             ->get();
 
         $totalAmount    = $invoices->sum('amount');

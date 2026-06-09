@@ -120,7 +120,7 @@ const inp = (err) => [
         <form @submit.prevent="submit" class="space-y-5">
 
             <!-- ── Heading + Save ────────────────────────────────────────── -->
-            <div class="flex items-center justify-between gap-4">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 class="text-lg font-bold text-slate-900">Setting Sekolah</h2>
                     <p class="text-sm text-slate-500">Kelola informasi, profil, lokasi, dan media sekolah.</p>
@@ -141,7 +141,7 @@ const inp = (err) => [
             </div>
 
             <!-- ── Tab Nav ───────────────────────────────────────────────── -->
-            <div class="flex gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1">
+            <div class="flex gap-1 overflow-x-auto rounded-xl border border-slate-200 bg-slate-100 p-1">
                 <button
                     v-for="tab in tabs"
                     :key="tab.key"

@@ -60,7 +60,7 @@ const formatDate = (dateStr) => {
         <div class="space-y-4">
 
             <!-- Page heading -->
-            <div class="flex items-start justify-between gap-4">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                     <h2 class="text-balance text-lg font-bold text-slate-900">Tahun Ajaran</h2>
                     <p class="text-pretty text-sm text-slate-500">
@@ -99,8 +99,32 @@ const formatDate = (dateStr) => {
                 </button>
             </div>
 
-            <!-- Table -->
-            <div v-else class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+            <template v-else>
+
+            <!-- Mobile card list -->
+            <div class="sm:hidden space-y-2">
+                <div
+                    v-for="year in academicYears"
+                    :key="year.id"
+                    class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+                >
+                    <div class="flex items-start justify-between p-4">
+                        <div class="min-w-0">
+                            <p class="truncate text-sm font-semibold text-slate-800">{{ year.name }}</p>
+                            <p class="mt-0.5 text-xs text-slate-400">{{ formatDate(year.start_date) }} — {{ formatDate(year.end_date) }}</p>
+                        </div>
+                        <span
+                            class="ml-2 inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1"
+                            :class="statusConfig[year.status]?.badge ?? 'bg-slate-100 text-slate-500 ring-slate-200'"
+                        >
+                            {{ statusConfig[year.status]?.label ?? year.status }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Desktop table -->
+            <div class="hidden sm:block overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                 <table class="min-w-full divide-y divide-slate-100">
                     <thead>
                         <tr class="bg-slate-50">
@@ -137,6 +161,8 @@ const formatDate = (dateStr) => {
                     </tbody>
                 </table>
             </div>
+
+            </template>
 
         </div>
 

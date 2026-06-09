@@ -115,15 +115,47 @@ const detail = ref(null);
                     />
                 </div>
 
-                <!-- Table -->
-                <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <!-- Mobile card list -->
+                <div class="sm:hidden space-y-2">
+                    <div v-if="!registrations?.data?.length" class="rounded-xl border border-dashed border-slate-200 bg-white px-5 py-8 text-center">
+                        <p class="text-sm text-slate-400">Belum ada pendaftar.</p>
+                    </div>
+                    <div
+                        v-for="reg in registrations?.data"
+                        :key="reg.id"
+                        class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+                    >
+                        <div class="flex items-start justify-between p-4">
+                            <div class="min-w-0">
+                                <p class="truncate text-sm font-semibold text-slate-800">{{ reg.full_name }}</p>
+                                <p class="text-xs text-slate-400">{{ reg.gender === 'male' ? 'Laki-laki' : 'Perempuan' }} · {{ reg.registration_number }}</p>
+                                <p class="mt-0.5 text-xs text-slate-500">{{ reg.parent_name }}</p>
+                            </div>
+                            <div class="flex shrink-0 items-center gap-1 ml-2">
+                                <button @click="detail = reg"
+                                    class="inline-flex size-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50">
+                                    <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-1.5 border-t border-slate-100 px-4 py-2.5">
+                            <span class="rounded-full px-2.5 py-1 text-xs font-semibold" :class="statusColor[reg.status]">
+                                {{ statusLabel[reg.status] }}
+                            </span>
+                            <span class="text-xs text-slate-400">{{ new Date(reg.created_at).toLocaleDateString('id-ID') }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desktop table -->
+                <div class="hidden sm:block overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="border-b border-slate-100 bg-slate-50 text-left">
                                     <th class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">No. Daftar</th>
                                     <th class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">Nama</th>
-                                    <th class="hidden px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500 sm:table-cell">Orang Tua</th>
+                                    <th class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">Orang Tua</th>
                                     <th class="hidden px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500 md:table-cell">Tgl. Daftar</th>
                                     <th class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">Status</th>
                                     <th class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">Detail</th>
@@ -139,7 +171,7 @@ const detail = ref(null);
                                         <p class="font-semibold text-slate-800">{{ reg.full_name }}</p>
                                         <p class="text-xs text-slate-400">{{ reg.gender === 'male' ? 'L' : 'P' }}</p>
                                     </td>
-                                    <td class="hidden px-4 py-3 sm:table-cell">
+                                    <td class="px-4 py-3">
                                         <p class="text-slate-700">{{ reg.parent_name }}</p>
                                         <p class="text-xs text-slate-400">{{ reg.parent_phone }}</p>
                                     </td>

@@ -28,13 +28,6 @@ class SubjectController extends Controller
         return redirect()->back()->with('success', 'Mata pelajaran berhasil ditambahkan.');
     }
 
-    public function show(Subject $subject): Response
-    {
-        return Inertia::render('Operator/Subject/Show', [
-            'subject' => $this->service->getById($subject),
-        ]);
-    }
-
     public function update(UpdateSubjectRequest $request, Subject $subject)
     {
         $this->service->update($subject, $request->validated());

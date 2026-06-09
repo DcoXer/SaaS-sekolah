@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreClassroomRequest;
 use App\Http\Requests\UpdateClassroomRequest;
 use App\Models\Classroom;
+use App\Models\Subject;
 use App\Models\Teacher;
 use App\Services\AcademicYearService;
 use App\Services\ClassroomService;
@@ -41,8 +42,9 @@ class ClassroomController extends Controller
 
     public function show(Classroom $classroom): Response
     {
-        $classroom = $this->service->getById($classroom);
-        $activeYear = $this->academicYearService->getActive();
+        $classroom   = $this->service->getById($classroom);
+        $activeYear  = $this->academicYearService->getActive();
+        $allSubjects = $this->subjectService->getAll();
 
         $peerClassrooms = collect();
         if ($activeYear && (int) $activeYear->id === (int) $classroom->academic_year_id) {
@@ -55,9 +57,9 @@ class ClassroomController extends Controller
         }
 
         return Inertia::render('Operator/Classroom/Show', [
-            'classroom' => $classroom,
-            'teachers'  => $this->teacherService->getAll(),
-            'subjects'  => $this->subjectService->getByGrade($classroom->grade),
+            'classroom'      => $classroom,
+            'teachers'       => $this->teacherService->getAll(),
+            'allSubjects'    => $allSubjects,
             'peerClassrooms' => $peerClassrooms,
         ]);
     }
@@ -75,6 +77,8 @@ class ClassroomController extends Controller
 
         return redirect()->back()->with('success', 'Kelas berhasil dihapus.');
     }
+
+    // ── Student Management ────────────────────────────────────────────────────
 
     public function availableStudents(Classroom $classroom): \Illuminate\Http\JsonResponse
     {
@@ -141,6 +145,52 @@ class ClassroomController extends Controller
         return redirect()->back()->with('success', "{$removed} siswa dikeluarkan dari rombel.");
     }
 
+    // ── Subject Management ────────────────────────────────────────────────────
+
+    public function addSubject(Request $request, Classroom $classroom)
+    {
+        $request->validate([
+            'subject_id' => ['required', 'exists:subjects,id'],
+        ]);
+
+        $activeYear = $this->academicYearService->getActive();
+        abort_if(!$activeYear, 404, 'Tidak ada tahun ajaran aktif.');
+        abort_if((int) $activeYear->id !== (int) $classroom->academic_year_id, 422, 'Kelas ini bukan dari tahun ajaran aktif.');
+
+        $subject = Subject::findOrFail($request->subject_id);
+        $this->service->addSubjectToClassroom($classroom, $subject, $activeYear);
+
+        return redirect()->back()->with('success', 'Mata pelajaran berhasil ditambahkan ke kelas.');
+    }
+
+    public function removeSubject(Classroom $classroom, Subject $subject)
+    {
+        $activeYear = $this->academicYearService->getActive();
+        abort_if(!$activeYear, 404, 'Tidak ada tahun ajaran aktif.');
+        abort_if((int) $activeYear->id !== (int) $classroom->academic_year_id, 422, 'Kelas ini bukan dari tahun ajaran aktif.');
+
+        $this->service->removeSubjectFromClassroom($classroom, $subject, $activeYear);
+
+        return redirect()->back()->with('success', 'Mata pelajaran dihapus dari kelas.');
+    }
+
+    public function assignSubjectTeacher(Request $request, Classroom $classroom, Subject $subject)
+    {
+        $request->validate([
+            'teacher_id' => ['required', 'exists:teachers,id'],
+        ]);
+
+        $activeYear = $this->academicYearService->getActive();
+        abort_if(!$activeYear, 404, 'Tidak ada tahun ajaran aktif.');
+
+        $teacher = Teacher::findOrFail($request->teacher_id);
+        $this->service->assignSubjectTeacher($classroom, $subject, $teacher, $activeYear);
+
+        return redirect()->back()->with('success', 'Guru berhasil ditugaskan ke mata pelajaran.');
+    }
+
+    // ── Teacher/Homeroom Assignment ───────────────────────────────────────────
+
     public function assignGuruKelas(Request $request, Classroom $classroom)
     {
         $request->validate([
@@ -171,23 +221,6 @@ class ClassroomController extends Controller
         $this->service->assignWaliKelas($classroom, $teacher, $activeYear);
 
         return redirect()->back()->with('success', 'Wali kelas berhasil di-assign.');
-    }
-
-    public function assignGuruBidang(Request $request, Classroom $classroom)
-    {
-        $request->validate([
-            'teacher_id' => ['required', 'exists:teachers,id'],
-            'subject_id' => ['required', 'exists:subjects,id'],
-        ]);
-
-        $activeYear = $this->academicYearService->getActive();
-        abort_if(!$activeYear, 404, 'Tidak ada tahun ajaran aktif.');
-
-        $teacher = Teacher::findOrFail($request->teacher_id);
-
-        $this->service->assignGuruBidang($classroom, $teacher, $request->subject_id, $activeYear);
-
-        return redirect()->back()->with('success', 'Guru bidang berhasil di-assign ke mapel.');
     }
 
     public function availableTeachers(Classroom $classroom): \Illuminate\Http\JsonResponse

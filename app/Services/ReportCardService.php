@@ -113,7 +113,11 @@ class ReportCardService
         AcademicYear $academicYear,
         int $semester
     ): array {
-        $subjects = \App\Models\Subject::where('grade', $classroom->grade)->get();
+        // Ambil mapel yang ada di kelas ini (via teacher_subjects)
+        $subjects = \App\Models\Subject::whereHas('teacherSubjects', function ($q) use ($classroom, $academicYear) {
+            $q->where('classroom_id', $classroom->id)
+              ->where('academic_year_id', $academicYear->id);
+        })->get();
 
         // Pre-load all components for this classroom+semester (1 query instead of N per subject)
         $allComponents = \App\Models\AssessmentComponent::where('classroom_id', $classroom->id)

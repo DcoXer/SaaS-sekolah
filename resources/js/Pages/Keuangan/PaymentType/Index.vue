@@ -187,7 +187,7 @@ const resetFilters = () => {
                     </div>
 
                     <!-- Action buttons -->
-                    <div v-if="activeYear" class="flex shrink-0 items-center gap-2">
+                    <div v-if="activeYear" class="flex flex-wrap items-center gap-2">
                         <button
                             @click="showSpp = true"
                             class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-white/20 px-4 py-2.5 text-sm font-semibold text-white ring-1 ring-white/30 backdrop-blur-sm transition-all duration-150 hover:bg-white/30"
@@ -195,7 +195,7 @@ const resetFilters = () => {
                             <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3" />
                             </svg>
-                            Generate SPP
+                            <span class="hidden sm:inline">Generate SPP</span>
                         </button>
                         <button
                             @click="openCreate"

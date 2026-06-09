@@ -53,7 +53,7 @@ const grouped = computed(() => {
         <div class="space-y-4">
 
             <!-- Heading -->
-            <div class="flex items-start justify-between gap-4">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                     <h2 class="text-balance text-lg font-bold text-slate-900">Template Surat</h2>
                     <p class="text-pretty text-sm text-slate-500">

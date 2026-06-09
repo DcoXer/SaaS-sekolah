@@ -129,47 +129,47 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
         <div class="space-y-4">
 
             <!-- Heading -->
-            <div class="flex items-start justify-between gap-4">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                     <h2 class="text-balance text-lg font-bold text-slate-900">Data Siswa</h2>
                     <p class="text-pretty text-sm text-slate-500">
                         Kelola data siswa beserta akun wali murid. Penempatan kelas diatur dari halaman detail.
                     </p>
                 </div>
-                <div class="flex shrink-0 items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                     <button
                         v-if="withAccountCount > 0"
                         @click="showBulkReset = true"
-                        class="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3.5 py-2 text-sm font-semibold text-amber-700 shadow-sm transition-[background-color,border-color] duration-150 hover:border-amber-300 hover:bg-amber-100"
+                        class="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-700 shadow-sm transition-[background-color,border-color] duration-150 hover:border-amber-300 hover:bg-amber-100"
                     >
-                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <svg class="size-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
-                        Download Akun
+                        <span class="hidden sm:inline">Download Akun</span>
                     </button>
                     <Link
                         :href="route('operator.students.export.form')"
-                        class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-[background-color,border-color] duration-150 hover:border-slate-300 hover:bg-slate-50"
+                        class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-[background-color,border-color] duration-150 hover:border-slate-300 hover:bg-slate-50"
                     >
-                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <svg class="size-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
-                        Export
+                        <span class="hidden sm:inline">Export</span>
                     </Link>
                     <Link
                         :href="route('operator.students.import.form')"
-                        class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-[background-color,border-color] duration-150 hover:border-slate-300 hover:bg-slate-50"
+                        class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-[background-color,border-color] duration-150 hover:border-slate-300 hover:bg-slate-50"
                     >
-                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <svg class="size-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M7.5 12L12 7.5m0 0l4.5 4.5M12 7.5V21" />
                         </svg>
-                        Import
+                        <span class="hidden sm:inline">Import</span>
                     </Link>
                     <Link
                         :href="route('operator.students.create')"
-                        class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600"
                     >
-                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                        <svg class="size-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
                         Tambah
@@ -180,7 +180,7 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
             <!-- Banner: siswa tanpa akun -->
             <div
                 v-if="withoutAccountCount > 0"
-                class="flex items-center justify-between gap-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3"
+                class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3"
             >
                 <div class="flex items-center gap-3">
                     <svg class="size-5 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -322,7 +322,6 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                         <tr v-for="student in paginated" :key="student.id" class="transition-[background-color] duration-150 hover:bg-slate-50">
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center gap-3">
-                                    <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-sky-100 text-xs font-semibold text-sky-700">{{ initials(student.name) }}</div>
                                     <span class="text-sm font-semibold text-slate-800">{{ student.name }}</span>
                                 </div>
                             </td>
@@ -330,7 +329,7 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                                 <div class="tabular-nums text-sm text-slate-700">{{ student.nisn ?? 'â€”' }}</div>
                                 <div v-if="student.nis" class="tabular-nums text-xs text-slate-400">NIS {{ student.nis }}</div>
                             </td>
-                            <td class="px-5 py-3.5"><span class="inline-flex items-center rounded-full bg-violet-50 px-2.5 py-1 text-xs font-semibold text-violet-700 ring-1 ring-violet-200">Kelas {{ student.grade }}</span></td>
+                            <td class="px-5 py-3.5"><span class="inline-flex items-center rounded-full bg-violet-50 px-2.5 py-1 text-xs font-semibold text-violet-700 ring-1 ring-violet-200">{{ student.grade }}</span></td>
                             <td class="px-5 py-3.5"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ring-1" :class="genderConfig[student.gender]?.badge ?? 'bg-slate-100 text-slate-500 ring-slate-200'">{{ genderConfig[student.gender]?.label ?? student.gender }}</span></td>
                             <td class="px-5 py-3.5">
                                 <span v-if="student.user" class="text-sm text-slate-700">{{ student.user.name }}</span>

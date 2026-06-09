@@ -82,8 +82,6 @@ class ClassroomService
     {
         DB::transaction(function () use ($classroom, $academicYear, $studentIds) {
             foreach ($studentIds as $studentId) {
-                // Gunakan insertOrIgnore agar race-safe — unique constraint (student_id, academic_year_id)
-                // mencegah siswa masuk dua rombel di tahun yang sama, INSERT IGNORE skip duplikat tanpa error
                 StudentClassroom::insertOrIgnore([
                     'student_id'       => $studentId,
                     'classroom_id'     => $classroom->id,
@@ -129,6 +127,47 @@ class ClassroomService
         });
     }
 
+    // ── Subject Management ────────────────────────────────────────────────────
+
+    public function addSubjectToClassroom(Classroom $classroom, Subject $subject, AcademicYear $academicYear): void
+    {
+        // Untuk grade 1-3: auto-assign guru kelas jika sudah ada
+        $teacherId = null;
+        if ($classroom->grade <= 3 && $classroom->homeroom_teacher_id) {
+            $teacherId = $classroom->homeroom_teacher_id;
+        }
+
+        TeacherSubject::firstOrCreate(
+            [
+                'subject_id'       => $subject->id,
+                'classroom_id'     => $classroom->id,
+                'academic_year_id' => $academicYear->id,
+            ],
+            ['teacher_id' => $teacherId]
+        );
+    }
+
+    public function removeSubjectFromClassroom(Classroom $classroom, Subject $subject, AcademicYear $academicYear): void
+    {
+        TeacherSubject::where('subject_id', $subject->id)
+                       ->where('classroom_id', $classroom->id)
+                       ->where('academic_year_id', $academicYear->id)
+                       ->delete();
+    }
+
+    public function assignSubjectTeacher(Classroom $classroom, Subject $subject, Teacher $teacher, AcademicYear $academicYear): void
+    {
+        abort_if($classroom->grade < 4, 422, 'Penugasan guru per mapel hanya untuk kelas 4-6.');
+        abort_if(!$teacher->isGuruBidang(), 422, 'Guru ini bukan guru bidang.');
+
+        TeacherSubject::where('subject_id', $subject->id)
+                       ->where('classroom_id', $classroom->id)
+                       ->where('academic_year_id', $academicYear->id)
+                       ->update(['teacher_id' => $teacher->id]);
+    }
+
+    // ── Guru Assignment ───────────────────────────────────────────────────────
+
     public function assignGuruKelas(Classroom $classroom, Teacher $teacher, AcademicYear $academicYear): void
     {
         abort_if($academicYear->status !== 'active', 422, 'Penugasan guru hanya bisa dilakukan pada tahun ajaran yang sedang aktif.');
@@ -142,20 +181,13 @@ class ClassroomService
 
         abort_if($alreadyAssigned, 422, 'Guru kelas ini sudah di-assign ke kelas lain.');
 
-        // Bungkus dalam transaction — update homeroom + assign semua mapel harus atomic
         DB::transaction(function () use ($classroom, $teacher, $academicYear) {
             $classroom->update(['homeroom_teacher_id' => $teacher->id]);
 
-            $subjects = Subject::where('grade', $classroom->grade)->get();
-
-            foreach ($subjects as $subject) {
-                TeacherSubject::firstOrCreate([
-                    'teacher_id'       => $teacher->id,
-                    'subject_id'       => $subject->id,
-                    'classroom_id'     => $classroom->id,
-                    'academic_year_id' => $academicYear->id,
-                ]);
-            }
+            // Update semua mapel yang sudah ada di kelas ini ke guru baru
+            TeacherSubject::where('classroom_id', $classroom->id)
+                           ->where('academic_year_id', $academicYear->id)
+                           ->update(['teacher_id' => $teacher->id]);
         });
     }
 
@@ -174,19 +206,6 @@ class ClassroomService
         abort_if($alreadyWaliKelas, 422, 'Guru ini sudah menjadi wali kelas di rombel lain.');
 
         $classroom->update(['homeroom_teacher_id' => $teacher->id]);
-    }
-
-    public function assignGuruBidang(Classroom $classroom, Teacher $teacher, int $subjectId, AcademicYear $academicYear): void
-    {
-        abort_if($classroom->grade < 4, 422, 'Guru bidang hanya untuk kelas 4-6.');
-        abort_if(!$teacher->isGuruBidang(), 422, 'Guru ini bukan guru bidang.');
-
-        TeacherSubject::firstOrCreate([
-            'teacher_id'       => $teacher->id,
-            'subject_id'       => $subjectId,
-            'classroom_id'     => $classroom->id,
-            'academic_year_id' => $academicYear->id,
-        ]);
     }
 
     public function removeAllAssignments(Classroom $classroom, AcademicYear $academicYear): void

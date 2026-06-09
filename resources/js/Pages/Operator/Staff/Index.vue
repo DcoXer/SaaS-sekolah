@@ -149,88 +149,181 @@ const submitDelete = () => {
             </div>
         </template>
 
-        <template #actions>
-            <button
-                @click="showCreate = true"
-                class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600"
-            >
-                <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                Tambah Staff
-            </button>
-        </template>
-
         <div class="space-y-4">
 
-            <!-- Page heading -->
-            <div>
-                <h2 class="text-balance text-lg font-bold text-slate-900">Kelola Staff</h2>
-                <p class="text-pretty text-sm text-slate-500">Akun Kepala Madrasah dan TU Keuangan.</p>
+            <!-- Heading -->
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                    <h2 class="text-balance text-lg font-bold text-slate-900">Kelola Staff</h2>
+                    <p class="text-pretty text-sm text-slate-500">Akun Kepala Madrasah dan TU Keuangan.</p>
+                </div>
+                <button
+                    @click="showCreate = true"
+                    class="inline-flex w-fit items-center gap-1.5 rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600"
+                >
+                    <svg class="size-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    Tambah Staff
+                </button>
             </div>
 
             <!-- Filter bar -->
-            <div class="flex items-center gap-2">
-                <div class="relative flex-1 max-w-xs">
+            <div class="flex items-center gap-2 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
+                <div class="relative flex-1">
                     <svg class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                     </svg>
                     <input
                         v-model="search"
-                        type="text"
+                        type="search"
                         placeholder="Cari nama atau email..."
-                        class="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-4 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"
                     />
                 </div>
             </div>
 
-            <!-- Table card -->
-            <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-                <div v-if="filtered.length === 0" class="flex flex-col items-center justify-center py-16">
-                    <svg class="mb-3 size-10 text-slate-200" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+            <!-- Empty state -->
+            <div
+                v-if="staff.length === 0"
+                class="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white py-16 text-center"
+            >
+                <svg class="mb-3 size-10 text-slate-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                </svg>
+                <p class="text-sm font-semibold text-slate-700">Belum ada akun staff</p>
+                <p class="mt-1 text-xs text-slate-400">Klik "Tambah Staff" untuk membuat akun baru.</p>
+                <button
+                    @click="showCreate = true"
+                    class="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600"
+                >
+                    <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
-                    <p class="text-sm font-medium text-slate-400">Belum ada akun staff</p>
-                    <p class="mt-0.5 text-xs text-slate-300">Klik "Tambah Staff" untuk membuat akun baru.</p>
+                    Tambah Staff
+                </button>
+            </div>
+
+            <!-- No results -->
+            <div
+                v-else-if="filtered.length === 0"
+                class="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white py-12 text-center"
+            >
+                <p class="text-sm font-semibold text-slate-700">Tidak ada hasil</p>
+                <p class="mt-1 text-xs text-slate-400">Coba ubah kata kunci pencarian.</p>
+                <button @click="search = ''" class="mt-3 text-xs font-semibold text-emerald-600 hover:underline">Reset pencarian</button>
+            </div>
+
+            <template v-else>
+
+                <!-- Mobile card list -->
+                <div class="sm:hidden space-y-2">
+                    <div
+                        v-for="s in filtered"
+                        :key="s.id"
+                        class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+                    >
+                        <div class="flex items-start justify-between p-4">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div
+                                    class="flex size-9 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+                                    :class="s.role === 'kamad' ? 'bg-emerald-100 text-emerald-700' : 'bg-sky-100 text-sky-700'"
+                                >
+                                    {{ s.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) }}
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="truncate text-sm font-semibold text-slate-800">{{ s.name }}</p>
+                                    <p class="truncate text-xs text-slate-400">{{ s.email }}</p>
+                                </div>
+                            </div>
+                            <div class="flex shrink-0 items-center gap-1 ml-2">
+                                <button
+                                    @click="openEdit(s)"
+                                    class="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                                    aria-label="Edit staff"
+                                >
+                                    <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
+                                    </svg>
+                                </button>
+                                <button
+                                    @click="deleteTarget = s"
+                                    class="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500"
+                                    aria-label="Hapus staff"
+                                >
+                                    <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-1.5 border-t border-slate-100 px-4 py-2.5">
+                            <span
+                                class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ring-1"
+                                :class="roleBadge[s.role] ?? 'bg-slate-50 text-slate-600 ring-slate-200'"
+                            >
+                                {{ roleLabel[s.role] ?? s.role }}
+                            </span>
+                            <span class="text-xs text-slate-400">Dibuat {{ formatDate(s.created_at) }}</span>
+                        </div>
+                    </div>
                 </div>
 
-                <div v-else class="overflow-x-auto">
-                    <table class="w-full text-sm">
+                <!-- Desktop table -->
+                <div class="hidden sm:block overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                    <table class="min-w-full divide-y divide-slate-100">
                         <thead>
-                            <tr class="border-b border-slate-100 bg-slate-50 text-left">
-                                <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Nama</th>
-                                <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Email</th>
-                                <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Role</th>
-                                <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Dibuat</th>
-                                <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-400"></th>
+                            <tr class="bg-slate-50">
+                                <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Staff</th>
+                                <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Role</th>
+                                <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Dibuat</th>
+                                <th class="px-5 py-3.5 text-right text-xs font-semibold text-slate-500">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
-                            <tr v-for="s in filtered" :key="s.id" class="hover:bg-slate-50/60">
-                                <td class="px-4 py-3 font-medium text-slate-800">{{ s.name }}</td>
-                                <td class="px-4 py-3 text-slate-500">{{ s.email }}</td>
-                                <td class="px-4 py-3">
+                            <tr v-for="s in filtered" :key="s.id" class="transition-[background-color] duration-150 hover:bg-slate-50">
+                                <td class="px-5 py-3.5">
+                                    <div class="flex items-center gap-3">
+                                        <div
+                                            class="flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+                                            :class="s.role === 'kamad' ? 'bg-emerald-100 text-emerald-700' : 'bg-sky-100 text-sky-700'"
+                                        >
+                                            {{ s.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) }}
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-semibold text-slate-800">{{ s.name }}</p>
+                                            <p class="text-xs text-slate-400">{{ s.email }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-5 py-3.5">
                                     <span
-                                        class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ring-1"
+                                        class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1"
                                         :class="roleBadge[s.role] ?? 'bg-slate-50 text-slate-600 ring-slate-200'"
                                     >
                                         {{ roleLabel[s.role] ?? s.role }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3 text-slate-400">{{ formatDate(s.created_at) }}</td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center justify-end gap-2">
+                                <td class="px-5 py-3.5 text-sm text-slate-500">{{ formatDate(s.created_at) }}</td>
+                                <td class="px-5 py-3.5">
+                                    <div class="flex items-center justify-end gap-1">
                                         <button
                                             @click="openEdit(s)"
-                                            class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-600 transition-[background-color,border-color] duration-150 hover:border-slate-300 hover:bg-slate-50"
+                                            class="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 transition-[background-color,color] duration-150 hover:bg-slate-100 hover:text-slate-700"
+                                            aria-label="Edit staff"
                                         >
-                                            Edit
+                                            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
+                                            </svg>
                                         </button>
                                         <button
                                             @click="deleteTarget = s"
-                                            class="rounded-lg border border-red-100 px-2.5 py-1.5 text-xs font-semibold text-red-500 transition-[background-color,border-color] duration-150 hover:border-red-200 hover:bg-red-50"
+                                            class="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 transition-[background-color,color] duration-150 hover:bg-red-50 hover:text-red-500"
+                                            aria-label="Hapus staff"
                                         >
-                                            Hapus
+                                            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                            </svg>
                                         </button>
                                     </div>
                                 </td>
@@ -238,7 +331,8 @@ const submitDelete = () => {
                         </tbody>
                     </table>
                 </div>
-            </div>
+
+            </template>
 
         </div>
 

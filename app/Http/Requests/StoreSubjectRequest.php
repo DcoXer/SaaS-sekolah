@@ -14,17 +14,14 @@ class StoreSubjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'  => ['required', 'string', 'max:100'],
-            'grade' => ['required', 'integer', 'between:1,6'],
+            'name' => ['required', 'string', 'max:100'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'name.required'  => 'Nama mapel wajib diisi.',
-            'grade.required' => 'Tingkat kelas wajib diisi.',
-            'grade.between'  => 'Tingkat kelas harus antara 1-6.',
+            'name.required' => 'Nama mapel wajib diisi.',
         ];
     }
 }

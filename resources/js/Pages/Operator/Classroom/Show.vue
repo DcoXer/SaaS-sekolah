@@ -7,14 +7,24 @@ import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 
 const props = defineProps({
-    classroom: { type: Object, required: true },
-    teachers:  { type: Array,  required: true },
-    subjects:  { type: Array,  required: true },
-    peerClassrooms: { type: Array, default: () => [] },
+    classroom:      { type: Object, required: true },
+    teachers:       { type: Array,  required: true },
+    allSubjects:    { type: Array,  required: true },
+    peerClassrooms: { type: Array,  default: () => [] },
 });
 
-const isLower = props.classroom.grade <= 3; // guru_kelas flow
-const isUpper = props.classroom.grade >= 4; // guru_bidang flow
+const isLower = props.classroom.grade <= 3;
+const isUpper = props.classroom.grade >= 4;
+
+// Subjects already in this classroom (from teacherSubjects)
+const classroomSubjectIds = computed(() =>
+    (props.classroom.teacher_subjects ?? []).map(ts => ts.subject_id)
+);
+
+// Subjects NOT yet in this classroom
+const availableSubjectsToAdd = computed(() =>
+    props.allSubjects.filter(s => !classroomSubjectIds.value.includes(s.id))
+);
 
 // ── Edit form ─────────────────────────────────────────────────────────────────
 const editForm = useForm({
@@ -82,32 +92,60 @@ const submitAssignWaliKelas = () => {
     });
 };
 
-// ── Assign Guru Bidang (grade 4-6) ────────────────────────────────────────────
-const showAssignGuruBidang   = ref(false);
-const availableGuruBidang    = ref([]);
-const loadingGuruBidang      = ref(false);
-const assignGuruBidangForm   = useForm({ teacher_id: '', subject_id: '' });
+// ── Add Subject (checklist modal) ─────────────────────────────────────────────
+const showAddSubject     = ref(false);
+const selectedSubjectId  = ref('');
+const addSubjectForm     = useForm({ subject_id: '' });
 
-const openAssignGuruBidang = async () => {
-    loadingGuruBidang.value = true;
-    showAssignGuruBidang.value = true;
-    assignGuruBidangForm.reset();
-    try {
-        const res = await fetch(route('operator.classrooms.available-teachers', props.classroom.id));
-        if (!res.ok) throw new Error(res.statusText);
-        const data = await res.json();
-        availableGuruBidang.value = data.all_guru_bidang ?? [];
-    } catch {
-        availableGuruBidang.value = [];
-    } finally {
-        loadingGuruBidang.value = false;
-    }
+const openAddSubject = () => {
+    selectedSubjectId.value = '';
+    addSubjectForm.reset();
+    showAddSubject.value = true;
 };
 
-const submitAssignGuruBidang = () => {
-    assignGuruBidangForm.post(route('operator.classrooms.assign-guru-bidang', props.classroom.id), {
-        onSuccess: () => { showAssignGuruBidang.value = false; },
+const submitAddSubject = () => {
+    addSubjectForm.subject_id = selectedSubjectId.value;
+    addSubjectForm.post(route('operator.classrooms.subjects.add', props.classroom.id), {
+        onSuccess: () => { showAddSubject.value = false; },
     });
+};
+
+// ── Remove Subject ────────────────────────────────────────────────────────────
+const removeSubjectTarget = ref(null);
+const removeSubjectForm   = useForm({});
+
+const submitRemoveSubject = () => {
+    removeSubjectForm.delete(
+        route('operator.classrooms.subjects.remove', [props.classroom.id, removeSubjectTarget.value.subject_id]),
+        { onSuccess: () => { removeSubjectTarget.value = null; } }
+    );
+};
+
+// ── Assign Teacher per Subject (grade 4-6) ────────────────────────────────────
+const showAssignTeacher   = ref(false);
+const assignTeacherTarget = ref(null); // the teacher_subject record
+const assignTeacherForm   = useForm({ teacher_id: '' });
+
+const guruBidangTeachers = computed(() =>
+    props.teachers.filter(t => t.type === 'guru_bidang')
+);
+
+const guruBidangOptions = computed(() =>
+    guruBidangTeachers.value.map(t => ({ value: String(t.id), label: t.user.name }))
+);
+
+const openAssignTeacher = (ts) => {
+    assignTeacherTarget.value = ts;
+    assignTeacherForm.teacher_id = ts.teacher_id ? String(ts.teacher_id) : '';
+    assignTeacherForm.clearErrors();
+    showAssignTeacher.value = true;
+};
+
+const submitAssignTeacher = () => {
+    assignTeacherForm.patch(
+        route('operator.classrooms.subjects.assign-teacher', [props.classroom.id, assignTeacherTarget.value.subject_id]),
+        { onSuccess: () => { showAssignTeacher.value = false; } }
+    );
 };
 
 // ── Assign Siswa ──────────────────────────────────────────────────────────────
@@ -145,7 +183,7 @@ const submitAssignSiswa = () => {
     });
 };
 
-// â”€â”€ Manage existing students (bulk move / remove) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Manage existing students (bulk move / remove) ─────────────────────────────
 const selectedInClass = ref([]);
 const showMoveStudents = ref(false);
 const showRemoveStudents = ref(false);
@@ -213,14 +251,6 @@ const submitDelete = () => {
 
 // ── Select Options ────────────────────────────────────────────────────────────
 const gradeOptions = [1,2,3,4,5,6].map(g => ({ value: g, label: `Kelas ${g}` }));
-
-const guruBidangOptions = computed(() =>
-    availableGuruBidang.value.map(t => ({ value: String(t.id), label: t.user.name }))
-);
-
-const subjectOptions = computed(() =>
-    props.subjects.map(s => ({ value: String(s.id), label: s.name }))
-);
 
 const peerClassroomOptions = computed(() =>
     props.peerClassrooms.map(c => ({ value: c.id, label: c.name }))
@@ -314,7 +344,7 @@ const peerClassroomOptions = computed(() =>
                             <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                             </svg>
-                            Tambah Siswa
+                            Tambah
                         </button>
                     </div>
                 </div>
@@ -343,7 +373,7 @@ const peerClassroomOptions = computed(() =>
                             <div class="min-w-0 flex-1">
                                 <p class="truncate text-sm font-semibold text-slate-800">{{ student.name }}</p>
                                 <p class="tabular-nums truncate text-xs text-slate-400">
-                                    NISN {{ student.nisn ?? 'â€”' }}<span v-if="student.nis"> â€¢ NIS {{ student.nis }}</span>
+                                    NISN {{ student.nisn ?? '—' }}<span v-if="student.nis"> • NIS {{ student.nis }}</span>
                                 </p>
                             </div>
                         </li>
@@ -357,7 +387,7 @@ const peerClassroomOptions = computed(() =>
             <!-- Sidebar -->
             <div class="space-y-5 lg:col-span-5">
 
-            <!-- Edit form card (nama + tingkat saja) -->
+            <!-- Edit form card -->
             <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                 <div class="border-b border-slate-100 px-5 py-4">
                     <h3 class="text-sm font-semibold text-slate-800">Edit Data Kelas</h3>
@@ -474,15 +504,19 @@ const peerClassroomOptions = computed(() =>
                 </div>
             </div>
 
-            <!-- ══ GRADE 4-6: Penugasan Guru Bidang ════════════════════════════ -->
-            <div v-if="isUpper" class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+            <!-- ══ Mata Pelajaran (both grades) ═══════════════════════════════════ -->
+            <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                 <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
                     <div>
-                        <h3 class="text-sm font-semibold text-slate-800">Guru Bidang</h3>
-                        <p class="mt-0.5 text-xs text-slate-400">Penugasan guru per mata pelajaran di kelas ini.</p>
+                        <h3 class="text-sm font-semibold text-slate-800">Mata Pelajaran</h3>
+                        <p class="mt-0.5 text-xs text-slate-400">
+                            <template v-if="isLower">Guru kelas mengajar semua mapel di bawah ini.</template>
+                            <template v-else>Mapel yang diajarkan di kelas ini beserta gurunya.</template>
+                        </p>
                     </div>
                     <button
-                        @click="openAssignGuruBidang"
+                        v-if="availableSubjectsToAdd.length > 0"
+                        @click="openAddSubject"
                         class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600"
                     >
                         <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
@@ -492,23 +526,100 @@ const peerClassroomOptions = computed(() =>
                     </button>
                 </div>
 
-                <div v-if="classroom.teacher_subjects?.length > 0">
-                    <ul class="divide-y divide-slate-100">
-                        <li
-                            v-for="ts in classroom.teacher_subjects"
-                            :key="ts.id"
-                            class="flex items-center justify-between px-5 py-3"
-                        >
-                            <div>
-                                <p class="text-sm font-medium text-slate-800">{{ ts.subject?.name }}</p>
-                                <p class="text-xs text-slate-400">{{ ts.teacher?.user?.name }}</p>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                <div v-else class="px-5 py-5 text-center">
-                    <p class="text-sm text-slate-400">Belum ada guru bidang yang di-assign.</p>
-                </div>
+                <!-- Grade 1-3: simple list, no teacher column -->
+                <template v-if="isLower">
+                    <div v-if="classroom.teacher_subjects?.length > 0">
+                        <ul class="divide-y divide-slate-100">
+                            <li
+                                v-for="ts in classroom.teacher_subjects"
+                                :key="ts.id"
+                                class="flex items-center justify-between px-5 py-3"
+                            >
+                                <div class="flex items-center gap-3">
+                                    <div class="flex size-6 shrink-0 items-center justify-center rounded-md bg-amber-50">
+                                        <svg class="size-3 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-slate-800">{{ ts.subject?.name }}</p>
+                                        <p class="text-xs text-slate-400">
+                                            {{ ts.teacher?.user?.name ?? (classroom.homeroom_teacher ? classroom.homeroom_teacher.user.name : 'Belum ada guru') }}
+                                            <span class="text-slate-300"> • Wali Kelas</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <button
+                                    @click="removeSubjectTarget = ts"
+                                    class="inline-flex size-7 items-center justify-center rounded-lg text-slate-300 transition-[background-color,color] duration-150 hover:bg-red-50 hover:text-red-500"
+                                    aria-label="Hapus mapel dari kelas"
+                                >
+                                    <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div v-else class="px-5 py-5 text-center">
+                        <p class="text-sm text-slate-400">Belum ada mata pelajaran di kelas ini.</p>
+                        <p class="mt-1 text-xs text-slate-300">Klik "Tambah" untuk memasukkan mapel.</p>
+                    </div>
+                </template>
+
+                <!-- Grade 4-6: list with teacher per subject -->
+                <template v-else>
+                    <div v-if="classroom.teacher_subjects?.length > 0">
+                        <ul class="divide-y divide-slate-100">
+                            <li
+                                v-for="ts in classroom.teacher_subjects"
+                                :key="ts.id"
+                                class="flex items-center justify-between px-5 py-3"
+                            >
+                                <div class="flex min-w-0 flex-1 items-center gap-3">
+                                    <div class="flex size-6 shrink-0 items-center justify-center rounded-md bg-amber-50">
+                                        <svg class="size-3 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                                        </svg>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="truncate text-sm font-medium text-slate-800">{{ ts.subject?.name }}</p>
+                                        <p
+                                            class="truncate text-xs"
+                                            :class="ts.teacher ? 'text-slate-400' : 'text-amber-500'"
+                                        >
+                                            {{ ts.teacher?.user?.name ?? 'Belum ditugaskan' }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex shrink-0 items-center gap-1 pl-2">
+                                    <button
+                                        @click="openAssignTeacher(ts)"
+                                        class="inline-flex size-7 items-center justify-center rounded-lg text-slate-400 transition-[background-color,color] duration-150 hover:bg-slate-100 hover:text-slate-700"
+                                        aria-label="Tugaskan guru"
+                                    >
+                                        <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        @click="removeSubjectTarget = ts"
+                                        class="inline-flex size-7 items-center justify-center rounded-lg text-slate-300 transition-[background-color,color] duration-150 hover:bg-red-50 hover:text-red-500"
+                                        aria-label="Hapus mapel dari kelas"
+                                    >
+                                        <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div v-else class="px-5 py-5 text-center">
+                        <p class="text-sm text-slate-400">Belum ada mata pelajaran di kelas ini.</p>
+                        <p class="mt-1 text-xs text-slate-300">Klik "Tambah" untuk memasukkan mapel.</p>
+                    </div>
+                </template>
             </div>
 
             </div> <!-- /sidebar -->
@@ -629,13 +740,13 @@ const peerClassroomOptions = computed(() =>
             </div>
         </Modal>
 
-        <!-- ══ Modal: Assign Guru Bidang ═══════════════════════════════════════ -->
-        <Modal :show="showAssignGuruBidang" max-width="sm" @close="showAssignGuruBidang = false">
+        <!-- ══ Modal: Tambah Mapel ═════════════════════════════════════════════ -->
+        <Modal :show="showAddSubject" max-width="sm" @close="showAddSubject = false">
             <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
-                <h3 class="text-base font-bold text-slate-900">Tambah Penugasan Guru Bidang</h3>
+                <h3 class="text-base font-bold text-slate-900">Tambah Mata Pelajaran</h3>
                 <button
                     type="button"
-                    @click="showAssignGuruBidang = false"
+                    @click="showAddSubject = false"
                     class="flex size-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600"
                 >
                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
@@ -644,50 +755,135 @@ const peerClassroomOptions = computed(() =>
                 </button>
             </div>
 
-            <div class="space-y-4 px-6 py-5">
-                <div v-if="loadingGuruBidang" class="py-6 text-center text-sm text-slate-400">Memuat data...</div>
-                <template v-else>
-                    <!-- Pilih Guru -->
-                    <div>
-                        <label class="mb-1.5 block text-xs font-semibold text-slate-600">
-                            Guru Bidang <span class="text-red-500">*</span>
-                        </label>
-                        <FilterSelect
-                            v-model="assignGuruBidangForm.teacher_id"
-                            :options="guruBidangOptions"
-                            block
-                            :has-error="!!assignGuruBidangForm.errors.teacher_id"
-                        />
-                        <p v-if="assignGuruBidangForm.errors.teacher_id" class="mt-1.5 text-xs text-red-500">{{ assignGuruBidangForm.errors.teacher_id }}</p>
-                    </div>
-
-                    <!-- Pilih Mapel -->
-                    <div>
-                        <label class="mb-1.5 block text-xs font-semibold text-slate-600">
-                            Mata Pelajaran <span class="text-red-500">*</span>
-                        </label>
-                        <FilterSelect
-                            v-model="assignGuruBidangForm.subject_id"
-                            :options="subjectOptions"
-                            block
-                            :has-error="!!assignGuruBidangForm.errors.subject_id"
-                        />
-                        <p v-if="assignGuruBidangForm.errors.subject_id" class="mt-1.5 text-xs text-red-500">{{ assignGuruBidangForm.errors.subject_id }}</p>
-                    </div>
-                </template>
+            <div class="px-6 py-5">
+                <p class="mb-3 text-xs text-slate-500">Pilih mata pelajaran yang akan ditambahkan ke kelas ini:</p>
+                <div class="max-h-64 space-y-1.5 overflow-y-auto">
+                    <label
+                        v-for="subject in availableSubjectsToAdd"
+                        :key="subject.id"
+                        :class="[
+                            'flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-2.5 transition-[border-color,background-color] duration-150',
+                            selectedSubjectId === String(subject.id)
+                                ? 'border-emerald-400 bg-emerald-50'
+                                : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50',
+                        ]"
+                    >
+                        <input type="radio" :value="String(subject.id)" v-model="selectedSubjectId" class="sr-only" />
+                        <div
+                            :class="[
+                                'flex size-4 shrink-0 items-center justify-center rounded-full border-2 transition-[border-color,background-color] duration-150',
+                                selectedSubjectId === String(subject.id) ? 'border-emerald-500 bg-emerald-500' : 'border-slate-300',
+                            ]"
+                        >
+                            <div v-if="selectedSubjectId === String(subject.id)" class="size-1.5 rounded-full bg-white"></div>
+                        </div>
+                        <span class="text-sm font-medium text-slate-800">{{ subject.name }}</span>
+                    </label>
+                </div>
+                <p v-if="addSubjectForm.errors.subject_id" class="mt-2 text-xs text-red-500">{{ addSubjectForm.errors.subject_id }}</p>
             </div>
 
             <div class="flex items-center justify-end gap-3 border-t border-slate-100 px-6 py-4">
-                <button type="button" @click="showAssignGuruBidang = false" class="rounded-lg px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100">Batal</button>
+                <button type="button" @click="showAddSubject = false" class="rounded-lg px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100">Batal</button>
                 <button
-                    @click="submitAssignGuruBidang"
-                    :disabled="assignGuruBidangForm.processing || !assignGuruBidangForm.teacher_id || !assignGuruBidangForm.subject_id"
+                    @click="submitAddSubject"
+                    :disabled="addSubjectForm.processing || !selectedSubjectId"
                     class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
                 >
-                    <svg v-if="assignGuruBidangForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <svg v-if="addSubjectForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                     </svg>
-                    {{ assignGuruBidangForm.processing ? 'Menyimpan...' : 'Simpan' }}
+                    {{ addSubjectForm.processing ? 'Menyimpan...' : 'Tambahkan' }}
+                </button>
+            </div>
+        </Modal>
+
+        <!-- ══ Modal: Tugaskan Guru ke Mapel (grade 4-6) ═══════════════════════ -->
+        <Modal :show="showAssignTeacher" max-width="sm" @close="showAssignTeacher = false">
+            <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900">Tugaskan Guru</h3>
+                    <p class="mt-0.5 text-xs text-slate-500">{{ assignTeacherTarget?.subject?.name }}</p>
+                </div>
+                <button
+                    type="button"
+                    @click="showAssignTeacher = false"
+                    class="flex size-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                >
+                    <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="px-6 py-5">
+                <div class="space-y-2">
+                    <label
+                        v-for="teacher in guruBidangTeachers"
+                        :key="teacher.id"
+                        :class="[
+                            'flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-[border-color,background-color] duration-150',
+                            assignTeacherForm.teacher_id === String(teacher.id)
+                                ? 'border-emerald-400 bg-emerald-50'
+                                : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50',
+                        ]"
+                    >
+                        <input type="radio" :value="String(teacher.id)" v-model="assignTeacherForm.teacher_id" class="sr-only" />
+                        <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-violet-100 text-xs font-bold text-violet-700">
+                            {{ teacher.user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) }}
+                        </div>
+                        <span class="text-sm font-medium text-slate-800">{{ teacher.user.name }}</span>
+                    </label>
+                </div>
+                <p v-if="assignTeacherForm.errors.teacher_id" class="mt-2 text-xs text-red-500">{{ assignTeacherForm.errors.teacher_id }}</p>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 border-t border-slate-100 px-6 py-4">
+                <button type="button" @click="showAssignTeacher = false" class="rounded-lg px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100">Batal</button>
+                <button
+                    @click="submitAssignTeacher"
+                    :disabled="assignTeacherForm.processing || !assignTeacherForm.teacher_id"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
+                >
+                    <svg v-if="assignTeacherForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                    {{ assignTeacherForm.processing ? 'Menyimpan...' : 'Simpan' }}
+                </button>
+            </div>
+        </Modal>
+
+        <!-- ══ Modal: Hapus Mapel dari Kelas ═══════════════════════════════════ -->
+        <Modal :show="!!removeSubjectTarget" max-width="sm" @close="removeSubjectTarget = null">
+            <div class="px-6 py-5">
+                <div class="mb-4 flex size-10 items-center justify-center rounded-full bg-red-100">
+                    <svg class="size-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                    </svg>
+                </div>
+                <h3 class="text-balance text-base font-bold text-slate-900">Hapus Mata Pelajaran</h3>
+                <p class="text-pretty mt-1.5 text-sm text-slate-500">
+                    Hapus <span class="font-semibold text-slate-700">{{ removeSubjectTarget?.subject?.name }}</span> dari kelas ini?
+                    Data nilai komponen yang terkait juga akan ikut terhapus.
+                </p>
+            </div>
+            <div class="flex items-center justify-end gap-3 border-t border-slate-100 px-6 py-4">
+                <button
+                    type="button"
+                    @click="removeSubjectTarget = null"
+                    class="rounded-lg px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100"
+                >
+                    Batal
+                </button>
+                <button
+                    @click="submitRemoveSubject"
+                    :disabled="removeSubjectForm.processing"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 disabled:opacity-60"
+                >
+                    <svg v-if="removeSubjectForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                    {{ removeSubjectForm.processing ? 'Menghapus...' : 'Ya, Hapus' }}
                 </button>
             </div>
         </Modal>
@@ -774,8 +970,7 @@ const peerClassroomOptions = computed(() =>
             </div>
         </Modal>
 
-        <!-- ══ Modal: Delete Confirm ═══════════════════════════════════════════ -->
-        <!-- Manage students -->
+        <!-- ══ Modal: Pindahkan Siswa ══════════════════════════════════════════ -->
         <Modal :show="showMoveStudents" max-width="sm" @close="showMoveStudents = false">
             <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
                 <h3 class="text-base font-bold text-slate-900">Pindahkan Siswa</h3>
@@ -834,6 +1029,7 @@ const peerClassroomOptions = computed(() =>
             </form>
         </Modal>
 
+        <!-- ══ Modal: Keluarkan Siswa ══════════════════════════════════════════ -->
         <Modal :show="showRemoveStudents" max-width="sm" @close="showRemoveStudents = false">
             <div class="px-6 py-5">
                 <div class="mb-4 flex size-10 items-center justify-center rounded-full bg-red-100">
@@ -871,6 +1067,7 @@ const peerClassroomOptions = computed(() =>
             </div>
         </Modal>
 
+        <!-- ══ Modal: Hapus Kelas ══════════════════════════════════════════════ -->
         <Modal :show="showDelete" max-width="sm" @close="showDelete = false">
             <div class="px-6 py-5">
                 <div class="mb-4 flex size-10 items-center justify-center rounded-full bg-red-100">

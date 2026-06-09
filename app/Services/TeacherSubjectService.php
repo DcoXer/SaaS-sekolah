@@ -33,14 +33,23 @@ class TeacherSubjectService
 
     public function assign(array $data): TeacherSubject
     {
-        return TeacherSubject::firstOrCreate(
-            [
-                'teacher_id'       => $data['teacher_id'],
-                'subject_id'       => $data['subject_id'],
-                'classroom_id'     => $data['classroom_id'],
-                'academic_year_id' => $data['academic_year_id'],
-            ]
-        );
+        // Unique key sekarang: (subject_id, classroom_id, academic_year_id)
+        $ts = TeacherSubject::where('subject_id', $data['subject_id'])
+            ->where('classroom_id', $data['classroom_id'])
+            ->where('academic_year_id', $data['academic_year_id'])
+            ->first();
+
+        if ($ts) {
+            $ts->update(['teacher_id' => $data['teacher_id']]);
+            return $ts;
+        }
+
+        return TeacherSubject::create([
+            'teacher_id'       => $data['teacher_id'],
+            'subject_id'       => $data['subject_id'],
+            'classroom_id'     => $data['classroom_id'],
+            'academic_year_id' => $data['academic_year_id'],
+        ]);
     }
 
     public function unassign(TeacherSubject $teacherSubject): void

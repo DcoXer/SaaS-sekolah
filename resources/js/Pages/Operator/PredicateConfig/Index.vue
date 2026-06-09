@@ -65,7 +65,7 @@ const predicateColor = {
         <div class="space-y-4">
 
             <!-- Heading -->
-            <div class="flex items-start justify-between gap-4">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                     <h2 class="text-balance text-lg font-bold text-slate-900">Konfigurasi Predikat</h2>
                     <p class="text-pretty text-sm text-slate-500">
@@ -112,8 +112,8 @@ const predicateColor = {
                     <span class="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">Aktif</span>
                 </div>
 
-                <!-- Header row -->
-                <div class="grid grid-cols-4 border-b border-slate-100 bg-slate-50 px-5 py-2.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <!-- Header row (desktop only) -->
+                <div class="hidden sm:grid grid-cols-4 border-b border-slate-100 bg-slate-50 px-5 py-2.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
                     <span>Predikat</span>
                     <span>Nilai Minimum</span>
                     <span>Nilai Maksimum</span>
@@ -125,48 +125,77 @@ const predicateColor = {
                     <div
                         v-for="(row, i) in syncForm.configs"
                         :key="row.predicate"
-                        class="grid grid-cols-4 items-center gap-4 px-5 py-3"
+                        class="px-5 py-3"
                     >
-                        <!-- Predicate badge -->
-                        <div class="flex items-center gap-2">
-                            <span :class="['inline-flex size-8 items-center justify-center rounded-lg text-sm font-bold', predicateColor[row.predicate]]">
+                        <!-- Mobile layout -->
+                        <div class="flex items-center gap-3 sm:hidden">
+                            <span :class="['inline-flex size-9 shrink-0 items-center justify-center rounded-lg text-sm font-bold', predicateColor[row.predicate]]">
                                 {{ row.predicate }}
                             </span>
+                            <div class="flex flex-1 items-center gap-2">
+                                <div class="flex-1">
+                                    <label class="mb-1 block text-xs font-semibold text-slate-500">Min</label>
+                                    <input
+                                        v-model.number="syncForm.configs[i].min_score"
+                                        type="number" min="0" max="100"
+                                        class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+                                    />
+                                </div>
+                                <span class="mt-5 text-xs text-slate-400">—</span>
+                                <div class="flex-1">
+                                    <label class="mb-1 block text-xs font-semibold text-slate-500">Max</label>
+                                    <input
+                                        v-model.number="syncForm.configs[i].max_score"
+                                        type="number" min="0" max="100"
+                                        class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+                                    />
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Min score -->
-                        <div>
-                            <input
-                                v-model.number="syncForm.configs[i].min_score"
-                                type="number"
-                                min="0"
-                                max="100"
-                                :class="[
-                                    'w-28 rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                    'border-slate-200',
-                                ]"
-                            />
-                        </div>
+                        <!-- Desktop layout -->
+                        <div class="hidden sm:grid grid-cols-4 items-center gap-4">
+                            <!-- Predicate badge -->
+                            <div class="flex items-center gap-2">
+                                <span :class="['inline-flex size-8 items-center justify-center rounded-lg text-sm font-bold', predicateColor[row.predicate]]">
+                                    {{ row.predicate }}
+                                </span>
+                            </div>
 
-                        <!-- Max score -->
-                        <div>
-                            <input
-                                v-model.number="syncForm.configs[i].max_score"
-                                type="number"
-                                min="0"
-                                max="100"
-                                :class="[
-                                    'w-28 rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
-                                    'border-slate-200',
-                                ]"
-                            />
-                        </div>
+                            <!-- Min score -->
+                            <div>
+                                <input
+                                    v-model.number="syncForm.configs[i].min_score"
+                                    type="number"
+                                    min="0"
+                                    max="100"
+                                    :class="[
+                                        'w-28 rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
+                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                        'border-slate-200',
+                                    ]"
+                                />
+                            </div>
 
-                        <!-- Range display -->
-                        <div class="text-right text-sm text-slate-500">
-                            {{ row.min_score }} – {{ row.max_score }}
+                            <!-- Max score -->
+                            <div>
+                                <input
+                                    v-model.number="syncForm.configs[i].max_score"
+                                    type="number"
+                                    min="0"
+                                    max="100"
+                                    :class="[
+                                        'w-28 rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
+                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                        'border-slate-200',
+                                    ]"
+                                />
+                            </div>
+
+                            <!-- Range display -->
+                            <div class="text-right text-sm text-slate-500">
+                                {{ row.min_score }} – {{ row.max_score }}
+                            </div>
                         </div>
                     </div>
                 </div>

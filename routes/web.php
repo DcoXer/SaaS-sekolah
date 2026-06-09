@@ -188,13 +188,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
              ->name('classrooms.assign-guru-kelas');
         Route::post('classrooms/{classroom}/assign-wali-kelas', [ClassroomController::class, 'assignWaliKelas'])
              ->name('classrooms.assign-wali-kelas');
-        Route::post('classrooms/{classroom}/assign-guru-bidang', [ClassroomController::class, 'assignGuruBidang'])
-             ->name('classrooms.assign-guru-bidang');
         Route::get('classrooms/{classroom}/available-teachers', [ClassroomController::class, 'availableTeachers'])
              ->name('classrooms.available-teachers');
 
+        // Subject management per classroom
+        Route::post('classrooms/{classroom}/subjects', [ClassroomController::class, 'addSubject'])
+             ->name('classrooms.subjects.add');
+        Route::delete('classrooms/{classroom}/subjects/{subject}', [ClassroomController::class, 'removeSubject'])
+             ->name('classrooms.subjects.remove');
+        Route::patch('classrooms/{classroom}/subjects/{subject}/teacher', [ClassroomController::class, 'assignSubjectTeacher'])
+             ->name('classrooms.subjects.assign-teacher');
+
         // Create Mata Pelajaran
-        Route::resource('subjects', SubjectController::class)->except(['create', 'edit']);
+        Route::resource('subjects', SubjectController::class)->except(['create', 'edit', 'show']);
 
         // Student import/export (BEFORE resource route)
         Route::get('students/export', [StudentImportExportController::class, 'exportForm'])->name('students.export.form');
@@ -363,6 +369,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Notifications (semua role)
+    Route::get('notifications/poll', [NotificationController::class, 'poll'])->name('notifications.poll');
     Route::patch('notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
     Route::patch('notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
 
