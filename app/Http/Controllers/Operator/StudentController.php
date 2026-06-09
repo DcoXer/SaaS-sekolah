@@ -88,6 +88,31 @@ class StudentController extends Controller
         ]);
     }
 
+    public function bulkResetAccounts()
+    {
+        $credentials = $this->service->bulkResetAccounts();
+
+        if (empty($credentials)) {
+            return response()->json(['count' => 0]);
+        }
+
+        return response()->streamDownload(function () use ($credentials) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['Nama Siswa', 'Nama Wali Murid', 'Email', 'Password']);
+            foreach ($credentials as $cred) {
+                fputcsv($handle, [
+                    $cred['student_name'],
+                    $cred['parent_name'],
+                    $cred['email'],
+                    $cred['password'],
+                ]);
+            }
+            fclose($handle);
+        }, 'kredensial_siswa.csv', [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    }
+
     public function generateAccount(Request $request, Student $student)
     {
         $request->validate([

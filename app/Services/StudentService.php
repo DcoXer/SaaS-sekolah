@@ -205,6 +205,35 @@ class StudentService
         return $credentials;
     }
 
+    public function bulkResetAccounts(): array
+    {
+        $students    = Student::whereNotNull('user_id')->with('user')->get();
+        $credentials = [];
+        $chars       = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+
+        DB::transaction(function () use ($students, $chars, &$credentials) {
+            foreach ($students as $student) {
+                if (!$student->user) continue;
+
+                $password = '';
+                for ($i = 0; $i < 10; $i++) {
+                    $password .= $chars[random_int(0, strlen($chars) - 1)];
+                }
+
+                $student->user->update(['password' => Hash::make($password)]);
+
+                $credentials[] = [
+                    'student_name' => $student->name,
+                    'parent_name'  => $student->user->name,
+                    'email'        => $student->user->email,
+                    'password'     => $password,
+                ];
+            }
+        });
+
+        return $credentials;
+    }
+
     public function delete(Student $student): void
     {
         DB::transaction(function () use ($student) {

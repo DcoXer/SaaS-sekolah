@@ -12,6 +12,45 @@ const props = defineProps({
     students: { type: Array, required: true },
 });
 
+// ── Bulk reset (existing accounts) ───────────────────────────────────────────
+const showBulkReset   = ref(false);
+const bulkResetting   = ref(false);
+const withAccountCount = computed(() => props.students.filter(s => s.user).length);
+
+const submitBulkReset = async () => {
+    bulkResetting.value = true;
+    try {
+        const res = await fetch(route('operator.students.bulk-reset-accounts'), {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf-token"]')?.content ?? '',
+            },
+        });
+
+        const contentType = res.headers.get('Content-Type') ?? '';
+
+        if (contentType.includes('application/json')) {
+            showBulkReset.value = false;
+            addToast?.('Belum ada siswa dengan akun.', 'success');
+        } else {
+            const blob = await res.blob();
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            a.href     = url;
+            a.download = 'kredensial_siswa.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showBulkReset.value = false;
+        }
+    } catch {
+        addToast?.('Terjadi kesalahan. Silakan coba lagi.', 'error');
+    } finally {
+        bulkResetting.value = false;
+    }
+};
+
 // ── Bulk generate accounts ────────────────────────────────────────────────────
 const showBulkGenerate    = ref(false);
 const bulkGenerating      = ref(false);
@@ -133,6 +172,16 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                     </p>
                 </div>
                 <div class="flex shrink-0 items-center gap-2">
+                    <button
+                        v-if="withAccountCount > 0"
+                        @click="showBulkReset = true"
+                        class="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3.5 py-2 text-sm font-semibold text-amber-700 shadow-sm transition-[background-color,border-color] duration-150 hover:border-amber-300 hover:bg-amber-100"
+                    >
+                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        </svg>
+                        Download Kredensial
+                    </button>
                     <Link
                         :href="route('operator.students.export.form')"
                         class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-[background-color,border-color] duration-150 hover:border-slate-300 hover:bg-slate-50"
@@ -351,6 +400,57 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
             </template>
 
         </div>
+
+        <!-- ── Bulk Reset Confirm ────────────────────────────────────────────── -->
+        <Modal :show="showBulkReset" max-width="sm" @close="showBulkReset = false">
+            <div class="px-6 py-5">
+                <div class="mb-4 flex size-10 items-center justify-center rounded-full bg-amber-100">
+                    <svg class="size-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                    </svg>
+                </div>
+                <h3 class="text-balance text-base font-bold text-slate-900">Download Kredensial Wali Murid</h3>
+                <p class="mt-1.5 text-pretty text-sm text-slate-500">
+                    Password semua <span class="font-semibold text-slate-700">{{ withAccountCount }} wali murid</span> yang sudah punya akun akan di-reset, lalu file CSV berisi kredensial baru akan terunduh.
+                </p>
+                <ul class="mt-3 space-y-1 text-xs text-slate-500">
+                    <li class="flex items-center gap-1.5">
+                        <svg class="size-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                        Password baru di-generate acak untuk semua akun yang ada
+                    </li>
+                    <li class="flex items-center gap-1.5">
+                        <svg class="size-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                        Hasil langsung terunduh sebagai <span class="font-mono">kredensial_siswa.csv</span>
+                    </li>
+                    <li class="flex items-center gap-1.5">
+                        <svg class="size-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                        Siswa tanpa akun tidak terpengaruh
+                    </li>
+                </ul>
+                <p class="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">
+                    Wali murid yang sedang login akan perlu login ulang dengan password baru.
+                </p>
+            </div>
+            <div class="flex items-center justify-end gap-3 border-t border-slate-100 px-6 py-4">
+                <button
+                    type="button"
+                    @click="showBulkReset = false"
+                    class="rounded-lg px-4 py-2 text-sm font-semibold text-slate-600 transition-[background-color] duration-150 hover:bg-slate-100"
+                >
+                    Batal
+                </button>
+                <button
+                    @click="submitBulkReset"
+                    :disabled="bulkResetting"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-amber-600 disabled:opacity-60"
+                >
+                    <svg v-if="bulkResetting" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                    {{ bulkResetting ? 'Memproses...' : 'Ya, Reset & Download' }}
+                </button>
+            </div>
+        </Modal>
 
         <!-- ── Bulk Generate Confirm ──────────────────────────────────────────── -->
         <Modal :show="showBulkGenerate" max-width="sm" @close="showBulkGenerate = false">

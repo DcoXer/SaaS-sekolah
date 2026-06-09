@@ -207,6 +207,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Create Siswa
         Route::post('students/bulk-generate-accounts', [StudentController::class, 'bulkGenerateAccounts'])
             ->name('students.bulk-generate-accounts');
+        Route::post('students/bulk-reset-accounts', [StudentController::class, 'bulkResetAccounts'])
+            ->name('students.bulk-reset-accounts');
         Route::resource('students', StudentController::class)->except(['edit']);
         Route::patch('students/{student}/assign-classroom', [StudentController::class, 'assignClassroom'])
             ->name('students.assign-classroom');
