@@ -77,8 +77,7 @@ app/
 ├── Jobs/             ← SendHonorariumSlipJob, SendSppReminderJob
 └── Helpers/          ← QrCodeHelper
 
-[File_Tree.md](File_Tree.md) | Folder Arsitektur Lengkap 
-```
+``
 
 ---
 
@@ -198,3 +197,4 @@ php artisan test --testsuite=Feature
 | [docs/akademik.md](docs/akademik.md) | Komponen nilai, input nilai, raport, verifikasi |
 | [docs/keuangan.md](docs/keuangan.md) | Tagihan, pembayaran, honor guru, absensi, WhatsApp |
 | [docs/surat.md](docs/surat.md) | Surat keterangan, pemberitahuan, approval, barcode |
+| [docs/File_Tree.md](docs/File_Tree.md) | Struktur Folder |
