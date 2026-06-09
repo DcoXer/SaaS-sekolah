@@ -1,7 +1,7 @@
 # File Tree: school-management
 
 **Generated:** 6/9/2026, 11:01:00 PM
-**Root Path:** `c:\laragon\www\school-management`
+**Root Path:** `SaaS-sekolah/docs/File_Tree.md`
 
 ```
 ├── 📁 app
