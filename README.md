@@ -77,7 +77,7 @@ app/
 ├── Jobs/             ← SendHonorariumSlipJob, SendSppReminderJob
 └── Helpers/          ← QrCodeHelper
 
-[/File_Tree.md](/File_Tree.md) | Folder Arsitektur Lengkap 
+[File_Tree.md](File_Tree.md) | Folder Arsitektur Lengkap 
 ```
 
 ---
