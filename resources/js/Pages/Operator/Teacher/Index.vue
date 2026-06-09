@@ -2,8 +2,10 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import Pagination from '@/Components/Pagination.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref, computed, watch } from 'vue';
+import { Head, Link, useForm, router } from '@inertiajs/vue3';
+import { ref, computed, watch, inject } from 'vue';
+
+const addToast = inject('addToast');
 
 const props = defineProps({
     teachers: { type: Array, required: true },
@@ -39,6 +41,41 @@ const paginated  = computed(() => {
 
 // Reset to page 1 when filter/search changes
 watch([search, filterType], () => { currentPage.value = 1; });
+
+// ── Bulk generate accounts ────────────────────────────────────────────────────
+const showBulkGenerate   = ref(false);
+const bulkGenerating     = ref(false);
+const placeholderCount   = computed(() =>
+    props.teachers.filter(t => t.user?.email?.endsWith('@sekolah.local')).length
+);
+
+const submitBulkGenerate = async () => {
+    bulkGenerating.value = true;
+    try {
+        const res = await fetch(route('operator.teachers.bulk-generate-accounts'), {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf-token"]')?.content ?? '',
+            },
+        });
+
+        const blob = await res.blob();
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href     = url;
+        a.download = 'akun_guru.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showBulkGenerate.value = false;
+        router.reload({ only: ['teachers'] });
+    } catch {
+        addToast?.('Terjadi kesalahan. Silakan coba lagi.', 'error');
+    } finally {
+        bulkGenerating.value = false;
+    }
+};
 
 // ── Delete ────────────────────────────────────────────────────────────────────
 const deleteTarget = ref(null);
@@ -89,6 +126,16 @@ const positionConfig = {
                     </p>
                 </div>
                 <div class="flex shrink-0 items-center gap-2">
+                    <button
+                        v-if="teachers.length > 0"
+                        @click="showBulkGenerate = true"
+                        class="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3.5 py-2 text-sm font-semibold text-amber-700 shadow-sm transition-[background-color,border-color] duration-150 hover:border-amber-300 hover:bg-amber-100"
+                    >
+                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                        Generate Akun
+                    </button>
                     <Link
                         :href="route('operator.teachers.export.form')"
                         class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-[background-color,border-color] duration-150 hover:border-slate-300 hover:bg-slate-50"
@@ -117,6 +164,28 @@ const positionConfig = {
                         Tambah
                     </Link>
                 </div>
+            </div>
+
+            <!-- Banner: guru dengan email placeholder -->
+            <div
+                v-if="placeholderCount > 0"
+                class="flex items-center justify-between gap-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3"
+            >
+                <div class="flex items-center gap-3">
+                    <svg class="size-5 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                    </svg>
+                    <p class="text-sm text-amber-800">
+                        <span class="font-semibold">{{ placeholderCount }} guru</span> masih pakai email sementara dari import.
+                        Email akan di-fix otomatis saat generate.
+                    </p>
+                </div>
+                <button
+                    @click="showBulkGenerate = true"
+                    class="shrink-0 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white transition-[background-color] duration-150 hover:bg-amber-600"
+                >
+                    Generate & Download
+                </button>
             </div>
 
             <!-- Search & Filter -->
@@ -314,6 +383,57 @@ const positionConfig = {
             </template>
 
         </div>
+
+        <!-- ── Bulk Generate Confirm ──────────────────────────────────────────── -->
+        <Modal :show="showBulkGenerate" max-width="sm" @close="showBulkGenerate = false">
+            <div class="px-6 py-5">
+                <div class="mb-4 flex size-10 items-center justify-center rounded-full bg-amber-100">
+                    <svg class="size-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                </div>
+                <h3 class="text-balance text-base font-bold text-slate-900">Generate & Download Akun Guru</h3>
+                <p class="mt-1.5 text-pretty text-sm text-slate-500">
+                    Password semua <span class="font-semibold text-slate-700">{{ teachers.length }} guru</span> akan di-reset dan file CSV berisi kredensial baru akan otomatis terunduh.
+                </p>
+                <ul class="mt-3 space-y-1 text-xs text-slate-500">
+                    <li class="flex items-center gap-1.5">
+                        <svg class="size-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                        Password baru di-generate acak untuk semua guru
+                    </li>
+                    <li v-if="placeholderCount > 0" class="flex items-center gap-1.5">
+                        <svg class="size-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                        {{ placeholderCount }} email sementara (<span class="font-mono">@sekolah.local</span>) akan di-fix ke <span class="font-mono">@guru.sekolah.id</span>
+                    </li>
+                    <li class="flex items-center gap-1.5">
+                        <svg class="size-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                        Hasil langsung terunduh sebagai <span class="font-mono">akun_guru.csv</span>
+                    </li>
+                </ul>
+                <p class="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">
+                    Guru yang sedang login akan perlu login ulang dengan password baru.
+                </p>
+            </div>
+            <div class="flex items-center justify-end gap-3 border-t border-slate-100 px-6 py-4">
+                <button
+                    type="button"
+                    @click="showBulkGenerate = false"
+                    class="rounded-lg px-4 py-2 text-sm font-semibold text-slate-600 transition-[background-color] duration-150 hover:bg-slate-100"
+                >
+                    Batal
+                </button>
+                <button
+                    @click="submitBulkGenerate"
+                    :disabled="bulkGenerating"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-amber-600 disabled:opacity-60"
+                >
+                    <svg v-if="bulkGenerating" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                    {{ bulkGenerating ? 'Memproses...' : 'Ya, Generate & Download' }}
+                </button>
+            </div>
+        </Modal>
 
         <!-- ── Delete Confirm ──────────────────────────────────────────────────── -->
         <Modal :show="!!deleteTarget" max-width="sm" @close="deleteTarget = null">

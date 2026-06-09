@@ -65,9 +65,27 @@ class StudentController extends Controller
 
     public function bulkGenerateAccounts()
     {
-        $count = $this->service->bulkGenerateAccounts();
+        $credentials = $this->service->bulkGenerateAccounts();
 
-        return redirect()->back()->with('success', "Berhasil membuat {$count} akun wali murid.");
+        if (empty($credentials)) {
+            return response()->json(['count' => 0]);
+        }
+
+        return response()->streamDownload(function () use ($credentials) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['Nama Siswa', 'Nama Wali Murid', 'Email', 'Password']);
+            foreach ($credentials as $cred) {
+                fputcsv($handle, [
+                    $cred['student_name'],
+                    $cred['parent_name'],
+                    $cred['email'],
+                    $cred['password'],
+                ]);
+            }
+            fclose($handle);
+        }, 'akun_wali_murid.csv', [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
     }
 
     public function generateAccount(Request $request, Student $student)

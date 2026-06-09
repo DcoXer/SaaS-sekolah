@@ -26,6 +26,27 @@ class TeacherController extends Controller
         return Inertia::render('Operator/Teacher/Create');
     }
 
+    public function bulkGenerateAccounts()
+    {
+        $credentials = $this->service->bulkGenerateAccounts();
+
+        return response()->streamDownload(function () use ($credentials) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['NIP', 'Nama Guru', 'Email', 'Password']);
+            foreach ($credentials as $cred) {
+                fputcsv($handle, [
+                    $cred['nip'],
+                    $cred['name'],
+                    $cred['email'],
+                    $cred['password'],
+                ]);
+            }
+            fclose($handle);
+        }, 'akun_guru.csv', [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    }
+
     public function store(StoreTeacherRequest $request)
     {
         $this->service->create($request->validated());

@@ -170,6 +170,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('teachers/import/confirm', [TeacherImportExportController::class, 'confirm'])->name('teachers.import.confirm');
 
         // Create Guru
+        Route::post('teachers/bulk-generate-accounts', [TeacherController::class, 'bulkGenerateAccounts'])
+            ->name('teachers.bulk-generate-accounts');
         Route::resource('teachers', TeacherController::class)->except(['edit']);
 
         // Create Kelas

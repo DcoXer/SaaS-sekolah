@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class TeacherService
 {
@@ -67,6 +68,51 @@ class TeacherService
 
             return $teacher->fresh('user');
         });
+    }
+
+    public function bulkGenerateAccounts(): array
+    {
+        $teachers    = Teacher::with('user')->get();
+        $credentials = [];
+        $chars       = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+
+        DB::transaction(function () use ($teachers, $chars, &$credentials) {
+            foreach ($teachers as $teacher) {
+                // Generate password baru
+                $password = '';
+                for ($i = 0; $i < 10; $i++) {
+                    $password .= $chars[random_int(0, strlen($chars) - 1)];
+                }
+
+                $email = $teacher->user->email;
+
+                // Fix email placeholder (@sekolah.local dari import CSV)
+                if (str_ends_with($email, '@sekolah.local')) {
+                    $base     = $teacher->nip
+                        ? Str::slug($teacher->nip, '.')
+                        : Str::slug($teacher->user->name, '.');
+                    $newEmail = $base . '@guru.sekolah.id';
+                    $suffix   = 1;
+                    while (User::where('email', $newEmail)->where('id', '!=', $teacher->user->id)->exists()) {
+                        $newEmail = $base . $suffix . '@guru.sekolah.id';
+                        $suffix++;
+                    }
+                    $email = $newEmail;
+                    $teacher->user->update(['email' => $email, 'password' => Hash::make($password)]);
+                } else {
+                    $teacher->user->update(['password' => Hash::make($password)]);
+                }
+
+                $credentials[] = [
+                    'nip'      => $teacher->nip ?? '',
+                    'name'     => $teacher->user->name,
+                    'email'    => $email,
+                    'password' => $password,
+                ];
+            }
+        });
+
+        return $credentials;
     }
 
     public function delete(Teacher $teacher): void

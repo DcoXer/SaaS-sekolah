@@ -3,7 +3,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import Pagination from '@/Components/Pagination.vue';
 import FilterSelect from '@/Components/FilterSelect.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import { ref, computed, watch, inject } from 'vue';
 
 const addToast = inject('addToast');
@@ -13,16 +13,43 @@ const props = defineProps({
 });
 
 // ── Bulk generate accounts ────────────────────────────────────────────────────
-const showBulkGenerate   = ref(false);
-const bulkGenerateForm   = useForm({});
+const showBulkGenerate    = ref(false);
+const bulkGenerating      = ref(false);
 const withoutAccountCount = computed(() => props.students.filter(s => !s.user).length);
 
-const submitBulkGenerate = () => {
-    bulkGenerateForm.post(route('operator.students.bulk-generate-accounts'), {
-        onSuccess: () => {
+const submitBulkGenerate = async () => {
+    bulkGenerating.value = true;
+    try {
+        const res = await fetch(route('operator.students.bulk-generate-accounts'), {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf-token"]')?.content ?? '',
+            },
+        });
+
+        const contentType = res.headers.get('Content-Type') ?? '';
+
+        if (contentType.includes('application/json')) {
             showBulkGenerate.value = false;
-        },
-    });
+            addToast?.('Semua siswa sudah memiliki akun.', 'success');
+        } else {
+            const blob = await res.blob();
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            a.href     = url;
+            a.download = 'akun_wali_murid.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showBulkGenerate.value = false;
+            router.reload({ only: ['students'] });
+        }
+    } catch {
+        addToast?.('Terjadi kesalahan. Silakan coba lagi.', 'error');
+    } finally {
+        bulkGenerating.value = false;
+    }
 };
 
 // ── Delete ────────────────────────────────────────────────────────────────────
@@ -364,13 +391,13 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                 </button>
                 <button
                     @click="submitBulkGenerate"
-                    :disabled="bulkGenerateForm.processing"
+                    :disabled="bulkGenerating"
                     class="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-amber-600 disabled:opacity-60"
                 >
-                    <svg v-if="bulkGenerateForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <svg v-if="bulkGenerating" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                     </svg>
-                    {{ bulkGenerateForm.processing ? 'Memproses...' : 'Ya, Generate Sekarang' }}
+                    {{ bulkGenerating ? 'Memproses...' : 'Ya, Generate & Download' }}
                 </button>
             </div>
         </Modal>
