@@ -82,7 +82,10 @@
       "Bash(cp C:/laragon/www/school-management/.claude/worktrees/agent-a9ea3759/app/Exports/TeachersExport.php C:/laragon/www/school-management/app/Exports/TeachersExport.php)",
       "Bash(cp C:/laragon/www/school-management/.claude/worktrees/agent-a9ea3759/app/Http/Controllers/Operator/StudentController.php C:/laragon/www/school-management/app/Http/Controllers/Operator/StudentController.php)",
       "Bash(cp C:/laragon/www/school-management/.claude/worktrees/agent-a9ea3759/app/Services/StudentService.php C:/laragon/www/school-management/app/Services/StudentService.php)",
-      "Bash(cp C:/laragon/www/school-management/.claude/worktrees/agent-a9ea3759/resources/js/Layouts/AppLayout.vue C:/laragon/www/school-management/resources/js/Layouts/AppLayout.vue)"
+      "Bash(cp C:/laragon/www/school-management/.claude/worktrees/agent-a9ea3759/resources/js/Layouts/AppLayout.vue C:/laragon/www/school-management/resources/js/Layouts/AppLayout.vue)",
+      "Bash(python3:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://school-management.test/login)",
+      "Bash(curl -s http://school-management.test/login)"
     ]
   }
 }

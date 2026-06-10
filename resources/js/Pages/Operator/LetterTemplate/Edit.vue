@@ -4,7 +4,7 @@ import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
-const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20';
+const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20';
 
 const props = defineProps({
     template:              { type: Object, required: true },
@@ -99,7 +99,7 @@ const submit = () => {
                                 id="is_active"
                                 v-model="form.is_active"
                                 type="checkbox"
-                                class="size-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-400"
+                                class="size-4 rounded border-slate-300 text-primary-500 focus:ring-primary-400"
                             />
                             <label for="is_active" class="text-sm font-medium text-slate-700">
                                 Template aktif
@@ -127,7 +127,7 @@ const submit = () => {
                                         type="button"
                                         @click="insertPlaceholder(ph)"
                                         :title="label"
-                                        class="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-mono text-slate-600 hover:bg-emerald-50 hover:border-emerald-300 hover:text-emerald-700 transition-colors"
+                                        class="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-mono text-slate-600 hover:bg-primary-50 hover:border-primary-300 hover:text-primary-700 transition-colors"
                                     >
                                         {{ ph }}
                                     </button>
@@ -157,7 +157,7 @@ const submit = () => {
                         <button
                             type="submit"
                             :disabled="form.processing"
-                            class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60"
+                            class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600 disabled:opacity-60"
                         >
                             <svg v-if="form.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />

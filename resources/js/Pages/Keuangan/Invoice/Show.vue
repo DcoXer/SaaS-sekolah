@@ -13,12 +13,12 @@ const props = defineProps({
 const statusColor = {
     unpaid:  'bg-red-100 text-red-700 ring-1 ring-red-200',
     partial: 'bg-amber-100 text-amber-700 ring-1 ring-amber-200',
-    paid:    'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-200',
+    paid:    'bg-primary-100 text-primary-700 ring-1 ring-primary-200',
 };
 const statusDot = {
     unpaid:  'bg-red-500',
     partial: 'bg-amber-500',
-    paid:    'bg-emerald-500',
+    paid:    'bg-primary-500',
 };
 const statusLabel = {
     unpaid:  'Belum Bayar',
@@ -97,12 +97,12 @@ const activeClassroom = props.student.classrooms?.[0];
             <!-- ── Student Identity Card ────────────────────────────────────── -->
             <div class="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
                 <!-- Top gradient strip -->
-                <div class="h-1.5 w-full bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-600"></div>
+                <div class="h-1.5 w-full bg-gradient-to-r from-primary-500 via-teal-400 to-primary-600"></div>
 
                 <div class="flex flex-col gap-4 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
                     <!-- Avatar + name -->
                     <div class="flex items-center gap-4">
-                        <div class="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 text-xl font-extrabold text-white shadow-md shadow-emerald-200/60">
+                        <div class="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-400 to-teal-500 text-xl font-extrabold text-white shadow-md shadow-primary-200/60">
                             {{ student.name?.charAt(0)?.toUpperCase() }}
                         </div>
                         <div>
@@ -114,8 +114,8 @@ const activeClassroom = props.student.classrooms?.[0];
                                     </svg>
                                     NIS {{ student.nis }}
                                 </span>
-                                <span v-if="activeClassroom" class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">
-                                    <svg class="size-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <span v-if="activeClassroom" class="inline-flex items-center gap-1 rounded-full bg-primary-50 px-2.5 py-1 text-xs font-semibold text-primary-700 ring-1 ring-primary-100">
+                                    <svg class="size-3 text-primary-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
                                     </svg>
                                     {{ activeClassroom.name }}
@@ -197,13 +197,13 @@ const activeClassroom = props.student.classrooms?.[0];
                                 <p v-if="inv.status !== 'paid'" class="text-xs font-semibold tabular-nums text-red-500">
                                     Sisa {{ formatRupiah(inv.remaining_amount) }}
                                 </p>
-                                <p v-else class="text-xs font-semibold text-emerald-600">Lunas</p>
+                                <p v-else class="text-xs font-semibold text-primary-600">Lunas</p>
                             </div>
                             <!-- Catat bayar -->
                             <button
                                 v-if="inv.status !== 'paid'"
                                 @click="openPay(inv)"
-                                class="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500 px-3.5 py-2 text-xs font-semibold text-white shadow-sm shadow-emerald-200 transition-all duration-150 hover:bg-emerald-600 hover:shadow-emerald-300 active:scale-95"
+                                class="inline-flex items-center gap-1.5 rounded-xl bg-primary-500 px-3.5 py-2 text-xs font-semibold text-white shadow-sm shadow-primary-200 transition-all duration-150 hover:bg-primary-600 hover:shadow-primary-300 active:scale-95"
                             >
                                 <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -258,8 +258,8 @@ const activeClassroom = props.student.classrooms?.[0];
                                 class="relative flex items-start gap-3 rounded-xl px-3 py-2.5 transition-colors duration-150 hover:bg-slate-50"
                             >
                                 <!-- Timeline dot -->
-                                <div class="relative z-10 mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-white ring-2 ring-emerald-400">
-                                    <span class="size-2 rounded-full bg-emerald-400"></span>
+                                <div class="relative z-10 mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-white ring-2 ring-primary-400">
+                                    <span class="size-2 rounded-full bg-primary-400"></span>
                                 </div>
 
                                 <!-- Content -->
@@ -293,7 +293,7 @@ const activeClassroom = props.student.classrooms?.[0];
                                                 {{ pay.confirmed_by?.name ?? 'Staf Keuangan' }}
                                             </span>
                                             <a v-if="pay.proof_url" :href="pay.proof_url" target="_blank" rel="noopener"
-                                                class="flex items-center gap-1 text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:underline">
+                                                class="flex items-center gap-1 text-xs font-semibold text-primary-600 hover:text-primary-700 hover:underline">
                                                 <svg class="size-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -304,7 +304,7 @@ const activeClassroom = props.student.classrooms?.[0];
 
                                     <!-- Amount + delete -->
                                     <div class="flex items-center gap-1.5">
-                                        <span class="text-sm font-extrabold tabular-nums text-emerald-600">{{ formatRupiah(pay.amount) }}</span>
+                                        <span class="text-sm font-extrabold tabular-nums text-primary-600">{{ formatRupiah(pay.amount) }}</span>
                                         <button
                                             @click="deletePaymentTarget = pay"
                                             class="ml-1 flex size-7 items-center justify-center rounded-lg text-slate-300 transition-all duration-150 hover:bg-red-50 hover:text-red-500"
@@ -321,7 +321,7 @@ const activeClassroom = props.student.classrooms?.[0];
                             <!-- Total paid row -->
                             <div class="mt-1 flex items-center justify-between border-t border-slate-100 pt-2.5 pl-8">
                                 <span class="text-xs font-semibold text-slate-500">Total terbayar</span>
-                                <span class="text-sm font-extrabold tabular-nums text-emerald-600">
+                                <span class="text-sm font-extrabold tabular-nums text-primary-600">
                                     {{ formatRupiah(inv.payments.reduce((s, p) => s + (p.amount ?? 0), 0)) }}
                                 </span>
                             </div>
@@ -338,8 +338,8 @@ const activeClassroom = props.student.classrooms?.[0];
                 <!-- Header -->
                 <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
                     <div class="flex items-center gap-3">
-                        <div class="flex size-9 items-center justify-center rounded-xl bg-emerald-100">
-                            <svg class="size-4.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <div class="flex size-9 items-center justify-center rounded-xl bg-primary-100">
+                            <svg class="size-4.5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75" />
                             </svg>
                         </div>
@@ -366,7 +366,7 @@ const activeClassroom = props.student.classrooms?.[0];
                             </div>
                             <div class="flex justify-between text-xs text-slate-500">
                                 <span>Sudah dibayar</span>
-                                <span class="font-semibold text-emerald-600">{{ formatRupiah((payTarget?.amount ?? 0) - (payTarget?.remaining_amount ?? 0)) }}</span>
+                                <span class="font-semibold text-primary-600">{{ formatRupiah((payTarget?.amount ?? 0) - (payTarget?.remaining_amount ?? 0)) }}</span>
                             </div>
                         </div>
                         <div class="flex justify-between border-t border-slate-200 bg-white px-4 py-2.5 text-xs">
@@ -379,7 +379,7 @@ const activeClassroom = props.student.classrooms?.[0];
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Nominal <span class="text-red-500">*</span></label>
                         <input v-model="payForm.amount" type="number" min="1000" placeholder="Contoh: 150000"
-                            :class="['w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-all duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', payForm.errors.amount ? 'border-red-400' : 'border-slate-200']" />
+                            :class="['w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-all duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', payForm.errors.amount ? 'border-red-400' : 'border-slate-200']" />
                         <p v-if="payForm.errors.amount" class="mt-1.5 text-xs text-red-500">{{ payForm.errors.amount }}</p>
                     </div>
 
@@ -387,13 +387,13 @@ const activeClassroom = props.student.classrooms?.[0];
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Catatan <span class="text-slate-400 font-normal">(opsional)</span></label>
                         <input v-model="payForm.note" type="text" placeholder="Mis: Pembayaran bulan Januari..."
-                            class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-all duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20" />
+                            class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-all duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20" />
                     </div>
 
                     <!-- Bukti -->
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Bukti Pembayaran <span class="text-slate-400 font-normal">(opsional)</span></label>
-                        <label class="flex cursor-pointer items-center gap-2.5 rounded-xl border border-dashed border-slate-200 bg-slate-50/80 px-4 py-3 text-xs font-semibold text-slate-500 transition-all duration-150 hover:border-emerald-300 hover:bg-emerald-50/30 hover:text-emerald-700">
+                        <label class="flex cursor-pointer items-center gap-2.5 rounded-xl border border-dashed border-slate-200 bg-slate-50/80 px-4 py-3 text-xs font-semibold text-slate-500 transition-all duration-150 hover:border-primary-300 hover:bg-primary-50/30 hover:text-primary-700">
                             <svg class="size-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                             </svg>
@@ -411,7 +411,7 @@ const activeClassroom = props.student.classrooms?.[0];
                         Batal
                     </button>
                     <button type="submit" :disabled="payForm.processing"
-                        class="inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-emerald-200 transition-all duration-150 hover:bg-emerald-600 disabled:opacity-60 active:scale-95">
+                        class="inline-flex items-center gap-2 rounded-xl bg-primary-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-primary-200 transition-all duration-150 hover:bg-primary-600 disabled:opacity-60 active:scale-95">
                         <svg v-if="payForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                         </svg>

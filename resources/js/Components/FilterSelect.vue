@@ -40,7 +40,7 @@ onUnmounted(() => document.removeEventListener('mousedown', handleOutside));
             :class="[
                 disabled  ? 'cursor-not-allowed opacity-50 border-slate-200 text-slate-400'
                 : hasError ? 'border-red-400 bg-white text-slate-800 ring-2 ring-red-400/20'
-                : open     ? 'border-emerald-400 bg-white ring-2 ring-emerald-400/20 text-slate-800'
+                : open     ? 'border-primary-400 bg-white ring-2 ring-primary-400/20 text-slate-800'
                 :             'border-slate-200 text-slate-600 hover:border-slate-300',
                 block ? 'w-full justify-between' : '',
             ]"
@@ -73,11 +73,11 @@ onUnmounted(() => document.removeEventListener('mousedown', handleOutside));
                         @click="select(opt.value)"
                         class="flex w-full items-center gap-2.5 px-3.5 py-2 text-sm transition-colors duration-100"
                         :class="String(modelValue) === String(opt.value)
-                            ? 'bg-emerald-50 text-emerald-700 font-semibold'
+                            ? 'bg-primary-50 text-primary-700 font-semibold'
                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-800'"
                     >
                         <span class="size-1.5 shrink-0 rounded-full transition-colors"
-                            :class="String(modelValue) === String(opt.value) ? 'bg-emerald-500' : 'bg-transparent'"/>
+                            :class="String(modelValue) === String(opt.value) ? 'bg-primary-500' : 'bg-transparent'"/>
                         {{ opt.label }}
                     </button>
                 </div>

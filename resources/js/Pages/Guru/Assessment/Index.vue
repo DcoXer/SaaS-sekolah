@@ -38,7 +38,7 @@ const hasOthers = (subjects, sem) =>
 const classroomPalette = [
     { ring: 'ring-violet-200', bg: 'bg-violet-50',  badge: 'bg-violet-500',  text: 'text-violet-700',  label: 'text-violet-800',  accent: 'bg-violet-100' },
     { ring: 'ring-sky-200',    bg: 'bg-sky-50',     badge: 'bg-sky-500',     text: 'text-sky-700',     label: 'text-sky-800',     accent: 'bg-sky-100' },
-    { ring: 'ring-emerald-200',bg: 'bg-emerald-50', badge: 'bg-emerald-500', text: 'text-emerald-700', label: 'text-emerald-800', accent: 'bg-emerald-100' },
+    { ring: 'ring-primary-200',bg: 'bg-primary-50', badge: 'bg-primary-500', text: 'text-primary-700', label: 'text-primary-800', accent: 'bg-primary-100' },
     { ring: 'ring-amber-200',  bg: 'bg-amber-50',   badge: 'bg-amber-500',   text: 'text-amber-700',   label: 'text-amber-800',   accent: 'bg-amber-100' },
     { ring: 'ring-rose-200',   bg: 'bg-rose-50',    badge: 'bg-rose-500',    text: 'text-rose-700',    label: 'text-rose-800',    accent: 'bg-rose-100' },
     { ring: 'ring-indigo-200', bg: 'bg-indigo-50',  badge: 'bg-indigo-500',  text: 'text-indigo-700',  label: 'text-indigo-800',  accent: 'bg-indigo-100' },

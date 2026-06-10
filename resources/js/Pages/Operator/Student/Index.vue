@@ -87,12 +87,38 @@ const filtered = computed(() => {
     return list;
 });
 
+// ── Sort ──────────────────────────────────────────────────────────────────────
+const sortKey = ref('name');
+const sortDir = ref('asc');
+
+const toggleSort = (key) => {
+    if (sortKey.value === key) {
+        sortDir.value = sortDir.value === 'asc' ? 'desc' : 'asc';
+    } else {
+        sortKey.value = key;
+        sortDir.value = 'asc';
+    }
+    currentPage.value = 1;
+};
+
+const sorted = computed(() => {
+    const list = [...filtered.value];
+    const dir  = sortDir.value === 'asc' ? 1 : -1;
+    return list.sort((a, b) => {
+        let va = '', vb = '';
+        if (sortKey.value === 'name')  { va = a.name ?? ''; vb = b.name ?? ''; }
+        else if (sortKey.value === 'nisn')  { va = a.nisn ?? ''; vb = b.nisn ?? ''; }
+        else if (sortKey.value === 'grade') { return (a.grade - b.grade) * dir; }
+        return va.localeCompare(vb, 'id') * dir;
+    });
+});
+
 const PER_PAGE    = 15;
 const currentPage = ref(1);
-const totalPages  = computed(() => Math.ceil(filtered.value.length / PER_PAGE));
+const totalPages  = computed(() => Math.ceil(sorted.value.length / PER_PAGE));
 const paginated   = computed(() => {
     const start = (currentPage.value - 1) * PER_PAGE;
-    return filtered.value.slice(start, start + PER_PAGE);
+    return sorted.value.slice(start, start + PER_PAGE);
 });
 watch([search, filterGrade, filterStatus], () => { currentPage.value = 1; });
 
@@ -133,7 +159,7 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                 <div>
                     <h2 class="text-balance text-lg font-bold text-slate-900">Data Siswa</h2>
                     <p class="text-pretty text-sm text-slate-500">
-                        Kelola data siswa beserta akun wali murid. Penempatan kelas diatur dari halaman detail.
+                        Kelola data siswa beserta akun wali murid.
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
@@ -167,7 +193,7 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                     </Link>
                     <Link
                         :href="route('operator.students.create')"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-primary-600"
                     >
                         <svg class="size-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -208,7 +234,7 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                         v-model="search"
                         type="search"
                         placeholder="Cari nama, NISN/NIS, wali murid..."
-                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"
+                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-400/20"
                     />
                 </div>
                 <FilterSelect
@@ -246,7 +272,7 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                 <p class="mt-1 text-xs text-slate-400">Tambah siswa untuk mulai mengelola kelas dan tagihan.</p>
                 <Link
                     :href="route('operator.students.create')"
-                    class="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600"
+                    class="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600"
                 >
                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -262,7 +288,7 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
             >
                 <p class="text-sm font-semibold text-slate-700">Tidak ada hasil</p>
                 <p class="mt-1 text-xs text-slate-400">Coba ubah kata kunci atau hapus filter.</p>
-                <button @click="search = ''; filterGrade = ''; filterStatus = ''" class="mt-3 text-xs font-semibold text-emerald-600 hover:underline">Reset pencarian</button>
+                <button @click="search = ''; filterGrade = ''; filterStatus = ''" class="mt-3 text-xs font-semibold text-primary-600 hover:underline">Reset pencarian</button>
             </div>
 
             <template v-else>
@@ -309,9 +335,33 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                 <table class="min-w-full divide-y divide-slate-100">
                     <thead>
                         <tr class="bg-slate-50">
-                            <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Siswa</th>
-                            <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">NISN</th>
-                            <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Tingkat</th>
+                            <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">
+                                <button @click="toggleSort('name')" class="inline-flex items-center gap-1 hover:text-slate-800 transition-colors duration-150">
+                                    Siswa
+                                    <span class="flex flex-col leading-none">
+                                        <svg class="size-2.5 transition-colors" :class="sortKey === 'name' && sortDir === 'asc' ? 'text-primary-500' : 'text-slate-300'" viewBox="0 0 10 6" fill="currentColor"><path d="M5 0L10 6H0z"/></svg>
+                                        <svg class="size-2.5 transition-colors" :class="sortKey === 'name' && sortDir === 'desc' ? 'text-primary-500' : 'text-slate-300'" viewBox="0 0 10 6" fill="currentColor"><path d="M5 6L0 0h10z"/></svg>
+                                    </span>
+                                </button>
+                            </th>
+                            <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">
+                                <button @click="toggleSort('nisn')" class="inline-flex items-center gap-1 hover:text-slate-800 transition-colors duration-150">
+                                    NISN
+                                    <span class="flex flex-col leading-none">
+                                        <svg class="size-2.5 transition-colors" :class="sortKey === 'nisn' && sortDir === 'asc' ? 'text-primary-500' : 'text-slate-300'" viewBox="0 0 10 6" fill="currentColor"><path d="M5 0L10 6H0z"/></svg>
+                                        <svg class="size-2.5 transition-colors" :class="sortKey === 'nisn' && sortDir === 'desc' ? 'text-primary-500' : 'text-slate-300'" viewBox="0 0 10 6" fill="currentColor"><path d="M5 6L0 0h10z"/></svg>
+                                    </span>
+                                </button>
+                            </th>
+                            <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">
+                                <button @click="toggleSort('grade')" class="inline-flex items-center gap-1 hover:text-slate-800 transition-colors duration-150">
+                                    Tingkat
+                                    <span class="flex flex-col leading-none">
+                                        <svg class="size-2.5 transition-colors" :class="sortKey === 'grade' && sortDir === 'asc' ? 'text-primary-500' : 'text-slate-300'" viewBox="0 0 10 6" fill="currentColor"><path d="M5 0L10 6H0z"/></svg>
+                                        <svg class="size-2.5 transition-colors" :class="sortKey === 'grade' && sortDir === 'desc' ? 'text-primary-500' : 'text-slate-300'" viewBox="0 0 10 6" fill="currentColor"><path d="M5 6L0 0h10z"/></svg>
+                                    </span>
+                                </button>
+                            </th>
                             <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Kelamin</th>
                             <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Wali Murid</th>
                             <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Status</th>

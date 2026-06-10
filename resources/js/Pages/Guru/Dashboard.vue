@@ -31,14 +31,14 @@ const byClassroom = computed(() => {
 const classroomAccents = [
     { bg: 'bg-violet-500', light: 'bg-violet-50', text: 'text-violet-700', ring: 'ring-violet-200', badge: 'bg-violet-100 text-violet-700' },
     { bg: 'bg-sky-500',    light: 'bg-sky-50',    text: 'text-sky-700',    ring: 'ring-sky-200',    badge: 'bg-sky-100 text-sky-700' },
-    { bg: 'bg-emerald-500',light: 'bg-emerald-50',text: 'text-emerald-700',ring: 'ring-emerald-200',badge: 'bg-emerald-100 text-emerald-700' },
+    { bg: 'bg-primary-500',light: 'bg-primary-50',text: 'text-primary-700',ring: 'ring-primary-200',badge: 'bg-primary-100 text-primary-700' },
     { bg: 'bg-amber-500',  light: 'bg-amber-50',  text: 'text-amber-700',  ring: 'ring-amber-200',  badge: 'bg-amber-100 text-amber-700' },
     { bg: 'bg-pink-500',   light: 'bg-pink-50',   text: 'text-pink-700',   ring: 'ring-pink-200',   badge: 'bg-pink-100 text-pink-700' },
     { bg: 'bg-cyan-500',   light: 'bg-cyan-50',   text: 'text-cyan-700',   ring: 'ring-cyan-200',   badge: 'bg-cyan-100 text-cyan-700' },
 ];
 
 const attendanceConfig = {
-    hadir: { label: 'Hadir',  color: 'text-emerald-700', bg: 'bg-emerald-500', light: 'bg-emerald-50',  dot: 'bg-emerald-500' },
+    hadir: { label: 'Hadir',  color: 'text-primary-700', bg: 'bg-primary-500', light: 'bg-primary-50',  dot: 'bg-primary-500' },
     izin:  { label: 'Izin',   color: 'text-sky-700',     bg: 'bg-sky-500',     light: 'bg-sky-50',      dot: 'bg-sky-400' },
     sakit: { label: 'Sakit',  color: 'text-amber-700',   bg: 'bg-amber-500',   light: 'bg-amber-50',    dot: 'bg-amber-400' },
     alpha: { label: 'Alpha',  color: 'text-red-700',     bg: 'bg-red-500',     light: 'bg-red-50',      dot: 'bg-red-500' },
@@ -90,7 +90,7 @@ function shortDate(dateStr) {
                         <h2 class="truncate text-xl font-extrabold text-white leading-tight">{{ user.name }}</h2>
                         <div class="mt-1.5 flex flex-wrap items-center gap-2">
                             <span class="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-semibold text-white backdrop-blur-sm">
-                                <span class="size-1.5 rounded-full bg-emerald-300"></span>
+                                <span class="size-1.5 rounded-full bg-primary-300"></span>
                                 Guru
                             </span>
                             <span v-if="activeYear" class="inline-flex items-center rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-medium text-orange-50 backdrop-blur-sm">
@@ -135,8 +135,8 @@ function shortDate(dateStr) {
                 </Link>
                 <Link href="/guru/attendance"
                     class="group flex flex-col items-center gap-2 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
-                    <div class="flex size-11 items-center justify-center rounded-2xl bg-emerald-50 ring-4 ring-emerald-100 transition-colors group-hover:bg-emerald-100">
-                        <svg class="size-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+                    <div class="flex size-11 items-center justify-center rounded-2xl bg-primary-50 ring-4 ring-primary-100 transition-colors group-hover:bg-primary-100">
+                        <svg class="size-5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
@@ -153,7 +153,7 @@ function shortDate(dateStr) {
                         <p class="text-xs text-slate-400">{{ new Date().toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }) }}</p>
                     </div>
                     <div v-if="attendanceSummary.total > 0" class="flex items-center gap-1.5">
-                        <span class="text-lg font-extrabold" :class="hadirPct >= 80 ? 'text-emerald-600' : hadirPct >= 60 ? 'text-amber-600' : 'text-red-600'">
+                        <span class="text-lg font-extrabold" :class="hadirPct >= 80 ? 'text-primary-600' : hadirPct >= 60 ? 'text-amber-600' : 'text-red-600'">
                             {{ hadirPct }}%
                         </span>
                         <span class="text-xs text-slate-400">hadir</span>
@@ -161,7 +161,7 @@ function shortDate(dateStr) {
                 </div>
 
                 <!-- Stats -->
-                <div class="grid grid-cols-4 gap-0 divide-x divide-slate-50">
+                <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-0 sm:divide-x sm:divide-slate-50">
                     <div v-for="(cfg, key) in attendanceConfig" :key="key" class="flex flex-col items-center py-4 gap-1">
                         <span class="tabular-nums text-2xl font-extrabold" :class="cfg.color">
                             {{ attendanceSummary[key] ?? 0 }}
@@ -172,7 +172,7 @@ function shortDate(dateStr) {
 
                 <!-- Progress bar -->
                 <div v-if="attendanceSummary.total > 0" class="flex gap-px px-5 pb-4 pt-1">
-                    <div v-if="attendanceSummary.hadir" class="h-1.5 rounded-l-full bg-emerald-500 transition-all"
+                    <div v-if="attendanceSummary.hadir" class="h-1.5 rounded-l-full bg-primary-500 transition-all"
                         :style="{ width: ((attendanceSummary.hadir / attendanceSummary.total) * 100) + '%' }" />
                     <div v-if="attendanceSummary.izin" class="h-1.5 bg-sky-400 transition-all"
                         :style="{ width: ((attendanceSummary.izin / attendanceSummary.total) * 100) + '%' }" />

@@ -101,7 +101,7 @@ const formatDate = (dateStr) => {
                     <div v-if="year.status === 'pending'" class="mt-3 border-t border-slate-100 pt-3">
                         <button
                             @click="openConfirm(year)"
-                            class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600"
+                            class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-primary-600"
                         >
                             <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
@@ -151,7 +151,7 @@ const formatDate = (dateStr) => {
                                 <button
                                     v-if="year.status === 'pending'"
                                     @click="openConfirm(year)"
-                                    class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600"
+                                    class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-primary-600"
                                 >
                                     <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
@@ -211,7 +211,7 @@ const formatDate = (dateStr) => {
                         type="button"
                         :disabled="form.processing"
                         @click="confirmApprove"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600 disabled:opacity-60"
                     >
                         <svg
                             v-if="form.processing"

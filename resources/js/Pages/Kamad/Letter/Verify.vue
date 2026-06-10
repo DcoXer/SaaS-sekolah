@@ -20,9 +20,9 @@ const formatDate = (d) => d
             <!-- Header -->
             <div class="mb-6 text-center">
                 <div class="mx-auto mb-3 flex size-14 items-center justify-center rounded-2xl"
-                     :class="valid ? 'bg-emerald-100' : 'bg-red-100'">
+                     :class="valid ? 'bg-primary-100' : 'bg-red-100'">
                     <!-- Valid icon -->
-                    <svg v-if="valid" class="size-7 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <svg v-if="valid" class="size-7 text-primary-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
                     </svg>
                     <!-- Invalid icon -->
@@ -30,7 +30,7 @@ const formatDate = (d) => d
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
                     </svg>
                 </div>
-                <h1 class="text-xl font-bold" :class="valid ? 'text-emerald-700' : 'text-red-600'">
+                <h1 class="text-xl font-bold" :class="valid ? 'text-primary-700' : 'text-red-600'">
                     {{ valid ? 'Surat Terverifikasi' : 'Surat Tidak Valid' }}
                 </h1>
                 <p class="mt-1 text-sm text-slate-500">
@@ -44,11 +44,11 @@ const formatDate = (d) => d
             <div v-if="valid && letter" class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
 
                 <!-- Status banner -->
-                <div class="bg-emerald-50 border-b border-emerald-100 px-5 py-3 flex items-center gap-2">
-                    <svg class="size-4 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <div class="bg-primary-50 border-b border-primary-100 px-5 py-3 flex items-center gap-2">
+                    <svg class="size-4 shrink-0 text-primary-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span class="text-sm font-semibold text-emerald-700">Surat Resmi — Status: Disetujui</span>
+                    <span class="text-sm font-semibold text-primary-700">Surat Resmi — Status: Disetujui</span>
                 </div>
 
                 <div class="divide-y divide-slate-100">

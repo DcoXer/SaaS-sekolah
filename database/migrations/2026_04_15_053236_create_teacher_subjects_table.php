@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('teacher_subjects', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('teacher_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('teacher_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('subject_id')->constrained()->cascadeOnDelete();
             $table->foreignId('classroom_id')->constrained()->cascadeOnDelete();
             $table->foreignId('academic_year_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
 
-            $table->unique(['teacher_id', 'subject_id', 'classroom_id', 'academic_year_id'], 'ts_unique');
+            $table->unique(['subject_id', 'classroom_id', 'academic_year_id'], 'ts_subject_classroom_year_unique');
         });
     }
 

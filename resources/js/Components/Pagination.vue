@@ -47,7 +47,7 @@ const visiblePages = (current, total) => {
                     @click="emit('update:currentPage', p)"
                     class="flex size-8 items-center justify-center rounded-lg text-xs font-semibold transition-[background-color,color] duration-150"
                     :class="currentPage === p
-                        ? 'bg-emerald-500 text-white shadow-sm'
+                        ? 'bg-primary-500 text-white shadow-sm'
                         : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50'"
                 >
                     {{ p }}

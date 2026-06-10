@@ -71,16 +71,33 @@ class PublicPpdbController extends Controller
         $invoice = null;
 
         if ($number) {
-            $result = PpdbRegistration::with('ppdbSetting')
+            $reg = PpdbRegistration::with('ppdbSetting')
                 ->where('registration_number', strtoupper(trim($number)))
                 ->first();
 
-            if (! $result) {
+            if (! $reg) {
                 $error = 'Nomor pendaftaran tidak ditemukan.';
-            } elseif ($result->status === 'accepted') {
-                $invoice = $result->invoice;
-                if ($invoice) {
-                    $invoice->append(['total_paid', 'remaining_amount']);
+            } else {
+                // Hanya expose field yang ditampilkan di halaman publik.
+                // NIK, nomor KK, NIK orang tua, file dokumen TIDAK di-expose.
+                $result = [
+                    'registration_number' => $reg->registration_number,
+                    'full_name'           => $reg->full_name,
+                    'gender'              => $reg->gender,
+                    'birth_place'         => $reg->birth_place,
+                    'birth_date'          => $reg->birth_date,
+                    'parent_name'         => $reg->parent_name,
+                    'parent_phone'        => $reg->parent_phone,
+                    'status'              => $reg->status,
+                    'notes'               => $reg->status === 'rejected' ? $reg->notes : null,
+                    'created_at'          => $reg->created_at,
+                ];
+
+                if ($reg->status === 'accepted') {
+                    $invoice = $reg->invoice;
+                    if ($invoice) {
+                        $invoice->append(['total_paid', 'remaining_amount']);
+                    }
                 }
             }
         }

@@ -82,7 +82,7 @@ const jsonLd = computed(() => ({
         <!-- ── Hero ──────────────────────────────────────────────────────── -->
         <div
             class="relative overflow-hidden transition-all duration-1000"
-            :class="heroBgUrl ? '' : 'bg-gradient-to-br from-green-900 via-green-800 to-green-700'"
+            :class="heroBgUrl ? '' : 'bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700'"
             :style="heroBgUrl ? `background-image:url('${heroBgUrl}');background-size:cover;background-position:center` : ''"
         >
             <!-- Overlay gelap saat ada foto -->
@@ -117,7 +117,7 @@ const jsonLd = computed(() => ({
                         <p v-if="school?.tagline" class="mt-3 text-base font-medium italic text-white/70 lg:text-lg">
                             "{{ school.tagline }}"
                         </p>
-                        <p v-if="school?.npsn" class="mt-2 text-sm text-green-300">NPSN: {{ school.npsn }}</p>
+                        <p v-if="school?.npsn" class="mt-2 text-sm text-primary-300">NPSN: {{ school.npsn }}</p>
                     </div>
                 </div>
 
@@ -152,8 +152,8 @@ const jsonLd = computed(() => ({
             <!-- Deskripsi Singkat -->
             <div v-if="school?.description" v-reveal>
                 <div class="mb-6 flex items-center gap-4">
-                    <div class="h-1 w-10 rounded-full bg-green-600"/>
-                    <p class="text-xs font-bold uppercase tracking-widest text-green-600">Tentang Kami</p>
+                    <div class="h-1 w-10 rounded-full bg-primary-600"/>
+                    <p class="text-xs font-bold uppercase tracking-widest text-primary-600">Tentang Kami</p>
                 </div>
                 <div class="rounded-2xl border border-slate-100 bg-slate-50 p-8 shadow-sm">
                     <p class="text-base leading-relaxed text-slate-700 whitespace-pre-line">{{ school.description }}</p>
@@ -163,22 +163,22 @@ const jsonLd = computed(() => ({
             <!-- Kepala Sekolah -->
             <div v-if="school?.principal_name" v-reveal>
                 <div class="mb-6 flex items-center gap-4">
-                    <div class="h-1 w-10 rounded-full bg-green-600"/>
-                    <p class="text-xs font-bold uppercase tracking-widest text-green-600">Pimpinan</p>
+                    <div class="h-1 w-10 rounded-full bg-primary-600"/>
+                    <p class="text-xs font-bold uppercase tracking-widest text-primary-600">Pimpinan</p>
                 </div>
                 <div class="flex flex-col items-center gap-6 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm sm:flex-row sm:items-center">
                     <!-- Avatar -->
-                    <div class="flex size-24 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-green-700 to-green-600 shadow-md">
+                    <div class="flex size-24 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-700 to-primary-600 shadow-md">
                         <svg class="size-12 text-white/80" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
                         </svg>
                     </div>
                     <div>
-                        <p class="text-xs font-bold uppercase tracking-widest text-green-600">Kepala Madrasah</p>
+                        <p class="text-xs font-bold uppercase tracking-widest text-primary-600">Kepala Madrasah</p>
                         <h3 class="mt-1 text-2xl font-extrabold text-slate-900">{{ school.principal_name }}</h3>
                         <p v-if="school.principal_nip" class="mt-1 text-sm text-slate-500">NIP. {{ school.principal_nip }}</p>
                         <p v-if="school?.address" class="mt-2 flex items-center gap-1.5 text-sm text-slate-500">
-                            <svg class="size-4 shrink-0 text-green-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <svg class="size-4 shrink-0 text-primary-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
                             </svg>
                             {{ school.address }}
@@ -190,15 +190,15 @@ const jsonLd = computed(() => ({
             <!-- Sejarah -->
             <div v-if="school?.history" v-reveal>
                 <div class="mb-6 flex items-center gap-4">
-                    <div class="h-1 w-10 rounded-full bg-green-600"/>
-                    <p class="text-xs font-bold uppercase tracking-widest text-green-600">Sejarah</p>
+                    <div class="h-1 w-10 rounded-full bg-primary-600"/>
+                    <p class="text-xs font-bold uppercase tracking-widest text-primary-600">Sejarah</p>
                 </div>
                 <div class="relative overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
                     <!-- Accent kiri -->
-                    <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-green-600 to-green-300"/>
+                    <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-primary-600 to-primary-300"/>
                     <div class="p-8 pl-10">
                         <div class="mb-4 flex items-center gap-3">
-                            <div class="flex size-10 items-center justify-center rounded-xl bg-green-700 shadow">
+                            <div class="flex size-10 items-center justify-center rounded-xl bg-primary-700 shadow">
                                 <svg class="size-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0118 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
                                 </svg>
@@ -213,13 +213,13 @@ const jsonLd = computed(() => ({
             <!-- Visi & Misi -->
             <div v-if="school?.vision || school?.mission">
                 <div v-reveal class="mb-6 flex items-center gap-4">
-                    <div class="h-1 w-10 rounded-full bg-green-600"/>
-                    <p class="text-xs font-bold uppercase tracking-widest text-green-600">Visi & Misi</p>
+                    <div class="h-1 w-10 rounded-full bg-primary-600"/>
+                    <p class="text-xs font-bold uppercase tracking-widest text-primary-600">Visi & Misi</p>
                 </div>
                 <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
 
                     <!-- Visi -->
-                    <div v-if="school?.vision" v-reveal="{ from: 'left' }" class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-800 to-green-600 p-8 shadow-md">
+                    <div v-if="school?.vision" v-reveal="{ from: 'left' }" class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-800 to-primary-600 p-8 shadow-md">
                         <div class="absolute -right-8 -top-8 size-40 rounded-full bg-white/5"/>
                         <div class="absolute -bottom-10 -left-6 size-32 rounded-full bg-white/5"/>
                         <div class="relative">
@@ -243,7 +243,7 @@ const jsonLd = computed(() => ({
                         <h3 class="mb-5 text-2xl font-extrabold text-slate-900">Misi</h3>
                         <ul class="space-y-3">
                             <li v-for="(line, i) in missionLines" :key="i" class="flex items-start gap-3 text-sm text-slate-700 leading-relaxed">
-                                <span class="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-green-100 text-[11px] font-extrabold text-green-700">{{ i + 1 }}</span>
+                                <span class="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-primary-100 text-[11px] font-extrabold text-primary-700">{{ i + 1 }}</span>
                                 {{ line }}
                             </li>
                             <li v-if="!missionLines.length" class="text-sm text-slate-400 italic">Belum diisi.</li>
@@ -255,14 +255,14 @@ const jsonLd = computed(() => ({
             <!-- Kontak -->
             <div v-if="school?.address || school?.phone || school?.email || school?.website">
                 <div v-reveal class="mb-6 flex items-center gap-4">
-                    <div class="h-1 w-10 rounded-full bg-green-600"/>
-                    <p class="text-xs font-bold uppercase tracking-widest text-green-600">Kontak</p>
+                    <div class="h-1 w-10 rounded-full bg-primary-600"/>
+                    <p class="text-xs font-bold uppercase tracking-widest text-primary-600">Kontak</p>
                 </div>
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 
                     <div v-if="school?.address" v-reveal="{ delay: 80 }" class="flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                        <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-green-100">
-                            <svg class="size-5 text-green-700" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+                        <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary-100">
+                            <svg class="size-5 text-primary-700" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
                             </svg>
                         </div>
@@ -280,7 +280,7 @@ const jsonLd = computed(() => ({
                         </div>
                         <div>
                             <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Telepon</p>
-                            <a :href="`tel:${school.phone}`" class="mt-1 block text-sm font-semibold text-slate-700 hover:text-green-700 transition-colors">{{ school.phone }}</a>
+                            <a :href="`tel:${school.phone}`" class="mt-1 block text-sm font-semibold text-slate-700 hover:text-primary-700 transition-colors">{{ school.phone }}</a>
                         </div>
                     </div>
 
@@ -292,7 +292,7 @@ const jsonLd = computed(() => ({
                         </div>
                         <div class="min-w-0">
                             <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Email</p>
-                            <a :href="`mailto:${school.email}`" class="mt-1 block truncate text-sm font-semibold text-slate-700 hover:text-green-700 transition-colors">{{ school.email }}</a>
+                            <a :href="`mailto:${school.email}`" class="mt-1 block truncate text-sm font-semibold text-slate-700 hover:text-primary-700 transition-colors">{{ school.email }}</a>
                         </div>
                     </div>
 
@@ -305,7 +305,7 @@ const jsonLd = computed(() => ({
                         <div class="min-w-0">
                             <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Website</p>
                             <a :href="school.website" target="_blank" rel="noopener noreferrer"
-                                class="mt-1 block truncate text-sm font-semibold text-slate-700 hover:text-green-700 transition-colors">
+                                class="mt-1 block truncate text-sm font-semibold text-slate-700 hover:text-primary-700 transition-colors">
                                 {{ school.website }}
                             </a>
                         </div>
@@ -331,7 +331,7 @@ const jsonLd = computed(() => ({
             <div class="mx-auto max-w-6xl px-6">
 
                 <div v-reveal class="mb-12 text-center">
-                    <p class="text-xs font-bold uppercase tracking-widest text-green-600">Sumber Daya Manusia</p>
+                    <p class="text-xs font-bold uppercase tracking-widest text-primary-600">Sumber Daya Manusia</p>
                     <h2 class="mt-2 text-2xl font-extrabold text-slate-900 lg:text-3xl">Struktur Organisasi</h2>
                     <p class="mt-2 text-sm text-slate-500">Tenaga pendidik dan kependidikan {{ school?.name }}</p>
                 </div>
@@ -387,12 +387,12 @@ const jsonLd = computed(() => ({
                         <div v-for="(u, i) in structure.tu_keuangan" :key="'tu-' + u.id"
                             v-reveal="{ delay: i * 80 }"
                             class="flex w-44 flex-col items-center rounded-2xl border border-slate-200 bg-white px-4 py-5 text-center shadow-sm">
-                            <div class="flex size-12 items-center justify-center rounded-full bg-emerald-100 text-sm font-extrabold text-emerald-700 ring-2 ring-emerald-200">
+                            <div class="flex size-12 items-center justify-center rounded-full bg-primary-100 text-sm font-extrabold text-primary-700 ring-2 ring-primary-200">
                                 <img v-if="u.photo" :src="u.photo" :alt="u.name" class="size-full rounded-full object-cover"/>
                                 <span v-else>{{ initials(u.name) }}</span>
                             </div>
                             <p class="mt-2.5 text-sm font-bold text-slate-800 leading-snug">{{ u.name }}</p>
-                            <span class="mt-2 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-600">TU Keuangan</span>
+                            <span class="mt-2 rounded-full bg-primary-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-600">TU Keuangan</span>
                         </div>
                         <div v-for="(u, i) in structure.operators" :key="'op-' + u.id"
                             v-reveal="{ delay: i * 80 }"

@@ -220,7 +220,7 @@ const hasDraftSlips = computed(() => filtered.value.some(h => h.status === 'draf
                         </button>
                         <!-- Bayar Semua -->
                         <button @click="showMarkAllPaid = true"
-                            class="flex flex-1 sm:flex-none items-center justify-center gap-2 rounded-xl bg-emerald-500/80 px-3 py-2 text-xs font-semibold text-white ring-1 ring-white/30 backdrop-blur-sm transition hover:bg-emerald-500 shadow-sm">
+                            class="flex flex-1 sm:flex-none items-center justify-center gap-2 rounded-xl bg-primary-500/80 px-3 py-2 text-xs font-semibold text-white ring-1 ring-white/30 backdrop-blur-sm transition hover:bg-primary-500 shadow-sm">
                             <svg class="size-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
@@ -280,17 +280,17 @@ const hasDraftSlips = computed(() => filtered.value.some(h => h.status === 'draf
                 </div>
 
                 <!-- Total Lunas -->
-                <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-teal-50 p-5 shadow-sm">
+                <div class="rounded-2xl border border-primary-100 bg-gradient-to-br from-primary-50 to-teal-50 p-5 shadow-sm">
                     <div class="flex items-center gap-3 mb-3">
-                        <div class="flex size-9 items-center justify-center rounded-xl bg-emerald-100">
-                            <svg class="size-4.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                        <div class="flex size-9 items-center justify-center rounded-xl bg-primary-100">
+                            <svg class="size-4.5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
-                        <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Sudah Dibayar</p>
+                        <p class="text-xs font-semibold uppercase tracking-wide text-primary-700">Sudah Dibayar</p>
                     </div>
-                    <p class="tabular-nums text-xl font-bold text-emerald-700">Rp {{ fmt(totalPaid) }}</p>
-                    <p class="mt-1 text-xs text-emerald-500">honor lunas</p>
+                    <p class="tabular-nums text-xl font-bold text-primary-700">Rp {{ fmt(totalPaid) }}</p>
+                    <p class="mt-1 text-xs text-primary-500">honor lunas</p>
                 </div>
 
                 <!-- Total Nominal -->
@@ -420,7 +420,7 @@ const hasDraftSlips = computed(() => filtered.value.some(h => h.status === 'draf
                                 Kirim WA
                             </button>
                             <button v-if="h.status === 'draft'" @click="paidTarget = h"
-                                class="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-600 transition-colors">
+                                class="flex items-center gap-1.5 rounded-lg bg-primary-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-primary-600 transition-colors">
                                 <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
                                 Bayar
                             </button>
@@ -485,7 +485,7 @@ const hasDraftSlips = computed(() => filtered.value.some(h => h.status === 'draf
                                             <svg class="size-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                                         </button>
                                         <button v-if="h.status === 'draft'" @click="paidTarget = h"
-                                            class="flex items-center gap-1 rounded-lg bg-emerald-500 px-2.5 py-1 text-xs font-semibold text-white hover:bg-emerald-600 transition-colors">
+                                            class="flex items-center gap-1 rounded-lg bg-primary-500 px-2.5 py-1 text-xs font-semibold text-white hover:bg-primary-600 transition-colors">
                                             <svg class="size-3" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
                                             Bayar
                                         </button>
@@ -669,8 +669,8 @@ const hasDraftSlips = computed(() => filtered.value.some(h => h.status === 'draf
         <Modal :show="!!paidTarget" @close="paidTarget = null" max-width="sm">
             <div class="p-6">
                 <div class="mb-4 flex items-center gap-3">
-                    <div class="flex size-11 items-center justify-center rounded-full bg-emerald-100">
-                        <svg class="size-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <div class="flex size-11 items-center justify-center rounded-full bg-primary-100">
+                        <svg class="size-5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
@@ -682,14 +682,14 @@ const hasDraftSlips = computed(() => filtered.value.some(h => h.status === 'draf
                 <p class="text-sm text-slate-600 mb-3">
                     Honor <strong class="text-slate-800">{{ paidTarget?.teacher.user.name }}</strong> periode <strong class="text-slate-800">{{ paidTarget ? periodLabel(paidTarget) : '' }}</strong> akan ditandai lunas.
                 </p>
-                <div class="mb-5 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800 font-medium">
+                <div class="mb-5 rounded-xl bg-primary-50 px-4 py-3 text-sm text-primary-800 font-medium">
                     Total: <strong>Rp {{ paidTarget ? fmt(paidTarget.total_amount) : '' }}</strong>
                 </div>
                 <div class="flex justify-end gap-2">
                     <button @click="paidTarget = null"
                         class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">Batal</button>
                     <button @click="submitMarkPaid" :disabled="paidForm.processing"
-                        class="rounded-xl bg-emerald-500 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-50 transition-colors">
+                        class="rounded-xl bg-primary-500 px-5 py-2 text-sm font-semibold text-white hover:bg-primary-600 disabled:opacity-50 transition-colors">
                         Ya, Tandai Lunas
                     </button>
                 </div>
@@ -700,8 +700,8 @@ const hasDraftSlips = computed(() => filtered.value.some(h => h.status === 'draf
         <Modal :show="showMarkAllPaid" @close="showMarkAllPaid = false" max-width="sm">
             <div class="p-6">
                 <div class="mb-4 flex items-center gap-3">
-                    <div class="flex size-11 items-center justify-center rounded-full bg-emerald-100">
-                        <svg class="size-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <div class="flex size-11 items-center justify-center rounded-full bg-primary-100">
+                        <svg class="size-5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
@@ -732,7 +732,7 @@ const hasDraftSlips = computed(() => filtered.value.some(h => h.status === 'draf
                         <button type="button" @click="showMarkAllPaid = false"
                             class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">Batal</button>
                         <button type="submit" :disabled="markAllPaidForm.processing"
-                            class="rounded-xl bg-emerald-500 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-50 transition-colors shadow-sm">
+                            class="rounded-xl bg-primary-500 px-5 py-2 text-sm font-semibold text-white hover:bg-primary-600 disabled:opacity-50 transition-colors shadow-sm">
                             {{ markAllPaidForm.processing ? 'Memproses...' : 'Bayar Semua' }}
                         </button>
                     </div>

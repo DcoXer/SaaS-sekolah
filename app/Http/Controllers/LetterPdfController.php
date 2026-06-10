@@ -14,6 +14,15 @@ class LetterPdfController extends Controller
     {
         $user = request()->user();
 
+        // Hanya role yang memiliki route ke sini yang boleh akses:
+        // - siswa: hanya suratnya sendiri
+        // - operator: semua surat (untuk keperluan administrasi)
+        // - kamad: semua surat (untuk keperluan approval)
+        abort_unless(
+            $user->hasAnyRole(['siswa', 'operator', 'kamad']),
+            403
+        );
+
         if ($user->hasRole('siswa')) {
             abort_if($letter->student_id !== $user->student?->id, 403);
         }

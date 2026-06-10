@@ -14,6 +14,8 @@ return new class extends Migration
             $table->date('date');
             $table->enum('status', ['hadir', 'izin', 'sakit', 'alpha'])->default('hadir');
             $table->text('notes')->nullable();
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
             $table->timestamps();
             $table->unique(['teacher_id', 'date'], 'ta_unique');
         });

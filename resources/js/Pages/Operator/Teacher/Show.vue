@@ -89,10 +89,10 @@ const positionConfig = {
                     <!-- Profile card -->
                     <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                         <!-- Banner -->
-                        <div class="h-20 bg-gradient-to-br from-emerald-400 to-teal-500" />
+                        <div class="h-20 bg-gradient-to-br from-primary-400 to-teal-500" />
                         <div class="px-5 pb-5">
                             <div class="-mt-8 mb-3 flex items-end justify-between">
-                                <div class="flex size-16 items-center justify-center rounded-full border-4 border-white bg-emerald-100 text-xl font-bold text-emerald-700 shadow">
+                                <div class="flex size-16 items-center justify-center rounded-full border-4 border-white bg-primary-100 text-xl font-bold text-primary-700 shadow">
                                     {{ initials(teacher.user.name) }}
                                 </div>
                                 <button
@@ -172,7 +172,7 @@ const positionConfig = {
                             <div class="flex items-center justify-between px-4 py-2.5">
                                 <dt class="text-xs text-slate-400">Status</dt>
                                 <dd>
-                                    <span class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">
+                                    <span class="inline-flex items-center rounded-full bg-primary-50 px-2 py-0.5 text-xs font-semibold text-primary-700 ring-1 ring-primary-200">
                                         Aktif
                                     </span>
                                 </dd>
@@ -201,7 +201,7 @@ const positionConfig = {
                                 type="text"
                                 :class="[
                                     'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150',
-                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                    'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                     editForm.errors.name ? 'border-red-400' : 'border-slate-200',
                                 ]"
                             />
@@ -221,7 +221,7 @@ const positionConfig = {
                                     autocomplete="off"
                                     :class="[
                                         'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150',
-                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                        'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                         editForm.errors.email ? 'border-red-400' : 'border-slate-200',
                                     ]"
                                 />
@@ -239,7 +239,7 @@ const positionConfig = {
                                     autocomplete="new-password"
                                     :class="[
                                         'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150',
-                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                        'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                         editForm.errors.password ? 'border-red-400' : 'border-slate-200',
                                     ]"
                                 />
@@ -258,7 +258,7 @@ const positionConfig = {
                                     placeholder="Nomor Induk Pegawai"
                                     :class="[
                                         'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150',
-                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                        'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                         editForm.errors.nip ? 'border-red-400' : 'border-slate-200',
                                     ]"
                                 />
@@ -273,7 +273,7 @@ const positionConfig = {
                                     placeholder="08xxxxxxxxxx"
                                     :class="[
                                         'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150',
-                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                        'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                         editForm.errors.phone ? 'border-red-400' : 'border-slate-200',
                                     ]"
                                 />
@@ -293,12 +293,12 @@ const positionConfig = {
                                     :class="[
                                         'flex cursor-pointer flex-col gap-0.5 rounded-lg border px-3.5 py-2.5 transition-[border-color,background-color] duration-150',
                                         editForm.type === opt.value
-                                            ? 'border-emerald-400 bg-emerald-50'
+                                            ? 'border-primary-400 bg-primary-50'
                                             : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50',
                                     ]"
                                 >
                                     <input type="radio" :value="opt.value" v-model="editForm.type" class="sr-only" />
-                                    <span :class="['text-sm font-semibold', editForm.type === opt.value ? 'text-emerald-700' : 'text-slate-700']">
+                                    <span :class="['text-sm font-semibold', editForm.type === opt.value ? 'text-primary-700' : 'text-slate-700']">
                                         {{ opt.label }}
                                     </span>
                                     <span class="text-xs text-slate-400">{{ opt.desc }}</span>
@@ -326,7 +326,7 @@ const positionConfig = {
                                     :class="[
                                         'flex flex-1 cursor-pointer items-center gap-2.5 rounded-lg border px-3.5 py-2.5 text-sm transition-[border-color,background-color] duration-150',
                                         editForm.gender === opt.value
-                                            ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
+                                            ? 'border-primary-400 bg-primary-50 text-primary-700'
                                             : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50',
                                     ]"
                                 >
@@ -342,7 +342,7 @@ const positionConfig = {
                             <button
                                 type="submit"
                                 :disabled="editForm.processing"
-                                class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60"
+                                class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600 disabled:opacity-60"
                             >
                                 <svg v-if="editForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />

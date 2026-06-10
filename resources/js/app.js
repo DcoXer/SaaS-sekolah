@@ -5,6 +5,7 @@ import { createInertiaApp, router } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import { applyPrimaryColor } from '@/utils/colorShades.js';
 
 let appName = import.meta.env.VITE_APP_NAME || 'Sekolah';
 
@@ -16,10 +17,17 @@ createInertiaApp({
             import.meta.glob('./Pages/**/*.vue'),
         ),
     setup({ el, App, props, plugin }) {
-        // Ambil nama sekolah dari shared props, update tiap navigasi
-        const getName = (page) => page?.props?.seo?.name || import.meta.env.VITE_APP_NAME || 'Sekolah';
+        // Ambil nama sekolah & primary color dari shared props, update tiap navigasi
+        const getName  = (page) => page?.props?.seo?.name || import.meta.env.VITE_APP_NAME || 'Sekolah';
+        const getColor = (page) => page?.props?.primaryColor ?? '#10b981';
+
         appName = getName(props.initialPage);
-        router.on('navigate', (e) => { appName = getName(e.detail.page); });
+        applyPrimaryColor(getColor(props.initialPage));
+
+        router.on('navigate', (e) => {
+            appName = getName(e.detail.page);
+            applyPrimaryColor(getColor(e.detail.page));
+        });
 
         const app = createApp({ render: () => h(App, props) })
             .use(plugin)

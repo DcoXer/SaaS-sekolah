@@ -126,33 +126,12 @@ class PaymentController extends Controller
 
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Midtrans finish verify failed', [
-                'order_id'          => $orderId,
-                'invoice'           => $invoice->id,
-                'error'             => $e->getMessage(),
-                'midtrans_status'   => $midtransStatus,
+                'order_id' => $orderId,
+                'invoice'  => $invoice->id,
+                'error'    => $e->getMessage(),
             ]);
 
-            // Transaction::status() gagal (misal sandbox delay / network issue).
-            // Jika redirect dari Midtrans membawa transaction_status settlement/capture,
-            // kita percayai dan record payment-nya langsung.
-            if (in_array($midtransStatus, ['settlement', 'capture'])) {
-                try {
-                    $this->service->recordPaymentFromRedirect($invoice, $orderId, $midtransStatus);
-                    return redirect()->route('siswa.invoices.index')
-                        ->with('success', 'Pembayaran berhasil dikonfirmasi.');
-                } catch (\Throwable $e2) {
-                    \Illuminate\Support\Facades\Log::error('Midtrans recordPaymentFromRedirect failed', [
-                        'order_id' => $orderId,
-                        'error'    => $e2->getMessage(),
-                    ]);
-                }
-            }
-
-            if ($midtransStatus === 'pending') {
-                return redirect()->route('siswa.invoices.index')
-                    ->with('success', 'Pembayaran sedang diproses. Status akan diperbarui otomatis.');
-            }
-
+            // Jangan percayai query param dari redirect — status final datang via webhook.
             return redirect()->route('siswa.invoices.index')
                 ->with('success', 'Pembayaran sedang diverifikasi. Status tagihan akan diperbarui otomatis dalam beberapa saat.');
         }

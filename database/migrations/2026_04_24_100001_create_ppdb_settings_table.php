@@ -17,6 +17,8 @@ return new class extends Migration
             $table->date('registration_end');
             $table->date('announcement_date')->nullable();
             $table->unsignedInteger('quota')->default(0);
+            $table->unsignedBigInteger('uang_masuk_amount')->nullable();
+            $table->unsignedBigInteger('dp_amount')->nullable();
             $table->boolean('is_open')->default(false);
             $table->timestamps();
         });

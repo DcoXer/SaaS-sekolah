@@ -23,7 +23,7 @@ const statusLabel = {
 const statusColor = {
     draft:            'bg-slate-100 text-slate-600',
     waiting_approval: 'bg-amber-100 text-amber-700',
-    approved:         'bg-emerald-100 text-emerald-700',
+    approved:         'bg-primary-100 text-primary-700',
     rejected:         'bg-red-100 text-red-700',
     published:        'bg-blue-100 text-blue-700',
 };
@@ -153,7 +153,7 @@ const targetGradeOptions = [
                 </div>
                 <button
                     @click="openCreate"
-                    class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600"
+                    class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-primary-600"
                 >
                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
@@ -173,7 +173,7 @@ const targetGradeOptions = [
                         v-model="search"
                         type="search"
                         placeholder="Cari jenis surat, nama siswa..."
-                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"
+                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-400/20"
                     />
                 </div>
                 <FilterSelect
@@ -216,7 +216,7 @@ const targetGradeOptions = [
             >
                 <p class="text-sm font-semibold text-slate-700">Tidak ada hasil</p>
                 <p class="mt-1 text-xs text-slate-400">Coba ubah kata kunci atau hapus filter.</p>
-                <button @click="search = ''; filterStatus = ''; filterCategory = ''" class="mt-3 text-xs font-semibold text-emerald-600 hover:underline">Reset pencarian</button>
+                <button @click="search = ''; filterStatus = ''; filterCategory = ''" class="mt-3 text-xs font-semibold text-primary-600 hover:underline">Reset pencarian</button>
             </div>
 
             <!-- Letters list -->
@@ -290,7 +290,7 @@ const targetGradeOptions = [
                                 v-if="letter.status === 'approved'"
                                 :href="route('operator.letters.pdf', letter.id)"
                                 target="_blank"
-                                class="inline-flex items-center gap-1 rounded-lg bg-emerald-500 px-2.5 py-1.5 text-xs font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600"
+                                class="inline-flex items-center gap-1 rounded-lg bg-primary-500 px-2.5 py-1.5 text-xs font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600"
                                 title="Unduh PDF"
                                 aria-label="Unduh PDF surat"
                             >
@@ -358,7 +358,7 @@ const targetGradeOptions = [
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Konten Surat <span class="text-red-500">*</span></label>
                         <textarea v-model="createForm.content" rows="12"
                             placeholder="Pilih template terlebih dahulu, atau tulis langsung..."
-                            :class="['w-full resize-y rounded-lg border bg-white px-3.5 py-2.5 font-mono text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', createForm.errors.content ? 'border-red-400' : 'border-slate-200']" />
+                            :class="['w-full resize-y rounded-lg border bg-white px-3.5 py-2.5 font-mono text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', createForm.errors.content ? 'border-red-400' : 'border-slate-200']" />
                         <p v-if="createForm.errors.content" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.content }}</p>
                     </div>
 
@@ -372,7 +372,7 @@ const targetGradeOptions = [
                         Batal
                     </button>
                     <button type="submit" :disabled="createForm.processing"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60">
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600 disabled:opacity-60">
                         <svg v-if="createForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                         </svg>

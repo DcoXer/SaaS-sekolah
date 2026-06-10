@@ -41,7 +41,7 @@ const doDelete = () => {
                 </div>
                 <Link
                     :href="route('operator.extracurriculars.create')"
-                    class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-600"
+                    class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-600"
                 >
                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -72,7 +72,7 @@ const doDelete = () => {
                             </div>
                             <div class="min-w-0">
                                 <p class="truncate text-sm font-semibold text-slate-800">{{ ekskul.name }}</p>
-                                <span :class="ekskul.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'" class="inline-flex rounded-full px-2 py-0.5 text-xs font-semibold">
+                                <span :class="ekskul.is_active ? 'bg-primary-50 text-primary-700' : 'bg-slate-100 text-slate-500'" class="inline-flex rounded-full px-2 py-0.5 text-xs font-semibold">
                                     {{ ekskul.is_active ? 'Aktif' : 'Nonaktif' }}
                                 </span>
                             </div>
@@ -125,13 +125,13 @@ const doDelete = () => {
                             <td class="px-4 py-3 font-medium text-slate-800">{{ ekskul.name }}</td>
                             <td class="px-4 py-3 text-slate-500 max-w-xs truncate">{{ ekskul.description ?? '—' }}</td>
                             <td class="px-4 py-3">
-                                <span :class="ekskul.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'" class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold">
+                                <span :class="ekskul.is_active ? 'bg-primary-50 text-primary-700' : 'bg-slate-100 text-slate-500'" class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold">
                                     {{ ekskul.is_active ? 'Aktif' : 'Nonaktif' }}
                                 </span>
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center justify-end gap-2">
-                                    <Link :href="route('operator.extracurriculars.show', ekskul.id)" class="rounded-lg border border-emerald-200 px-2.5 py-1.5 text-xs font-semibold text-emerald-600 hover:bg-emerald-50">Detail</Link>
+                                    <Link :href="route('operator.extracurriculars.show', ekskul.id)" class="rounded-lg border border-primary-200 px-2.5 py-1.5 text-xs font-semibold text-primary-600 hover:bg-primary-50">Detail</Link>
                                     <Link :href="route('operator.extracurriculars.edit', ekskul.id)" class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50">Edit</Link>
                                     <button @click="confirmDelete(ekskul.id)" class="rounded-lg border border-red-100 px-2.5 py-1.5 text-xs font-semibold text-red-500 hover:bg-red-50">Hapus</button>
                                 </div>

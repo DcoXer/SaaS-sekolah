@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('invoice_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('tu_keuangan_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('tu_keuangan_id')->nullable()->constrained('users')->cascadeOnDelete();
             $table->unsignedBigInteger('amount');
             $table->enum('method', ['cash', 'midtrans']);
             $table->string('midtrans_order_id')->nullable()->unique();

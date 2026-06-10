@@ -35,7 +35,13 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $user,
+                'user' => $user ? [
+                    'id'            => $user->id,
+                    'name'          => $user->name,
+                    'email'         => $user->email,
+                    'avatar_url'    => $user->avatar_url,
+                    'signature_url' => $user->signature_url,
+                ] : null,
                 'role' => $user?->getRoleNames()->first(),
             ],
             'flash' => [
@@ -57,23 +63,14 @@ class HandleInertiaRequests extends Middleware
             'unreadCount' => fn () => $user
                 ? app(NotificationService::class)->getUnreadCount($user)
                 : 0,
-            'midtrans' => [
-                'client_key'    => config('services.midtrans.client_key'),
-                'is_production' => config('services.midtrans.is_production'),
-            ],
             'seo' => function () {
                 $school = \App\Models\SchoolSetting::current();
                 return [
-                    'name'        => $school?->name        ?? config('app.name'),
-                    'tagline'     => $school?->tagline      ?? '',
-                    'description' => $school?->description  ?? '',
-                    'address'     => $school?->address      ?? '',
-                    'phone'       => $school?->phone        ?? '',
-                    'email'       => $school?->email        ?? '',
-                    'website'     => $school?->website      ?? config('app.url'),
-                    'logo_url'    => $school?->logo         ? asset('storage/' . $school->logo) : null,
-                    'npsn'        => $school?->npsn         ?? '',
+                    'name' => $school?->name ?? config('app.name'),
                 ];
+            },
+            'primaryColor' => function () {
+                return \App\Models\SchoolSetting::current()?->primary_color ?? '#10b981';
             },
         ];
     }

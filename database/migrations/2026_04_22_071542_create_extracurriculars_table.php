@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100);
             $table->text('description')->nullable();
+            $table->string('coach')->nullable();
+            $table->string('schedule')->nullable();
             $table->string('image')->nullable(); // path di storage/public
             $table->boolean('is_active')->default(true);
             $table->unsignedSmallInteger('sort_order')->default(0);

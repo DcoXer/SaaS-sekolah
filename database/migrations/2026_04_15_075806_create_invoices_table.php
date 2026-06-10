@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('payment_type_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('student_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('ppdb_registration_id')->nullable();
+            $table->foreignId('payment_type_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('academic_year_id')->constrained()->cascadeOnDelete();
             $table->unsignedBigInteger('amount');
             $table->enum('status', ['unpaid', 'partial', 'paid'])->default('unpaid');
             $table->date('due_date');
+            $table->string('receipt_code', 36)->nullable()->unique();
             $table->timestamps();
 
             $table->unique(['student_id', 'payment_type_id'], 'invoice_unique');

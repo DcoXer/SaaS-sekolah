@@ -2,6 +2,7 @@
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import JsonLd from '@/Components/JsonLd.vue';
+import PublicHeader from '@/Components/PublicHeader.vue';
 
 const props = defineProps({
     canLogin:         { type: Boolean, default: true },
@@ -16,10 +17,7 @@ const props = defineProps({
     heroPhotos:       { type: Array,   default: () => [] },
 });
 
-// ── navbar scroll state 
-const scrolled   = ref(false);
-const mobileOpen = ref(false);
-const onScroll   = () => { scrolled.value = window.scrollY > 60; };
+// ── smooth scroll helper (dipakai di hero CTA)
 
 // ── hero slideshow
 const PLACEHOLDER_SLIDES = [
@@ -56,7 +54,6 @@ const resetTimer = () => {
 };
 
 const scrollTo = (id) => {
-    mobileOpen.value = false;
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
@@ -73,7 +70,7 @@ const missionLines = computed(() => (props.school?.mission ?? '').split('\n').fi
 
 // ── ekskul color map
 const ekskulColors = [
-    'bg-green-100 text-green-700',
+    'bg-primary-100 text-primary-700',
     'bg-amber-100 text-amber-700',
     'bg-sky-100 text-sky-700',
     'bg-violet-100 text-violet-700',
@@ -83,14 +80,8 @@ const ekskulColors = [
     'bg-indigo-100 text-indigo-700',
 ];
 
-onMounted(() => {
-    window.addEventListener('scroll', onScroll);
-    resetTimer();
-});
-onUnmounted(() => {
-    window.removeEventListener('scroll', onScroll);
-    clearInterval(timer);
-});
+onMounted(() => { resetTimer(); });
+onUnmounted(() => { clearInterval(timer); });
 
 const baseUrl = usePage().props.ziggy?.url ?? '';
 const jsonLd = computed(() => ({
@@ -126,97 +117,15 @@ const jsonLd = computed(() => ({
 
     <div class="min-h-screen overflow-x-clip bg-white font-sans antialiased" style="font-family:'Plus Jakarta Sans',sans-serif">
 
-        <!-- Top Info Bar -->
-        <div class="hidden bg-green-900 md:block">
-            <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-2 text-xs text-white">
-                <div class="flex items-center gap-5">
-                    <span v-if="school?.phone" class="flex items-center gap-1.5">
-                        <svg class="size-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
-                        {{ school.phone }}
-                    </span>
-                    <span v-if="school?.email" class="flex items-center gap-1.5">
-                        <svg class="size-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
-                        {{ school.email }}
-                    </span>
-                </div>
-                <span v-if="school?.npsn" class="text-white">NPSN: {{ school.npsn }}</span>
-            </div>
-        </div>
-
-        <!-- Header / Navbar -->
-        <header
-            class="sticky top-0 z-50 border-b transition-shadow duration-300"
-            :class="scrolled ? 'border-slate-200 bg-white shadow-md' : 'border-slate-100 bg-white'"
-        >
-            <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-6">
-                <!-- Logo + Nama -->
-                <button @click="scrollTo('beranda')" class="flex shrink-0 items-center gap-3">
-                    <img v-if="school?.logo" :src="school.logo" alt="Logo" class="size-10 rounded-lg object-contain" />
-                    <div v-else class="flex size-10 items-center justify-center rounded-lg bg-green-700 shadow-sm">
-                        <svg class="size-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
-                        </svg>
-                    </div>
-                    <div class="text-left leading-tight">
-                        <p class="text-sm font-bold text-slate-800 leading-none">{{ school?.name ?? 'Nama Sekolah' }}</p>
-                        <p v-if="school?.tagline" class="mt-0.5 text-[11px] text-green-700 font-medium">{{ school.tagline }}</p>
-                    </div>
-                </button>
-
-                <!-- Desktop Nav -->
-                <nav class="hidden items-center gap-1 md:flex">
-                    <button @click="scrollTo('beranda')" class="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-green-50 hover:text-green-700">Beranda</button>
-                    <Link :href="route('tentang')" class="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-green-50 hover:text-green-700">Tentang</Link>
-                    <Link :href="route('ekskul')"  class="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-green-50 hover:text-green-700">Ekskul</Link>
-                    <Link :href="route('galeri')"  class="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-green-50 hover:text-green-700">Galeri</Link>
-                    <Link :href="route('berita.index')" class="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-green-50 hover:text-green-700">Berita</Link>
-                    <button @click="scrollTo('kontak')" class="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-green-50 hover:text-green-700">Kontak</button>
-                    <Link v-if="ppdbActive" :href="route('ppdb.index')"
-                        class="ml-1 inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-400">
-                        PPDB
-                    </Link>
-                </nav>
-
-                <!-- CTA + Mobile toggle -->
-                <div class="flex items-center gap-2">
-                    <Link
-                        v-if="isLoggedIn && dashboardRoute" :href="dashboardRoute"
-                        class="hidden items-center gap-1.5 rounded-lg bg-green-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-green-600 sm:inline-flex"
-                    >
-                        Dashboard
-                        <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
-                    </Link>
-                    <Link
-                        v-else-if="canLogin" :href="route('login')"
-                        class="hidden items-center gap-1.5 rounded-lg bg-green-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-green-600 sm:inline-flex"
-                    >
-                        Masuk
-                        <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
-                    </Link>
-                    <!-- Mobile hamburger -->
-                    <button @click="mobileOpen = !mobileOpen" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100 md:hidden">
-                        <svg v-if="!mobileOpen" class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
-                        <svg v-else class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Mobile menu -->
-            <div v-if="mobileOpen" class="border-t border-slate-100 bg-white px-6 py-3 md:hidden">
-                <div class="flex flex-col gap-1">
-                    <button @click="scrollTo('beranda')" class="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-green-700">Beranda</button>
-                    <Link :href="route('tentang')" class="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-green-700">Tentang</Link>
-                    <Link :href="route('ekskul')"  class="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-green-700">Ekskul</Link>
-                    <Link :href="route('galeri')"  class="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-green-700">Galeri</Link>
-                    <Link :href="route('berita.index')" class="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-green-700">Berita</Link>
-                    <button @click="scrollTo('kontak')" class="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-green-700">Kontak</button>
-                    <Link v-if="ppdbActive" :href="route('ppdb.index')"
-                        class="rounded-lg bg-amber-500 px-3 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-amber-400">
-                        PPDB — Daftar Sekarang
-                    </Link>
-                </div>
-            </div>
-        </header>
+        <!-- Header -->
+        <PublicHeader
+            :school="school"
+            :can-login="canLogin"
+            :is-logged-in="isLoggedIn"
+            :dashboard-route="dashboardRoute"
+            :ppdb-active="ppdbActive"
+            active-page=""
+        />
 
         <!-- Hero Section -->
         <section id="beranda" class="relative flex h-screen min-h-[600px] flex-col overflow-hidden">
@@ -230,7 +139,7 @@ const jsonLd = computed(() => ({
                     :class="i === currentSlide ? 'opacity-100' : 'opacity-0'"
                 />
                 <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/75"/>
-                <div class="absolute inset-0 bg-green-950/30"/>
+                <div class="absolute inset-0 bg-primary-950/30"/>
             </div>
 
             <!-- Main content (vertically centered) -->
@@ -276,7 +185,7 @@ const jsonLd = computed(() => ({
                 <div v-reveal="{ delay: 400 }" class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
                     <button
                         @click="scrollTo('tentang')"
-                        class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-7 py-3.5 text-sm font-bold text-green-800 shadow-xl transition-all active:scale-95 hover:bg-green-50 sm:w-auto"
+                        class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-7 py-3.5 text-sm font-bold text-primary-800 shadow-xl transition-all active:scale-95 hover:bg-primary-50 sm:w-auto"
                     >
                         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0118 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
                         Profil Sekolah
@@ -369,8 +278,8 @@ const jsonLd = computed(() => ({
             <div class="mx-auto max-w-6xl px-6">
                 <!-- Label -->
                 <div v-reveal class="mb-14">
-                    <span class="inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-green-700">
-                        <span class="size-1.5 rounded-full bg-green-500"/>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-primary-100 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-primary-700">
+                        <span class="size-1.5 rounded-full bg-primary-500"/>
                         Tentang Kami
                     </span>
                 </div>
@@ -380,7 +289,7 @@ const jsonLd = computed(() => ({
                     <div v-reveal="{ from: 'left' }" class="min-w-0 flex-1">
                         <h2 class="text-4xl font-extrabold leading-tight text-slate-900 lg:text-5xl">
                             Mengenal<br/>
-                            <span class="text-green-700">{{ school?.name ?? 'Sekolah Kami' }}</span>
+                            <span class="text-primary-700">{{ school?.name ?? 'Sekolah Kami' }}</span>
                         </h2>
 
                         <p v-if="school?.description" class="mt-6 max-w-xl text-base leading-relaxed text-slate-500">
@@ -392,11 +301,11 @@ const jsonLd = computed(() => ({
 
                         <div class="mt-10 space-y-5">
                             <div v-if="school?.vision" class="group flex items-start gap-4">
-                                <div class="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl bg-green-100 transition-colors group-hover:bg-green-700">
-                                    <svg class="size-4 text-green-700 transition-colors group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                <div class="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary-100 transition-colors group-hover:bg-primary-700">
+                                    <svg class="size-4 text-primary-700 transition-colors group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                                 </div>
                                 <div>
-                                    <p class="text-xs font-bold uppercase tracking-widest text-green-600">Visi</p>
+                                    <p class="text-xs font-bold uppercase tracking-widest text-primary-600">Visi</p>
                                     <p class="mt-1 text-sm leading-relaxed text-slate-700">{{ school.vision.length > 100 ? school.vision.slice(0, 100) + '…' : school.vision }}</p>
                                 </div>
                             </div>
@@ -422,7 +331,7 @@ const jsonLd = computed(() => ({
                         </div>
 
                         <Link :href="route('tentang')"
-                            class="mt-10 inline-flex items-center gap-2 rounded-xl bg-green-700 px-6 py-3.5 text-sm font-bold text-white shadow-md transition-all hover:bg-green-600 hover:shadow-lg active:scale-95">
+                            class="mt-10 inline-flex items-center gap-2 rounded-xl bg-primary-700 px-6 py-3.5 text-sm font-bold text-white shadow-md transition-all hover:bg-primary-600 hover:shadow-lg active:scale-95">
                             Profil Lengkap Sekolah
                             <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                         </Link>
@@ -439,9 +348,9 @@ const jsonLd = computed(() => ({
                                 class="size-full object-cover"
                             />
                             <!-- Fallback: placeholder gradient -->
-                            <div v-else class="flex size-full flex-col items-center justify-center bg-gradient-to-br from-green-100 via-green-50 to-slate-100">
-                                <svg class="size-20 text-green-300" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>
-                                <p class="mt-4 text-sm font-medium text-green-400">{{ school?.name ?? 'Foto Sekolah' }}</p>
+                            <div v-else class="flex size-full flex-col items-center justify-center bg-gradient-to-br from-primary-100 via-primary-50 to-slate-100">
+                                <svg class="size-20 text-primary-300" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>
+                                <p class="mt-4 text-sm font-medium text-primary-400">{{ school?.name ?? 'Foto Sekolah' }}</p>
                             </div>
                             <!-- Overlay badge nama sekolah di bawah -->
                             <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
@@ -460,12 +369,12 @@ const jsonLd = computed(() => ({
         </section>
 
         <!-- Ekskul -->
-        <section id="ekskul" class="bg-green-950 py-24">
+        <section id="ekskul" class="bg-primary-950 py-24">
             <div class="mx-auto max-w-6xl px-6">
 
                 <div v-reveal class="mb-14 flex items-end justify-between gap-4">
                     <div>
-                        <p class="text-xs font-bold uppercase tracking-widest text-green-400">Kegiatan Siswa</p>
+                        <p class="text-xs font-bold uppercase tracking-widest text-primary-400">Kegiatan Siswa</p>
                         <h2 class="mt-2 text-3xl font-extrabold text-white lg:text-4xl">Ekstrakulikuler</h2>
                     </div>
                     <Link v-if="extracurriculars.length > 4" :href="route('ekskul')"
@@ -477,6 +386,7 @@ const jsonLd = computed(() => ({
 
                 <!-- Bento grid -->
                 <div v-if="extracurriculars.length" class="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:grid-rows-2">
+
                     <!-- Featured (kiri, span 2 baris di desktop) -->
                     <div
                         v-if="extracurriculars[0]"
@@ -495,7 +405,7 @@ const jsonLd = computed(() => ({
                         </div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"/>
                         <div class="absolute bottom-0 left-0 right-0 p-6">
-                            <span class="inline-block rounded-full bg-green-500/20 px-3 py-1 text-xs font-bold uppercase tracking-wide text-green-400 backdrop-blur-sm">Unggulan</span>
+                            <span class="inline-block rounded-full bg-primary-500/20 px-3 py-1 text-xs font-bold uppercase tracking-wide text-primary-400 backdrop-blur-sm">Unggulan</span>
                             <h3 class="mt-2 text-xl font-extrabold text-white">{{ extracurriculars[0].name }}</h3>
                             <p v-if="extracurriculars[0].description" class="mt-1.5 line-clamp-2 text-sm text-white/60">{{ extracurriculars[0].description }}</p>
                         </div>
@@ -505,7 +415,7 @@ const jsonLd = computed(() => ({
                     <div
                         v-for="(ekskul, i) in extracurriculars.slice(1, 5)" :key="ekskul.id"
                         v-reveal="{ delay: (i + 1) * 80 }"
-                        class="group relative overflow-hidden rounded-2xl border border-white/5 bg-white/5 transition-all duration-200 hover:bg-white/8 hover:border-white/10"
+                        class="group relative overflow-hidden rounded-2xl border border-white/5 bg-white/5 transition-all duration-200 hover:border-white/10 hover:bg-white/10"
                         style="min-height: 130px;"
                     >
                         <img
@@ -514,7 +424,7 @@ const jsonLd = computed(() => ({
                             :alt="ekskul.name"
                             class="absolute inset-0 size-full object-cover opacity-25 transition-opacity duration-300 group-hover:opacity-40"
                         />
-                        <div class="relative flex h-full flex-col justify-end p-5">
+                        <div class="absolute inset-0 flex flex-col justify-end p-5">
                             <div :class="ekskulColors[(i + 1) % ekskulColors.length].split(' ')[0]" class="mb-2 size-2 rounded-full"/>
                             <h3 class="text-sm font-bold leading-snug text-white">{{ ekskul.name }}</h3>
                             <p v-if="ekskul.description" class="mt-1 line-clamp-1 text-xs text-white/40">{{ ekskul.description }}</p>
@@ -542,11 +452,11 @@ const jsonLd = computed(() => ({
 
                 <div v-reveal class="mb-14 flex items-end justify-between gap-4">
                     <div>
-                        <p class="text-xs font-bold uppercase tracking-widest text-green-600">Dokumentasi</p>
+                        <p class="text-xs font-bold uppercase tracking-widest text-primary-600">Dokumentasi</p>
                         <h2 class="mt-2 text-3xl font-extrabold text-slate-900 lg:text-4xl">Galeri</h2>
                     </div>
                     <Link v-if="galleries.length > 6" :href="route('galeri')"
-                        class="hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-green-700 hover:text-green-600 transition-colors sm:flex">
+                        class="hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-primary-700 hover:text-primary-600 transition-colors sm:flex">
                         Lihat Semua
                         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                     </Link>
@@ -574,7 +484,7 @@ const jsonLd = computed(() => ({
                                 />
                                 <div class="absolute inset-0 flex items-center justify-center bg-black/25 transition-colors group-hover:bg-black/40">
                                     <div class="flex size-14 items-center justify-center rounded-full bg-white/95 shadow-xl">
-                                        <svg class="size-7 translate-x-0.5 text-green-700" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                        <svg class="size-7 translate-x-0.5 text-primary-700" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                     </div>
                                 </div>
                             </div>
@@ -593,7 +503,7 @@ const jsonLd = computed(() => ({
 
                 <div v-if="galleries.length > 6" class="mt-8 text-center">
                     <Link :href="route('galeri')"
-                        class="inline-flex items-center gap-2 rounded-xl border border-green-200 bg-white px-5 py-2.5 text-sm font-semibold text-green-700 shadow-sm transition-colors hover:bg-green-50">
+                        class="inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-white px-5 py-2.5 text-sm font-semibold text-primary-700 shadow-sm transition-colors hover:bg-primary-50">
                         Lihat Semua Galeri ({{ galleries.length }})
                         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                     </Link>
@@ -607,11 +517,11 @@ const jsonLd = computed(() => ({
 
                 <div v-reveal class="mb-14 flex items-end justify-between gap-4">
                     <div>
-                        <p class="text-xs font-bold uppercase tracking-widest text-green-600">Informasi Sekolah</p>
+                        <p class="text-xs font-bold uppercase tracking-widest text-primary-600">Informasi Sekolah</p>
                         <h2 class="mt-2 text-3xl font-extrabold text-slate-900 lg:text-4xl">Berita & Pengumuman</h2>
                     </div>
                     <Link :href="route('berita.index')"
-                        class="hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-green-700 hover:text-green-600 transition-colors sm:flex">
+                        class="hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-primary-700 hover:text-primary-600 transition-colors sm:flex">
                         Lihat Semua
                         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                     </Link>
@@ -630,23 +540,23 @@ const jsonLd = computed(() => ({
                             :alt="latestPosts[0].title"
                             class="size-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
-                        <div v-else class="flex size-full items-center justify-center bg-gradient-to-br from-green-100 to-green-200">
-                            <svg class="size-16 text-green-300" fill="none" viewBox="0 0 24 24" stroke-width="1.25" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-3 1.5h.008v.008H10.5V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM10.5 7.5h.008v.008H10.5V7.5zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3 9.75A.75.75 0 013.75 9h16.5a.75.75 0 01.75.75v7.5a.75.75 0 01-.75.75H3.75A.75.75 0 013 17.25v-7.5z"/></svg>
+                        <div v-else class="flex size-full items-center justify-center bg-gradient-to-br from-primary-100 to-primary-200">
+                            <svg class="size-16 text-primary-300" fill="none" viewBox="0 0 24 24" stroke-width="1.25" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-3 1.5h.008v.008H10.5V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM10.5 7.5h.008v.008H10.5V7.5zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3 9.75A.75.75 0 013.75 9h16.5a.75.75 0 01.75.75v7.5a.75.75 0 01-.75.75H3.75A.75.75 0 013 17.25v-7.5z"/></svg>
                         </div>
                     </div>
                     <div class="flex flex-1 flex-col justify-center p-7 lg:p-10">
                         <div class="mb-4 flex items-center gap-3">
-                            <span :class="latestPosts[0].category === 'pengumuman' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'"
+                            <span :class="latestPosts[0].category === 'pengumuman' ? 'bg-amber-100 text-amber-700' : 'bg-primary-100 text-primary-700'"
                                 class="rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide">
                                 {{ latestPosts[0].category === 'pengumuman' ? 'Pengumuman' : 'Berita' }}
                             </span>
                             <span class="text-xs text-slate-400">{{ latestPosts[0].published_at }}</span>
                         </div>
-                        <h3 class="text-xl font-extrabold leading-snug text-slate-800 transition-colors group-hover:text-green-700 lg:text-2xl">
+                        <h3 class="text-xl font-extrabold leading-snug text-slate-800 transition-colors group-hover:text-primary-700 lg:text-2xl">
                             {{ latestPosts[0].title }}
                         </h3>
                         <p v-if="latestPosts[0].excerpt" class="mt-3 line-clamp-3 text-sm leading-relaxed text-slate-500">{{ latestPosts[0].excerpt }}</p>
-                        <span class="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-green-700">
+                        <span class="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-primary-700">
                             Baca selengkapnya
                             <svg class="size-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                         </span>
@@ -668,26 +578,26 @@ const jsonLd = computed(() => ({
                                 :alt="post.title"
                                 class="size-full object-cover transition-transform duration-300 group-hover:scale-105"
                             />
-                            <div v-else :class="post.category === 'pengumuman' ? 'bg-amber-50' : 'bg-green-50'" class="flex size-full items-center justify-center">
+                            <div v-else :class="post.category === 'pengumuman' ? 'bg-amber-50' : 'bg-primary-50'" class="flex size-full items-center justify-center">
                                 <svg class="size-7 text-slate-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-3 1.5h.008v.008H10.5V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM10.5 7.5h.008v.008H10.5V7.5zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3 9.75A.75.75 0 013.75 9h16.5a.75.75 0 01.75.75v7.5a.75.75 0 01-.75.75H3.75A.75.75 0 013 17.25v-7.5z"/></svg>
                             </div>
                         </div>
                         <div class="min-w-0 flex-1">
                             <div class="mb-1.5 flex items-center gap-2">
-                                <span :class="post.category === 'pengumuman' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'"
+                                <span :class="post.category === 'pengumuman' ? 'bg-amber-100 text-amber-700' : 'bg-primary-100 text-primary-700'"
                                     class="rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide">
                                     {{ post.category === 'pengumuman' ? 'Pengumuman' : 'Berita' }}
                                 </span>
                                 <span class="text-xs text-slate-400">{{ post.published_at }}</span>
                             </div>
-                            <h3 class="line-clamp-2 text-sm font-bold leading-snug text-slate-800 transition-colors group-hover:text-green-700">{{ post.title }}</h3>
+                            <h3 class="line-clamp-2 text-sm font-bold leading-snug text-slate-800 transition-colors group-hover:text-primary-700">{{ post.title }}</h3>
                         </div>
                     </Link>
                 </div>
 
                 <div class="mt-8 text-center sm:hidden">
                     <Link :href="route('berita.index')"
-                        class="inline-flex items-center gap-2 rounded-xl border border-green-200 bg-white px-5 py-2.5 text-sm font-semibold text-green-700 shadow-sm transition-colors hover:bg-green-50">
+                        class="inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-white px-5 py-2.5 text-sm font-semibold text-primary-700 shadow-sm transition-colors hover:bg-primary-50">
                         Lihat Semua Berita & Pengumuman
                     </Link>
                 </div>
@@ -695,7 +605,7 @@ const jsonLd = computed(() => ({
         </section>
 
         <!-- Kontak -->
-        <section id="kontak" class="bg-green-950 py-20">
+        <section id="kontak" class="bg-primary-950 py-20">
             <div class="mx-auto max-w-6xl px-6">
                 <div class="grid gap-16 lg:grid-cols-2 lg:items-center">
 
@@ -704,19 +614,19 @@ const jsonLd = computed(() => ({
                         <p class="text-xs font-bold uppercase tracking-widest text-amber-400">Hubungi Kami</p>
                         <h2 class="mt-4 text-5xl font-extrabold leading-none text-white lg:text-6xl">
                             Kontak<br/>
-                            <span class="text-green-600">&amp; Lokasi</span>
+                            <span class="text-primary-600">&amp; Lokasi</span>
                         </h2>
                         <p class="mt-6 max-w-xs text-sm leading-relaxed text-white/40">
                             Kami terbuka untuk pertanyaan dan kunjungan. Hubungi kami kapan saja.
                         </p>
                         <div class="mt-10">
                             <Link v-if="!isLoggedIn && canLogin" :href="route('login')"
-                                class="inline-flex items-center gap-2.5 rounded-2xl bg-amber-400 px-7 py-4 text-sm font-bold text-green-900 shadow-lg transition-all hover:bg-amber-300 active:scale-95">
+                                class="inline-flex items-center gap-2.5 rounded-2xl bg-amber-400 px-7 py-4 text-sm font-bold text-primary-900 shadow-lg transition-all hover:bg-amber-300 active:scale-95">
                                 <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
                                 Masuk ke Portal Akademik
                             </Link>
                             <Link v-if="isLoggedIn && dashboardRoute" :href="dashboardRoute"
-                                class="inline-flex items-center gap-2.5 rounded-2xl bg-amber-400 px-7 py-4 text-sm font-bold text-green-900 shadow-lg transition-all hover:bg-amber-300 active:scale-95">
+                                class="inline-flex items-center gap-2.5 rounded-2xl bg-amber-400 px-7 py-4 text-sm font-bold text-primary-900 shadow-lg transition-all hover:bg-amber-300 active:scale-95">
                                 Buka Dashboard
                                 <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                             </Link>
@@ -726,7 +636,7 @@ const jsonLd = computed(() => ({
                     <!-- Kanan: info list, left-border accent, no cards -->
                     <div v-reveal="{ delay: 150 }" class="space-y-8">
 
-                        <div v-if="school?.address" class="border-l-2 border-green-600 pl-5">
+                        <div v-if="school?.address" class="border-l-2 border-primary-600 pl-5">
                             <p class="text-xs font-bold uppercase tracking-widest text-white/30">Alamat</p>
                             <p class="mt-1.5 text-sm leading-relaxed text-white/80">{{ school.address }}</p>
                         </div>
@@ -759,15 +669,15 @@ const jsonLd = computed(() => ({
         </section>
 
         <!-- Footer -->
-        <footer class="bg-green-950 py-4">
+        <footer class="bg-primary-950 py-4">
             <div class="mx-auto max-w-6xl px-6">
                 <div class="flex flex-col items-center gap-3 text-center sm:flex-row sm:justify-between sm:text-left">
                     <div class="flex items-center gap-2.5">
                         <img v-if="school?.logo" :src="school.logo" alt="Logo" class="size-6 rounded object-contain opacity-70"/>
-                        <span class="text-xs font-semibold text-green-400">{{ school?.name ?? 'Sistem Manajemen Sekolah' }}</span>
-                        <span v-if="school?.npsn" class="text-xs text-green-700">· NPSN {{ school.npsn }}</span>
+                        <span class="text-xs font-semibold text-primary-400">{{ school?.name ?? 'Sistem Manajemen Sekolah' }}</span>
+                        <span v-if="school?.npsn" class="text-xs text-primary-700">· NPSN {{ school.npsn }}</span>
                     </div>
-                    <p class="text-xs text-green-700">
+                    <p class="text-xs text-primary-700">
                         &copy; {{ new Date().getFullYear() }} · Hak cipta dilindungi.
                     </p>
                 </div>

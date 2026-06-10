@@ -37,7 +37,7 @@ const baseUrl = usePage().props.ziggy?.url ?? '';
         <section class="border-b border-slate-100 bg-gradient-to-b from-slate-50 to-white py-12">
             <div class="mx-auto max-w-6xl px-6">
                 <div class="flex items-center gap-2 text-sm text-slate-500 mb-3">
-                    <Link :href="route('welcome')" class="hover:text-green-700 transition-colors">Beranda</Link>
+                    <Link :href="route('welcome')" class="hover:text-primary-700 transition-colors">Beranda</Link>
                     <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
                     <span class="text-slate-700 font-medium">Berita & Pengumuman</span>
                 </div>
@@ -64,7 +64,7 @@ const baseUrl = usePage().props.ziggy?.url ?? '';
                                 :alt="post.title"
                                 class="size-full object-cover transition-transform duration-300 group-hover:scale-105"
                             />
-                            <div v-else class="flex size-full items-center justify-center bg-gradient-to-br from-green-50 to-slate-100">
+                            <div v-else class="flex size-full items-center justify-center bg-gradient-to-br from-primary-50 to-slate-100">
                                 <svg class="size-12 text-slate-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-3 1.5h.008v.008H10.5V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM10.5 7.5h.008v.008H10.5V7.5zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3 9.75A.75.75 0 013.75 9h16.5a.75.75 0 01.75.75v7.5a.75.75 0 01-.75.75H3.75A.75.75 0 013 17.25v-7.5z"/>
                                 </svg>
@@ -74,15 +74,15 @@ const baseUrl = usePage().props.ziggy?.url ?? '';
                         <!-- Content -->
                         <div class="flex flex-1 flex-col p-5">
                             <div class="mb-3 flex items-center gap-2">
-                                <span :class="post.category === 'pengumuman' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'"
+                                <span :class="post.category === 'pengumuman' ? 'bg-amber-100 text-amber-700' : 'bg-primary-100 text-primary-700'"
                                     class="rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide">
                                     {{ post.category === 'pengumuman' ? 'Pengumuman' : 'Berita' }}
                                 </span>
                                 <span v-if="post.published_at" class="text-xs text-slate-400">{{ post.published_at }}</span>
                             </div>
-                            <h2 class="line-clamp-2 text-base font-bold leading-snug text-slate-800 group-hover:text-green-700 transition-colors">{{ post.title }}</h2>
+                            <h2 class="line-clamp-2 text-base font-bold leading-snug text-slate-800 group-hover:text-primary-700 transition-colors">{{ post.title }}</h2>
                             <p v-if="post.excerpt" class="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-slate-500">{{ post.excerpt }}</p>
-                            <span class="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-green-700">
+                            <span class="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-primary-700">
                                 Baca selengkapnya
                                 <svg class="size-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                             </span>
@@ -107,7 +107,7 @@ const baseUrl = usePage().props.ziggy?.url ?? '';
                         v-html="link.label"
                         class="inline-flex min-w-[2.5rem] items-center justify-center rounded-xl px-3.5 py-2 text-sm transition-colors"
                         :class="link.active
-                            ? 'bg-green-700 font-semibold text-white'
+                            ? 'bg-primary-700 font-semibold text-white'
                             : link.url
                                 ? 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                                 : 'cursor-not-allowed border border-slate-100 bg-white text-slate-300'"
@@ -117,9 +117,9 @@ const baseUrl = usePage().props.ziggy?.url ?? '';
         </section>
 
         <!-- Footer -->
-        <footer class="border-t border-slate-100 bg-green-950 py-6">
+        <footer class="border-t border-slate-100 bg-primary-950 py-6">
             <div class="mx-auto max-w-6xl px-6 text-center">
-                <p class="text-xs text-green-500">
+                <p class="text-xs text-primary-500">
                     &copy; {{ new Date().getFullYear() }} {{ school?.name ?? 'Sistem Manajemen Sekolah' }}
                     <span v-if="school?.npsn"> · NPSN {{ school.npsn }}</span>
                 </p>

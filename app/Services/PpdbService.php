@@ -51,7 +51,10 @@ class PpdbService
         $stored = ['photo' => null, 'document_kk' => null, 'document_akta' => null];
         foreach (['photo', 'document_kk', 'document_akta'] as $field) {
             if (isset($files[$field]) && $files[$field] instanceof UploadedFile) {
-                $stored[$field] = $files[$field]->store($subfolder, 'public');
+                // Foto disimpan di public disk (digunakan untuk review di halaman operator)
+                // Dokumen KK & Akta disimpan di local disk (tidak bisa diakses langsung via URL)
+                $disk = $field === 'photo' ? 'public' : 'local';
+                $stored[$field] = $files[$field]->store($subfolder, $disk);
             }
         }
 

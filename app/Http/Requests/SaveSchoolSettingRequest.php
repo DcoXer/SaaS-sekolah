@@ -36,6 +36,7 @@ class SaveSchoolSettingRequest extends FormRequest
             'hero_tentang'   => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
             'hero_galeri'    => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
             'hero_ekskul'    => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
+            'primary_color'  => ['nullable', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
         ];
     }
 
@@ -49,6 +50,7 @@ class SaveSchoolSettingRequest extends FormRequest
             'logo.max'                => 'Ukuran logo maksimal 2MB.',
             'stamp.image'             => 'Stempel harus berupa gambar.',
             'stamp.max'               => 'Ukuran stempel maksimal 2MB.',
+            'primary_color.regex'     => 'Format warna harus berupa hex valid, contoh: #10b981.',
         ];
     }
 }

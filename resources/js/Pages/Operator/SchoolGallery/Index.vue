@@ -72,7 +72,7 @@ const getYtThumb = (url) => {
     return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null;
 };
 
-const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20';
+const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20';
 </script>
 
 <template>
@@ -105,12 +105,12 @@ const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-
                 <div class="flex border-b border-slate-100">
                     <button
                         @click="activeTab = 'photo'"
-                        :class="activeTab === 'photo' ? 'border-b-2 border-emerald-500 text-emerald-600' : 'text-slate-400 hover:text-slate-600'"
+                        :class="activeTab === 'photo' ? 'border-b-2 border-primary-500 text-primary-600' : 'text-slate-400 hover:text-slate-600'"
                         class="px-6 py-3 text-sm font-semibold transition-colors"
                     >Foto</button>
                     <button
                         @click="activeTab = 'video'"
-                        :class="activeTab === 'video' ? 'border-b-2 border-emerald-500 text-emerald-600' : 'text-slate-400 hover:text-slate-600'"
+                        :class="activeTab === 'video' ? 'border-b-2 border-primary-500 text-primary-600' : 'text-slate-400 hover:text-slate-600'"
                         class="px-6 py-3 text-sm font-semibold transition-colors"
                     >Video YouTube</button>
                 </div>
@@ -147,7 +147,7 @@ const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-
                         <input v-model.number="photoForm.sort_order" type="number" min="0" :class="INPUT_CLS" />
                     </div>
                     <div class="flex justify-end sm:col-span-2">
-                        <button type="submit" :disabled="photoForm.processing" class="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60">
+                        <button type="submit" :disabled="photoForm.processing" class="rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-600 disabled:opacity-60">
                             {{ photoForm.processing ? 'Mengupload...' : 'Tambah Foto' }}
                         </button>
                     </div>
@@ -173,7 +173,7 @@ const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-
                         <input v-model.number="videoForm.sort_order" type="number" min="0" :class="INPUT_CLS" />
                     </div>
                     <div class="flex justify-end sm:col-span-2">
-                        <button type="submit" :disabled="videoForm.processing" class="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60">
+                        <button type="submit" :disabled="videoForm.processing" class="rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-600 disabled:opacity-60">
                             {{ videoForm.processing ? 'Menyimpan...' : 'Tambah Video' }}
                         </button>
                     </div>

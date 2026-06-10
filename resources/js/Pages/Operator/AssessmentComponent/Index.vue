@@ -6,10 +6,10 @@ import { Head, useForm, router } from '@inertiajs/vue3';
 import { ref, computed, watch } from 'vue';
 
 const props = defineProps({
-    components:   { type: Array,  required: true },
-    academicYears:{ type: Array,  required: true },
-    classrooms:   { type: Array,  required: true },
-    subjects:     { type: Array,  required: true },
+    components:        { type: Array, required: true },
+    academicYears:     { type: Array, required: true },
+    classrooms:        { type: Array, required: true },
+    classroomSubjects: { type: Array, required: true },
 });
 
 // ── Filter ────────────────────────────────────────────────────────────────────
@@ -49,11 +49,8 @@ const activeYear = computed(() => props.academicYears.find(y => y.status === 'ac
 
 const currentClassroom = computed(() => props.classrooms.find(c => c.id == selectedClassroom.value));
 
-// ── Filtered subjects (by classroom grade) ────────────────────────────────────
-const filteredSubjects = computed(() => {
-    if (!currentClassroom.value) return props.subjects;
-    return props.subjects.filter(s => s.grade === currentClassroom.value.grade);
-});
+// Subjects yang sudah ada di kelas ini (dikirim dari server)
+const filteredSubjects = computed(() => props.classroomSubjects);
 
 // ── Create ────────────────────────────────────────────────────────────────────
 const showCreate = ref(false);
@@ -186,7 +183,7 @@ const kiOptions = [
                 <button
                     v-if="activeYear && currentClassroom"
                     @click="openCreate"
-                    class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600"
+                    class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-primary-600"
                 >
                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -231,7 +228,7 @@ const kiOptions = [
                 <p class="mt-1 text-xs text-slate-400">Tambah komponen nilai untuk kelas dan semester ini.</p>
                 <button
                     @click="openCreate"
-                    class="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600"
+                    class="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600"
                 >
                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -337,7 +334,7 @@ const kiOptions = [
                     <div class="col-span-2">
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Nama Komponen <span class="text-red-500">*</span></label>
                         <input v-model="createForm.name" type="text" placeholder="Contoh: Ulangan Harian 1"
-                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', createForm.errors.name ? 'border-red-400' : 'border-slate-200']" />
+                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', createForm.errors.name ? 'border-red-400' : 'border-slate-200']" />
                         <p v-if="createForm.errors.name" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.name }}</p>
                     </div>
 
@@ -367,7 +364,7 @@ const kiOptions = [
                         <input v-model.number="createForm.weight" type="number" min="1" max="100"
                             :disabled="createForm.type !== 'numeric'"
                             :placeholder="createForm.type !== 'numeric' ? 'Tidak dipakai' : '0-100'"
-                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20 disabled:bg-slate-50 disabled:text-slate-400', createForm.errors.weight ? 'border-red-400' : 'border-slate-200']" />
+                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20 disabled:bg-slate-50 disabled:text-slate-400', createForm.errors.weight ? 'border-red-400' : 'border-slate-200']" />
                         <p v-if="createForm.errors.weight" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.weight }}</p>
                     </div>
 
@@ -375,21 +372,21 @@ const kiOptions = [
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Nilai Minimum</label>
                         <input v-model.number="createForm.min_score" type="number" min="0" max="100"
-                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', 'border-slate-200']" />
+                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', 'border-slate-200']" />
                     </div>
 
                     <!-- Max score -->
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Nilai Maksimum</label>
                         <input v-model.number="createForm.max_score" type="number" min="0" max="100"
-                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', 'border-slate-200']" />
+                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', 'border-slate-200']" />
                     </div>
 
                     <!-- Order -->
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Urutan Tampil</label>
                         <input v-model.number="createForm.order" type="number" min="0"
-                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', 'border-slate-200']" />
+                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', 'border-slate-200']" />
                     </div>
                 </div>
 
@@ -399,7 +396,7 @@ const kiOptions = [
                         Batal
                     </button>
                     <button type="submit" :disabled="createForm.processing"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60">
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600 disabled:opacity-60">
                         <svg v-if="createForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                         </svg>
@@ -427,7 +424,7 @@ const kiOptions = [
                     <div class="col-span-2">
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Nama Komponen <span class="text-red-500">*</span></label>
                         <input v-model="editForm.name" type="text"
-                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.name ? 'border-red-400' : 'border-slate-200']" />
+                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', editForm.errors.name ? 'border-red-400' : 'border-slate-200']" />
                         <p v-if="editForm.errors.name" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.name }}</p>
                     </div>
 
@@ -451,7 +448,7 @@ const kiOptions = [
                         </label>
                         <input v-model.number="editForm.weight" type="number" min="1" max="100"
                             :disabled="editForm.type !== 'numeric'"
-                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20 disabled:bg-slate-50 disabled:text-slate-400', editForm.errors.weight ? 'border-red-400' : 'border-slate-200']" />
+                            :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20 disabled:bg-slate-50 disabled:text-slate-400', editForm.errors.weight ? 'border-red-400' : 'border-slate-200']" />
                         <p v-if="editForm.errors.weight" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.weight }}</p>
                     </div>
 
@@ -459,19 +456,19 @@ const kiOptions = [
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Nilai Minimum</label>
                         <input v-model.number="editForm.min_score" type="number" min="0" max="100"
-                            class="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20" />
+                            class="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20" />
                     </div>
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Nilai Maksimum</label>
                         <input v-model.number="editForm.max_score" type="number" min="0" max="100"
-                            class="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20" />
+                            class="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20" />
                     </div>
 
                     <!-- Order -->
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Urutan Tampil</label>
                         <input v-model.number="editForm.order" type="number" min="0"
-                            class="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20" />
+                            class="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20" />
                     </div>
                 </div>
 
@@ -481,7 +478,7 @@ const kiOptions = [
                         Batal
                     </button>
                     <button type="submit" :disabled="editForm.processing"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60">
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600 disabled:opacity-60">
                         <svg v-if="editForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                         </svg>

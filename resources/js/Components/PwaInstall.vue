@@ -46,9 +46,9 @@ onUnmounted(() => window.removeEventListener('beforeinstallprompt', onBeforeInst
             v-if="show"
             class="fixed bottom-4 left-4 right-4 z-50 sm:left-auto sm:right-5 sm:w-80"
         >
-            <div class="flex items-center gap-3 rounded-2xl border border-emerald-100 bg-white p-4 shadow-xl ring-1 ring-black/5">
+            <div class="flex items-center gap-3 rounded-2xl border border-primary-100 bg-white p-4 shadow-xl ring-1 ring-black/5">
                 <!-- Icon -->
-                <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-500 shadow-sm">
+                <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary-500 shadow-sm">
                     <svg class="size-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
                     </svg>
@@ -65,7 +65,7 @@ onUnmounted(() => window.removeEventListener('beforeinstallprompt', onBeforeInst
                     <button
                         @click="install"
                         :disabled="installing"
-                        class="rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-600 disabled:opacity-60"
+                        class="rounded-lg bg-primary-500 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-primary-600 disabled:opacity-60"
                     >
                         {{ installing ? 'Menginstall...' : 'Install' }}
                     </button>

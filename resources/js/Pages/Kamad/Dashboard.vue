@@ -123,10 +123,10 @@ const quickNav = [
     {
         label: 'Rekap Absensi',
         href:  '/kamad/attendances',
-        bg:    'bg-emerald-50',
-        ring:  'ring-emerald-100',
-        color: 'text-emerald-600',
-        hover: 'group-hover:bg-emerald-100',
+        bg:    'bg-primary-50',
+        ring:  'ring-primary-100',
+        color: 'text-primary-600',
+        hover: 'group-hover:bg-primary-100',
         icon:  'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
     },
     {
@@ -169,7 +169,7 @@ const quickNav = [
                         <h2 class="truncate text-xl font-extrabold text-white leading-tight">{{ user.name }}</h2>
                         <div class="mt-1.5 flex flex-wrap items-center gap-2">
                             <span class="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-semibold text-white backdrop-blur-sm">
-                                <span class="size-1.5 rounded-full bg-emerald-300"></span>
+                                <span class="size-1.5 rounded-full bg-primary-300"></span>
                                 Kepala Madrasah
                             </span>
                             <span v-if="activeYear" class="inline-flex items-center rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-medium text-indigo-100 backdrop-blur-sm">
@@ -201,8 +201,8 @@ const quickNav = [
                         </div>
                     </div>
                     <div v-else class="flex items-center gap-3 rounded-2xl bg-white/15 p-3.5 backdrop-blur-sm">
-                        <div class="flex size-8 shrink-0 items-center justify-center rounded-xl bg-emerald-400/30">
-                            <svg class="size-4 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                        <div class="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary-400/30">
+                            <svg class="size-4 text-primary-300" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
@@ -267,7 +267,7 @@ const quickNav = [
                     </div>
                     <p class="text-sm font-bold text-slate-800">{{ card.label }}</p>
                     <p class="mt-0.5 text-xs text-slate-400">{{ card.sub }}</p>
-                    <div class="mt-3 flex items-center gap-1 text-xs font-semibold text-emerald-500">
+                    <div class="mt-3 flex items-center gap-1 text-xs font-semibold text-primary-500">
                         <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                         </svg>
@@ -298,9 +298,9 @@ const quickNav = [
                                 <p class="tabular-nums text-lg font-bold text-amber-600">{{ ppdb.pending ?? 0 }}</p>
                                 <p class="text-[11px] font-medium text-amber-500">Menunggu</p>
                             </div>
-                            <div class="rounded-xl bg-emerald-50 p-2.5">
-                                <p class="tabular-nums text-lg font-bold text-emerald-600">{{ ppdb.accepted ?? 0 }}</p>
-                                <p class="text-[11px] font-medium text-emerald-500">Diterima</p>
+                            <div class="rounded-xl bg-primary-50 p-2.5">
+                                <p class="tabular-nums text-lg font-bold text-primary-600">{{ ppdb.accepted ?? 0 }}</p>
+                                <p class="text-[11px] font-medium text-primary-500">Diterima</p>
                             </div>
                         </div>
                         <!-- Progress bar -->
@@ -349,33 +349,33 @@ const quickNav = [
                                 Ada <span class="font-bold">{{ honorarium.unpaid }}</span> honor yang menunggu pembayaran
                             </p>
                         </div>
-                        <div v-else class="mt-4 flex items-center gap-2 rounded-xl bg-emerald-50 p-3">
-                            <svg class="size-4 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                        <div v-else class="mt-4 flex items-center gap-2 rounded-xl bg-primary-50 p-3">
+                            <svg class="size-4 shrink-0 text-primary-500" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <p class="text-xs font-semibold text-emerald-600">Semua honor sudah dibayar</p>
+                            <p class="text-xs font-semibold text-primary-600">Semua honor sudah dibayar</p>
                         </div>
                     </div>
                 </Link>
 
                 <!-- Absensi card -->
-                <Link href="/kamad/attendances" class="group relative overflow-hidden rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
-                    <div class="pointer-events-none absolute right-0 top-0 size-24 rounded-full bg-emerald-50 blur-2xl" />
+                <Link href="/kamad/attendances" class="group relative overflow-hidden rounded-2xl border border-primary-100 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+                    <div class="pointer-events-none absolute right-0 top-0 size-24 rounded-full bg-primary-50 blur-2xl" />
                     <div class="relative">
                         <div class="flex items-center justify-between">
-                            <div class="inline-flex size-10 items-center justify-center rounded-xl bg-emerald-50 ring-4 ring-emerald-100">
-                                <svg class="size-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+                            <div class="inline-flex size-10 items-center justify-center rounded-xl bg-primary-50 ring-4 ring-primary-100">
+                                <svg class="size-5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
-                            <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-600">Absensi</span>
+                            <span class="rounded-full bg-primary-50 px-2 py-0.5 text-xs font-semibold text-primary-600">Absensi</span>
                         </div>
                         <p class="mt-4 tabular-nums text-3xl font-extrabold text-slate-800">{{ hadirRate }}%</p>
                         <p class="text-xs font-medium text-slate-400">Kehadiran — {{ attendance.month }}</p>
                         <div class="mt-3 grid grid-cols-4 gap-1.5">
-                            <div class="rounded-lg bg-emerald-50 p-2 text-center">
-                                <p class="tabular-nums text-sm font-bold text-emerald-600">{{ attendance.hadir ?? 0 }}</p>
-                                <p class="text-[10px] font-medium text-emerald-500">Hadir</p>
+                            <div class="rounded-lg bg-primary-50 p-2 text-center">
+                                <p class="tabular-nums text-sm font-bold text-primary-600">{{ attendance.hadir ?? 0 }}</p>
+                                <p class="text-[10px] font-medium text-primary-500">Hadir</p>
                             </div>
                             <div class="rounded-lg bg-sky-50 p-2 text-center">
                                 <p class="tabular-nums text-sm font-bold text-sky-600">{{ attendance.izin ?? 0 }}</p>
@@ -393,7 +393,7 @@ const quickNav = [
                         <!-- Progress bar -->
                         <div class="mt-3">
                             <div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
-                                <div class="h-full rounded-full bg-emerald-500 transition-all duration-700" :style="{ width: hadirRate + '%' }" />
+                                <div class="h-full rounded-full bg-primary-500 transition-all duration-700" :style="{ width: hadirRate + '%' }" />
                             </div>
                         </div>
                     </div>

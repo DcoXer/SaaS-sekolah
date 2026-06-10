@@ -69,7 +69,7 @@ const formatDate = (dateStr) => {
                 </div>
                 <button
                     @click="openModal"
-                    class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600"
+                    class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-primary-600"
                 >
                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -90,7 +90,7 @@ const formatDate = (dateStr) => {
                 <p class="mt-1 text-xs text-slate-400">Buat tahun ajaran pertama untuk memulai.</p>
                 <button
                     @click="openModal"
-                    class="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600"
+                    class="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600"
                 >
                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -200,7 +200,7 @@ const formatDate = (dateStr) => {
                             maxlength="20"
                             :class="[
                                 'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150',
-                                'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                 form.errors.name ? 'border-red-400' : 'border-slate-200',
                             ]"
                         />
@@ -219,7 +219,7 @@ const formatDate = (dateStr) => {
                                 type="date"
                                 :class="[
                                     'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                    'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                     form.errors.start_date ? 'border-red-400' : 'border-slate-200',
                                 ]"
                             />
@@ -236,7 +236,7 @@ const formatDate = (dateStr) => {
                                 :min="form.start_date || undefined"
                                 :class="[
                                     'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                    'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                     form.errors.end_date ? 'border-red-400' : 'border-slate-200',
                                 ]"
                             />
@@ -267,7 +267,7 @@ const formatDate = (dateStr) => {
                     <button
                         type="submit"
                         :disabled="form.processing"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600 disabled:opacity-60"
                     >
                         <svg
                             v-if="form.processing"

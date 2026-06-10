@@ -50,7 +50,7 @@ const kiLabel = {
 
 // Predicate color map
 const predicateColor = {
-    A: { base: 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-300 hover:bg-emerald-100', active: 'border-emerald-500 bg-emerald-500 text-white shadow-emerald-200' },
+    A: { base: 'border-primary-200 bg-primary-50 text-primary-700 hover:border-primary-300 hover:bg-primary-100', active: 'border-primary-500 bg-primary-500 text-white shadow-primary-200' },
     B: { base: 'border-sky-200 bg-sky-50 text-sky-700 hover:border-sky-300 hover:bg-sky-100',                     active: 'border-sky-500 bg-sky-500 text-white shadow-sky-200' },
     C: { base: 'border-amber-200 bg-amber-50 text-amber-700 hover:border-amber-300 hover:bg-amber-100',           active: 'border-amber-500 bg-amber-500 text-white shadow-amber-200' },
     D: { base: 'border-rose-200 bg-rose-50 text-rose-700 hover:border-rose-300 hover:bg-rose-100',               active: 'border-rose-500 bg-rose-500 text-white shadow-rose-200' },
@@ -108,7 +108,7 @@ const predicateColor = {
                         <span class="text-xs font-medium text-slate-400">Tipe</span>
                         <span
                             class="inline-flex items-center rounded-lg px-2.5 py-1 text-xs font-bold"
-                            :class="isNumeric ? 'bg-emerald-100 text-emerald-700'
+                            :class="isNumeric ? 'bg-primary-100 text-primary-700'
                                   : isPredicate ? 'bg-amber-100 text-amber-700'
                                   : 'bg-purple-100 text-purple-700'"
                         >
@@ -184,10 +184,10 @@ const predicateColor = {
                                     min="0"
                                     :max="assessmentComponent.max_score ?? 100"
                                     placeholder="0"
-                                    class="w-full rounded-xl border px-4 py-3 pr-20 text-lg font-bold text-slate-800 outline-none transition-all duration-150 placeholder:text-slate-300 focus:ring-2 focus:ring-emerald-400/30"
+                                    class="w-full rounded-xl border px-4 py-3 pr-20 text-lg font-bold text-slate-800 outline-none transition-all duration-150 placeholder:text-slate-300 focus:ring-2 focus:ring-primary-400/30"
                                     :class="entry.score !== null && entry.score !== ''
-                                        ? 'border-emerald-300 bg-emerald-50/50 focus:border-emerald-400'
-                                        : 'border-slate-200 bg-white focus:border-emerald-400'"
+                                        ? 'border-primary-300 bg-primary-50/50 focus:border-primary-400'
+                                        : 'border-slate-200 bg-white focus:border-primary-400'"
                                 />
                                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
                                     <span class="text-sm font-medium text-slate-400">/ {{ assessmentComponent.max_score ?? 100 }}</span>
@@ -253,10 +253,10 @@ const predicateColor = {
                                             min="0"
                                             :max="assessmentComponent.max_score ?? 100"
                                             placeholder="—"
-                                            class="w-full rounded-lg border px-3 py-2 pr-10 text-sm font-semibold text-slate-800 outline-none transition-all duration-150 placeholder:text-slate-300 focus:ring-2 focus:ring-emerald-400/20"
+                                            class="w-full rounded-lg border px-3 py-2 pr-10 text-sm font-semibold text-slate-800 outline-none transition-all duration-150 placeholder:text-slate-300 focus:ring-2 focus:ring-primary-400/20"
                                             :class="entry.score !== null && entry.score !== ''
-                                                ? 'border-emerald-300 bg-emerald-50/60 focus:border-emerald-400'
-                                                : 'border-slate-200 bg-white focus:border-emerald-400'"
+                                                ? 'border-primary-300 bg-primary-50/60 focus:border-primary-400'
+                                                : 'border-slate-200 bg-white focus:border-primary-400'"
                                         />
                                         <span class="pointer-events-none absolute inset-y-0 right-2.5 flex items-center text-xs text-slate-300">
                                             /{{ assessmentComponent.max_score ?? 100 }}
@@ -295,7 +295,7 @@ const predicateColor = {
                     <button
                         type="submit"
                         :disabled="form.processing"
-                        class="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-5 py-3.5 text-sm font-bold text-white shadow-lg shadow-emerald-500/25 transition-all duration-150 hover:from-emerald-600 hover:to-emerald-700 hover:shadow-emerald-500/40 disabled:opacity-60 active:scale-[0.99]"
+                        class="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary-500 to-primary-600 px-5 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary-500/25 transition-all duration-150 hover:from-primary-600 hover:to-primary-700 hover:shadow-primary-500/40 disabled:opacity-60 active:scale-[0.99]"
                     >
                         <svg
                             v-if="form.processing"
@@ -322,7 +322,7 @@ const predicateColor = {
                     <button
                         type="submit"
                         :disabled="form.processing"
-                        class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 py-3 text-sm font-bold text-white shadow-md shadow-emerald-500/20 transition-all duration-150 hover:from-emerald-600 hover:to-emerald-700 hover:shadow-lg hover:shadow-emerald-500/30 disabled:opacity-60"
+                        class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-500 to-primary-600 px-6 py-3 text-sm font-bold text-white shadow-md shadow-primary-500/20 transition-all duration-150 hover:from-primary-600 hover:to-primary-700 hover:shadow-lg hover:shadow-primary-500/30 disabled:opacity-60"
                     >
                         <svg
                             v-if="form.processing"

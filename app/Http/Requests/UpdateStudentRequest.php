@@ -30,7 +30,7 @@ class UpdateStudentRequest extends FormRequest
             'guardian_name' => ['nullable', 'string', 'max:100'],
             'parent_phone'  => ['nullable', 'string', 'max:20'],
             'parent_name'   => ['nullable', 'string', 'max:100'],
-            'password'    => ['nullable', 'string', 'min:8'],
+            'password'    => ['nullable', 'string', 'min:8', 'max:100'],
         ];
     }
 

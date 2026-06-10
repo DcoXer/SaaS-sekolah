@@ -43,7 +43,7 @@ const submitSync = () => {
 };
 
 const predicateColor = {
-    A: 'bg-emerald-100 text-emerald-700',
+    A: 'bg-primary-100 text-primary-700',
     B: 'bg-blue-100 text-blue-700',
     C: 'bg-amber-100 text-amber-700',
     D: 'bg-red-100 text-red-700',
@@ -76,7 +76,7 @@ const predicateColor = {
                     v-if="academicYear"
                     @click="submitSync"
                     :disabled="syncForm.processing"
-                    class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60"
+                    class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-primary-600 disabled:opacity-60"
                 >
                     <svg v-if="syncForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -109,7 +109,7 @@ const predicateColor = {
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5" />
                     </svg>
                     <span class="text-sm font-semibold text-slate-700">{{ academicYear.name }}</span>
-                    <span class="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">Aktif</span>
+                    <span class="inline-flex items-center rounded-full bg-primary-100 px-2 py-0.5 text-xs font-semibold text-primary-700">Aktif</span>
                 </div>
 
                 <!-- Header row (desktop only) -->
@@ -138,7 +138,7 @@ const predicateColor = {
                                     <input
                                         v-model.number="syncForm.configs[i].min_score"
                                         type="number" min="0" max="100"
-                                        class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+                                        class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20"
                                     />
                                 </div>
                                 <span class="mt-5 text-xs text-slate-400">—</span>
@@ -147,7 +147,7 @@ const predicateColor = {
                                     <input
                                         v-model.number="syncForm.configs[i].max_score"
                                         type="number" min="0" max="100"
-                                        class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+                                        class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20"
                                     />
                                 </div>
                             </div>
@@ -171,7 +171,7 @@ const predicateColor = {
                                     max="100"
                                     :class="[
                                         'w-28 rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                        'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                         'border-slate-200',
                                     ]"
                                 />
@@ -186,7 +186,7 @@ const predicateColor = {
                                     max="100"
                                     :class="[
                                         'w-28 rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                        'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                         'border-slate-200',
                                     ]"
                                 />

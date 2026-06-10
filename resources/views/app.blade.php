@@ -6,15 +6,15 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         @php
-            $seo      = $page['props']['seo'] ?? [];
-            $siteName = $seo['name']        ?? config('app.name');
-            $siteDesc = $seo['description'] ?? '';
-            $siteUrl  = $seo['website']     ?? url('/');
-            $logoUrl  = $seo['logo_url']    ?? '';
-            $address  = $seo['address']     ?? '';
-            $phone    = $seo['phone']       ?? '';
-            $email    = $seo['email']       ?? '';
-            $npsn     = $seo['npsn']        ?? '';
+            $seo       = $page['props']['seo'] ?? [];
+            $siteName  = $seo['name'] ?? config('app.name');
+            // Detail sekolah hanya tersedia di public pages via props.school
+            $siteDesc  = $seo['description'] ?? '';
+            $logoUrl   = $seo['logo_url']    ?? '';
+            $address   = $seo['address']     ?? '';
+            $phone     = $seo['phone']       ?? '';
+            $email     = $seo['email']       ?? '';
+            $npsn      = $seo['npsn']        ?? '';
             $canonical = url()->current();
         @endphp
 
@@ -103,7 +103,21 @@
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
-        @routes
+        @auth
+            @php
+                $ziggyGroup = match(auth()->user()->getRoleNames()->first()) {
+                    'kamad'        => 'kamad',
+                    'operator'     => 'operator',
+                    'tu_keuangan'  => 'keuangan',
+                    'guru'         => 'guru',
+                    'siswa'        => 'siswa',
+                    default        => 'guest',
+                };
+            @endphp
+            @routes($ziggyGroup)
+        @else
+            @routes('guest')
+        @endauth
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead
 

@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Default primary color CSS variables (emerald #10b981).
+   Overridden at runtime by applyPrimaryColor() in app.js. */
+:root {
+    --p-50:  236 253 245;
+    --p-100: 209 250 229;
+    --p-200: 167 243 208;
+    --p-300: 110 231 183;
+    --p-400:  52 211 153;
+    --p-500:  16 185 129;
+    --p-600:  5 150 105;
+    --p-700:  4 120  87;
+    --p-800:  6  95  70;
+    --p-900:  6  78  59;
+    --p-950:  2  44  34;
+}
+
 html,
 body {
     background-color: rgb(241 245 249); /* slate-100 */
@@ -16,4 +32,10 @@ body::-webkit-scrollbar {
 #app {
     height: 100%;
     background-color: rgb(241 245 249);
+}
+
+/* Sembunyikan tombol show/hide password bawaan Edge & IE */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
 }

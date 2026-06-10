@@ -77,7 +77,7 @@ const formatDate = (val) => {
                 <div class="flex flex-wrap items-center gap-2">
                     <button
                         @click="showRequest = true"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-primary-600"
                     >
                         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -130,7 +130,7 @@ const formatDate = (val) => {
                         v-model="searchLetter"
                         type="search"
                         placeholder="Cari jenis surat..."
-                        class="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-3.5 text-sm text-slate-800 placeholder-slate-400 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+                        class="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-3.5 text-sm text-slate-800 placeholder-slate-400 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20"
                     />
                 </div>
 
@@ -150,7 +150,7 @@ const formatDate = (val) => {
                     class="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white py-12 text-center"
                 >
                     <p class="text-sm font-semibold text-slate-700">Tidak ada hasil</p>
-                    <button @click="searchLetter = ''" class="mt-2 text-xs font-semibold text-emerald-600 hover:underline">Reset pencarian</button>
+                    <button @click="searchLetter = ''" class="mt-2 text-xs font-semibold text-primary-600 hover:underline">Reset pencarian</button>
                 </div>
 
                 <template v-else>
@@ -320,7 +320,7 @@ const formatDate = (val) => {
                         Batal
                     </button>
                     <button type="submit" :disabled="requestForm.processing"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60">
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600 disabled:opacity-60">
                         <svg v-if="requestForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                         </svg>

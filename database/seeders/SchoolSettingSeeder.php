@@ -23,6 +23,7 @@ class SchoolSettingSeeder extends Seeder
             'vision'         => 'Terwujudnya peserta didik yang cerdas, berakhlak mulia, dan berprestasi dalam bidang akademik maupun non-akademik berlandaskan iman dan taqwa kepada Allah SWT.',
             'mission'        => "Menyelenggarakan pembelajaran yang aktif, kreatif, efektif, dan menyenangkan.\nMengintegrasikan nilai-nilai keislaman dalam setiap aspek pembelajaran.\nMengembangkan potensi peserta didik secara optimal melalui kegiatan akademik dan ekstrakulikuler.\nMembangun karakter peserta didik yang jujur, disiplin, tanggung jawab, dan peduli lingkungan.\nMenjalin kerjasama yang harmonis antara madrasah, orang tua, dan masyarakat.",
             'history'        => 'MI Nurul Ulum didirikan pada tahun 1985 oleh KH. Abdul Halim bersama tokoh masyarakat setempat dengan visi memajukan pendidikan Islam di wilayah Paiton. Berawal dari sebuah mushola kecil dengan 40 santri, madrasah ini terus berkembang pesat. Pada tahun 2000, gedung permanen tiga lantai berhasil dibangun berkat dukungan warga dan donatur. Kini MI Nurul Ulum telah meluluskan lebih dari 2.000 alumni yang tersebar di berbagai penjuru nusantara dan menjadi kebanggaan masyarakat Karanganyar.',
+            'primary_color'  => '#10b981',
         ]);
     }
 }

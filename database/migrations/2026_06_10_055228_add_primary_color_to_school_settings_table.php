@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('avatar')->nullable()->after('email');
+        Schema::table('school_settings', function (Blueprint $table) {
+            $table->string('primary_color', 7)->default('#10b981')->after('hero_ekskul');
         });
     }
 
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('avatar');
+        Schema::table('school_settings', function (Blueprint $table) {
+            $table->dropColumn('primary_color');
         });
     }
 };

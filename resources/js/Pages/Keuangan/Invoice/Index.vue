@@ -110,7 +110,7 @@ const submitReminder = () => {
         <div class="space-y-6">
 
             <!-- ── Hero Banner ─────────────────────────────────────────────────── -->
-            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-600 via-emerald-500 to-teal-500 px-6 py-6 shadow-lg shadow-emerald-200/60">
+            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-600 via-primary-500 to-teal-500 px-6 py-6 shadow-lg shadow-primary-200/60">
                 <!-- Decorative circles -->
                 <div class="pointer-events-none absolute -right-8 -top-8 size-40 rounded-full bg-white/10"></div>
                 <div class="pointer-events-none absolute -bottom-10 right-16 size-28 rounded-full bg-white/8"></div>
@@ -124,7 +124,7 @@ const submitReminder = () => {
                         </div>
                         <div>
                             <h1 class="text-xl font-bold text-white">Tagihan Siswa</h1>
-                            <p class="mt-0.5 text-sm text-emerald-100">
+                            <p class="mt-0.5 text-sm text-primary-100">
                                 <span v-if="activeYear">Tahun ajaran {{ activeYear.name }} — tagihan belum atau kurang terbayar</span>
                                 <span v-else>Tidak ada tahun ajaran aktif saat ini</span>
                             </p>
@@ -182,20 +182,20 @@ const submitReminder = () => {
                 </div>
 
                 <!-- Sudah Lunas -->
-                <div class="group relative overflow-hidden rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white px-5 py-4 shadow-sm transition-shadow duration-200 hover:shadow-md">
-                    <div class="absolute right-0 top-0 h-full w-1.5 rounded-r-2xl bg-emerald-400"></div>
+                <div class="group relative overflow-hidden rounded-2xl border border-primary-100 bg-gradient-to-br from-primary-50 to-white px-5 py-4 shadow-sm transition-shadow duration-200 hover:shadow-md">
+                    <div class="absolute right-0 top-0 h-full w-1.5 rounded-r-2xl bg-primary-400"></div>
                     <div class="flex items-start justify-between">
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-wider text-emerald-500">Sudah Terbayar</p>
-                            <p class="mt-2 text-xl font-extrabold tabular-nums text-emerald-600">{{ formatRupiah(summary.total_paid) }}</p>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-primary-500">Sudah Terbayar</p>
+                            <p class="mt-2 text-xl font-extrabold tabular-nums text-primary-600">{{ formatRupiah(summary.total_paid) }}</p>
                         </div>
-                        <div class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-100">
-                            <svg class="size-4.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                        <div class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary-100">
+                            <svg class="size-4.5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
                     </div>
-                    <p class="mt-2.5 text-xs text-emerald-500">Pembayaran telah dikonfirmasi</p>
+                    <p class="mt-2.5 text-xs text-primary-500">Pembayaran telah dikonfirmasi</p>
                 </div>
             </div>
 
@@ -223,7 +223,7 @@ const submitReminder = () => {
                             v-model="search"
                             type="search"
                             placeholder="Cari nama atau NIS siswa..."
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50/80 py-2.5 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-all duration-150 focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"
+                            class="w-full rounded-xl border border-slate-200 bg-slate-50/80 py-2.5 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-all duration-150 focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-400/20"
                         />
                     </div>
 
@@ -301,7 +301,7 @@ const submitReminder = () => {
                         {{ hasActiveFilter ? 'Coba ubah kata kunci atau hapus filter yang aktif.' : 'Tidak ada tagihan yang belum terbayar saat ini.' }}
                     </p>
                     <button v-if="hasActiveFilter" @click="resetFilters"
-                        class="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-3.5 py-2 text-xs font-semibold text-emerald-700 transition-colors duration-150 hover:bg-emerald-100">
+                        class="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-primary-50 px-3.5 py-2 text-xs font-semibold text-primary-700 transition-colors duration-150 hover:bg-primary-100">
                         <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -324,15 +324,15 @@ const submitReminder = () => {
                         <li v-for="group in paginated" :key="group.student?.id">
                             <Link
                                 :href="route('keuangan.invoices.show', group.student?.id)"
-                                class="group flex items-center gap-3 px-4 py-4 transition-colors duration-150 hover:bg-emerald-50/40 sm:grid sm:grid-cols-12 sm:gap-4 sm:px-5 sm:py-3.5"
+                                class="group flex items-center gap-3 px-4 py-4 transition-colors duration-150 hover:bg-primary-50/40 sm:grid sm:grid-cols-12 sm:gap-4 sm:px-5 sm:py-3.5"
                             >
                                 <!-- Avatar + info (col 5) -->
                                 <div class="col-span-5 flex min-w-0 items-center gap-3">
-                                    <div class="relative flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 text-sm font-bold text-white shadow-sm">
+                                    <div class="relative flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary-400 to-teal-500 text-sm font-bold text-white shadow-sm">
                                         {{ group.student?.name?.charAt(0)?.toUpperCase() ?? '?' }}
                                     </div>
                                     <div class="min-w-0">
-                                        <p class="truncate text-sm font-semibold text-slate-800 group-hover:text-emerald-700">{{ group.student?.name }}</p>
+                                        <p class="truncate text-sm font-semibold text-slate-800 group-hover:text-primary-700">{{ group.student?.name }}</p>
                                         <p class="flex items-center gap-1.5 text-xs text-slate-400">
                                             <span>NIS {{ group.student?.nis }}</span>
                                             <template v-if="group.student?.grade">
@@ -367,7 +367,7 @@ const submitReminder = () => {
 
                                 <!-- Chevron (col 1) -->
                                 <div class="col-span-1 hidden justify-end sm:flex">
-                                    <svg class="size-4 text-slate-300 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <svg class="size-4 text-slate-300 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-primary-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                                     </svg>
                                 </div>
@@ -487,7 +487,7 @@ const submitReminder = () => {
                     <button
                         type="submit"
                         :disabled="reminderForm.processing"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600 disabled:opacity-60"
                     >
                         <svg v-if="reminderForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />

@@ -110,7 +110,7 @@ const jsonLd = computed(() => ({
         <!-- ── Hero ────────────────────────────────────────────────────── -->
         <div
             class="relative overflow-hidden py-20 transition-all duration-1000"
-            :class="heroBgUrl ? '' : 'bg-gradient-to-br from-green-900 via-green-800 to-green-700'"
+            :class="heroBgUrl ? '' : 'bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700'"
             :style="heroBgUrl ? `background-image:url('${heroBgUrl}');background-size:cover;background-position:center` : ''"
         >
             <!-- Overlay gelap saat ada foto -->
@@ -128,7 +128,7 @@ const jsonLd = computed(() => ({
                         Dokumentasi Sekolah
                     </span>
                     <h1 class="mt-4 text-4xl font-extrabold text-white lg:text-5xl">Galeri Sekolah</h1>
-                    <p class="mt-3 text-base text-green-200">
+                    <p class="mt-3 text-base text-primary-200">
                         Kumpulan foto dan video kegiatan <span class="font-semibold text-white">{{ school?.name }}</span>
                     </p>
                 </div>
@@ -157,12 +157,12 @@ const jsonLd = computed(() => ({
                     @click="activeTab = tab.value"
                     class="group relative rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-200"
                     :class="activeTab === tab.value
-                        ? 'bg-green-700 text-white shadow-md shadow-green-200'
-                        : 'border border-slate-200 bg-white text-slate-500 hover:border-green-200 hover:bg-green-50 hover:text-green-700'"
+                        ? 'bg-primary-700 text-white shadow-md shadow-primary-200'
+                        : 'border border-slate-200 bg-white text-slate-500 hover:border-primary-200 hover:bg-primary-50 hover:text-primary-700'"
                 >
                     {{ tab.label }}
                     <span class="ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold"
-                        :class="activeTab === tab.value ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400 group-hover:bg-green-100 group-hover:text-green-600'">
+                        :class="activeTab === tab.value ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400 group-hover:bg-primary-100 group-hover:text-primary-600'">
                         {{ tab.count.value }}
                     </span>
                 </button>
@@ -173,7 +173,7 @@ const jsonLd = computed(() => ({
                 <div
                     v-for="(item, i) in filtered" :key="item.id"
                     v-reveal="{ delay: (i % 4) * 60 }"
-                    class="group mb-5 cursor-pointer break-inside-avoid overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-green-200"
+                    class="group mb-5 cursor-pointer break-inside-avoid overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-primary-200"
                     @click="openLightbox(item)"
                 >
                     <div class="relative overflow-hidden">
@@ -193,7 +193,7 @@ const jsonLd = computed(() => ({
                             />
                             <div class="absolute inset-0 flex items-center justify-center bg-black/20 transition-colors duration-300 group-hover:bg-black/40">
                                 <div class="flex size-11 items-center justify-center rounded-full bg-white/95 shadow-xl transition-transform duration-200 group-hover:scale-110">
-                                    <svg class="size-5 translate-x-0.5 text-green-700" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    <svg class="size-5 translate-x-0.5 text-primary-700" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                 </div>
                             </div>
                             <!-- Video badge -->
@@ -219,7 +219,7 @@ const jsonLd = computed(() => ({
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/>
                 </svg>
                 <p class="font-semibold text-slate-500">Belum ada item galeri</p>
-                <button v-if="activeTab !== 'all'" @click="activeTab = 'all'" class="mt-2 text-sm font-semibold text-green-600 hover:underline">Tampilkan semua</button>
+                <button v-if="activeTab !== 'all'" @click="activeTab = 'all'" class="mt-2 text-sm font-semibold text-primary-600 hover:underline">Tampilkan semua</button>
             </div>
         </div>
 

@@ -49,7 +49,7 @@ const iconPaths = {
 
             <!-- Logo -->
             <div class="flex items-center gap-2.5">
-                <div class="flex size-9 items-center justify-center rounded-xl bg-emerald-500 shadow-sm">
+                <div class="flex size-9 items-center justify-center rounded-xl bg-primary-500 shadow-sm">
                     <svg class="size-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" :d="iconPaths.building" />
                     </svg>
@@ -59,14 +59,14 @@ const iconPaths = {
 
             <!-- Center -->
             <div>
-                <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5">
-                    <span class="size-1.5 rounded-full bg-emerald-400" />
-                    <span class="text-xs font-semibold text-emerald-400">Sistem Aktif</span>
+                <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-primary-500/30 bg-primary-500/10 px-3 py-1.5">
+                    <span class="size-1.5 rounded-full bg-primary-400" />
+                    <span class="text-xs font-semibold text-primary-400">Sistem Aktif</span>
                 </div>
 
                 <h1 class="text-balance text-3xl font-bold leading-tight text-white xl:text-4xl">
                     Manajemen sekolah<br>
-                    <span class="text-emerald-400">lebih mudah.</span>
+                    <span class="text-primary-400">lebih mudah.</span>
                 </h1>
 
                 <p class="mt-4 text-pretty text-sm leading-relaxed text-white/40">
@@ -78,7 +78,7 @@ const iconPaths = {
                         v-for="item in highlights" :key="item"
                         class="flex items-start gap-3 text-sm text-white/60"
                     >
-                        <svg class="mt-0.5 size-4 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <svg class="mt-0.5 size-4 shrink-0 text-primary-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" :d="iconPaths.check" />
                         </svg>
                         {{ item }}
@@ -94,7 +94,7 @@ const iconPaths = {
 
             <!-- Mobile logo -->
             <div class="mb-8 flex items-center gap-2.5 lg:hidden">
-                <div class="flex size-8 items-center justify-center rounded-lg bg-emerald-500 shadow-sm">
+                <div class="flex size-8 items-center justify-center rounded-lg bg-primary-500 shadow-sm">
                     <svg class="size-4 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" :d="iconPaths.building" />
                     </svg>
@@ -112,7 +112,7 @@ const iconPaths = {
                 <!-- Status -->
                 <div
                     v-if="status"
-                    class="mb-5 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700"
+                    class="mb-5 rounded-lg border border-primary-200 bg-primary-50 px-4 py-3 text-sm text-primary-700"
                 >
                     {{ status }}
                 </div>
@@ -140,7 +140,7 @@ const iconPaths = {
                                 placeholder="nama@sekolah.sch.id"
                                 :class="[
                                     'w-full rounded-xl border bg-white py-3 pl-10 pr-4 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150',
-                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                    'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                     form.errors.email ? 'border-red-400 focus:border-red-400 focus:ring-red-400/20' : 'border-slate-200',
                                 ]"
                             />
@@ -155,7 +155,7 @@ const iconPaths = {
                             <Link
                                 v-if="canResetPassword"
                                 :href="route('password.request')"
-                                class="text-xs text-emerald-600 hover:underline"
+                                class="text-xs text-primary-600 hover:underline"
                             >
                                 Lupa password?
                             </Link>
@@ -175,7 +175,7 @@ const iconPaths = {
                                 placeholder="••••••••"
                                 :class="[
                                     'w-full rounded-xl border bg-white py-3 pl-10 pr-11 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150',
-                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                    'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                     form.errors.password ? 'border-red-400 focus:border-red-400 focus:ring-red-400/20' : 'border-slate-200',
                                 ]"
                             />
@@ -199,7 +199,7 @@ const iconPaths = {
                         <input
                             type="checkbox"
                             v-model="form.remember"
-                            class="size-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-400/30"
+                            class="size-4 rounded border-slate-300 text-primary-500 focus:ring-primary-400/30"
                         />
                         <span class="text-sm text-slate-600">Ingat saya</span>
                     </label>
@@ -208,7 +208,7 @@ const iconPaths = {
                     <button
                         type="submit"
                         :disabled="form.processing"
-                        class="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 text-sm font-semibold text-white shadow-md transition-[background-color] duration-150 hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-60"
+                        class="flex w-full items-center justify-center gap-2 rounded-xl bg-primary-500 py-3 text-sm font-semibold text-white shadow-md transition-[background-color] duration-150 hover:bg-primary-600 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         <svg
                             v-if="form.processing"

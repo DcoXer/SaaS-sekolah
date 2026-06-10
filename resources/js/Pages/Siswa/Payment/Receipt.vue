@@ -12,7 +12,7 @@ const { invoice, student, payment_type, total_paid, remaining, status, receipt_c
 const statusColor = {
     unpaid:  'bg-red-100 text-red-700',
     partial: 'bg-amber-100 text-amber-700',
-    paid:    'bg-emerald-100 text-emerald-700',
+    paid:    'bg-primary-100 text-primary-700',
 };
 const statusLabel = {
     unpaid:  'Belum Bayar',
@@ -100,11 +100,11 @@ const formatDate = (val) => {
                             </div>
                             <div class="flex justify-between gap-4">
                                 <dt class="text-slate-500">Terbayar</dt>
-                                <dd class="font-semibold text-emerald-600">{{ formatRupiah(total_paid) }}</dd>
+                                <dd class="font-semibold text-primary-600">{{ formatRupiah(total_paid) }}</dd>
                             </div>
                             <div class="flex justify-between gap-4 border-t border-slate-100 pt-2">
                                 <dt class="font-semibold text-slate-700">Sisa</dt>
-                                <dd :class="['font-bold', remaining > 0 ? 'text-red-600' : 'text-emerald-600']">{{ formatRupiah(remaining) }}</dd>
+                                <dd :class="['font-bold', remaining > 0 ? 'text-red-600' : 'text-primary-600']">{{ formatRupiah(remaining) }}</dd>
                             </div>
                             <div class="flex justify-between gap-4">
                                 <dt class="text-slate-500">Jatuh tempo</dt>
@@ -133,13 +133,13 @@ const formatDate = (val) => {
                             <tr v-for="pay in invoice.payments" :key="pay.id">
                                 <td class="py-2 text-slate-600">{{ formatDate(pay.paid_at) }}</td>
                                 <td class="py-2 capitalize text-slate-600">{{ pay.method }}</td>
-                                <td class="py-2 text-right font-semibold text-emerald-600">{{ formatRupiah(pay.amount) }}</td>
+                                <td class="py-2 text-right font-semibold text-primary-600">{{ formatRupiah(pay.amount) }}</td>
                             </tr>
                         </tbody>
                         <tfoot>
                             <tr class="border-t border-slate-200">
                                 <td colspan="2" class="pt-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Total Terbayar</td>
-                                <td class="pt-2 text-right font-bold text-emerald-600">{{ formatRupiah(total_paid) }}</td>
+                                <td class="pt-2 text-right font-bold text-primary-600">{{ formatRupiah(total_paid) }}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -165,7 +165,7 @@ const formatDate = (val) => {
                                 </div>
                                 <p class="text-xs text-slate-400">QR ada di PDF</p>
                                 <a :href="verify_url" target="_blank"
-                                   class="text-xs font-semibold text-emerald-600 hover:underline">
+                                   class="text-xs font-semibold text-primary-600 hover:underline">
                                     Verifikasi
                                 </a>
                             </div>

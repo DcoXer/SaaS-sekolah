@@ -38,7 +38,7 @@ const lightboxSrc = ref(null);
 
         <!-- ── Hero ───────────────────────────────────────────────────────── -->
         <div class="relative overflow-hidden"
-            :class="post.cover_image ? 'h-72 sm:h-96 bg-slate-900' : 'h-64 sm:h-80 bg-gradient-to-br from-green-900 via-green-800 to-green-700'">
+            :class="post.cover_image ? 'h-72 sm:h-96 bg-slate-900' : 'h-64 sm:h-80 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700'">
 
             <!-- Cover image -->
             <img v-if="post.cover_image"
@@ -67,10 +67,10 @@ const lightboxSrc = ref(null);
 
             <!-- Title content -->
             <div class="absolute inset-x-0 bottom-0 mx-auto max-w-3xl px-6 pb-8">
-                <span :class="post.category === 'pengumuman' ? 'border-amber-400/40 bg-amber-400/10 text-amber-300' : 'border-green-400/40 bg-green-400/10 text-green-300'"
+                <span :class="post.category === 'pengumuman' ? 'border-amber-400/40 bg-amber-400/10 text-amber-300' : 'border-primary-400/40 bg-primary-400/10 text-primary-300'"
                     class="inline-flex w-fit items-center gap-2 rounded-full border px-3.5 py-1 text-xs font-semibold tracking-wide">
                     <span class="size-1.5 rounded-full"
-                        :class="post.category === 'pengumuman' ? 'bg-amber-400' : 'bg-green-400'"/>
+                        :class="post.category === 'pengumuman' ? 'bg-amber-400' : 'bg-primary-400'"/>
                     {{ post.category === 'pengumuman' ? 'Pengumuman' : 'Berita' }}
                 </span>
                 <h1 class="mt-2 text-2xl font-extrabold leading-tight text-white drop-shadow sm:text-3xl lg:text-4xl">
@@ -85,8 +85,8 @@ const lightboxSrc = ref(null);
 
             <!-- Excerpt -->
             <blockquote v-if="post.excerpt"
-                class="mb-10 rounded-2xl border border-green-100 bg-green-50 px-6 py-5">
-                <p class="text-base font-medium italic leading-relaxed text-green-800">{{ post.excerpt }}</p>
+                class="mb-10 rounded-2xl border border-primary-100 bg-primary-50 px-6 py-5">
+                <p class="text-base font-medium italic leading-relaxed text-primary-800">{{ post.excerpt }}</p>
             </blockquote>
 
             <!-- Content -->
@@ -121,7 +121,7 @@ const lightboxSrc = ref(null);
             <!-- Back link -->
             <div class="mt-14 border-t border-slate-100 pt-8">
                 <Link :href="route('berita.index')"
-                    class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-green-700">
+                    class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-primary-700">
                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
                     </svg>
@@ -146,9 +146,9 @@ const lightboxSrc = ref(null);
         </Teleport>
 
         <!-- Footer -->
-        <footer class="border-t border-slate-100 bg-green-950 py-6">
+        <footer class="border-t border-slate-100 bg-primary-950 py-6">
             <div class="mx-auto max-w-6xl px-6 text-center">
-                <p class="text-xs text-green-500">
+                <p class="text-xs text-primary-500">
                     &copy; {{ new Date().getFullYear() }} {{ school?.name ?? 'Sistem Manajemen Sekolah' }}
                     <span v-if="school?.npsn"> · NPSN {{ school.npsn }}</span>
                 </p>

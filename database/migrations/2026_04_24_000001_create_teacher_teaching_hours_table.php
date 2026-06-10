@@ -15,6 +15,8 @@ return new class extends Migration
             $table->unsignedSmallInteger('total_hours');
             $table->unsignedInteger('hourly_rate');
             $table->unsignedInteger('daily_transport_rate');
+            $table->string('position_name')->nullable();
+            $table->unsignedInteger('position_allowance')->nullable();
             $table->timestamps();
             $table->unique(['teacher_id', 'academic_year_id'], 'tth_unique');
         });

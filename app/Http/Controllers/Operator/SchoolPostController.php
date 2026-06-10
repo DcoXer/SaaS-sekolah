@@ -119,7 +119,7 @@ class SchoolPostController extends Controller
 
     public function storeImage(Request $request, SchoolPost $post)
     {
-        $request->validate(['image' => 'required|image|max:3072']);
+        $request->validate(['image' => 'required|image|mimes:jpg,jpeg,png,webp|max:3072']);
 
         $this->service->storeImage($post, $request->file('image'));
 

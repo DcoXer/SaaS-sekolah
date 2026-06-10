@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('academic_year_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
 
-            $table->unique(['student_id', 'academic_year_id']); // 1 siswa 1 kelas per tahun ajaran
+            $table->unique(['student_id', 'academic_year_id'], 'student_classrooms_student_year_unique');
         });
     }
 

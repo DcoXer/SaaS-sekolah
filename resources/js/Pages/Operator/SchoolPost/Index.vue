@@ -65,7 +65,7 @@ const togglePublish = (post) => {
                 </div>
                 <Link
                     :href="route('operator.school-posts.create')"
-                    class="inline-flex shrink-0 items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-600 transition-colors"
+                    class="inline-flex shrink-0 items-center gap-2 rounded-lg bg-primary-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-600 transition-colors"
                 >
                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
                     Tulis Post
@@ -82,7 +82,7 @@ const togglePublish = (post) => {
                         v-model="search"
                         type="search"
                         placeholder="Cari judul..."
-                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"
+                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-400/20"
                     />
                 </div>
                 <FilterSelect
@@ -131,7 +131,7 @@ const togglePublish = (post) => {
                                 class="rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide">
                                 {{ post.category === 'pengumuman' ? 'Pengumuman' : 'Berita' }}
                             </span>
-                            <span :class="post.is_published ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'"
+                            <span :class="post.is_published ? 'bg-primary-100 text-primary-700' : 'bg-slate-100 text-slate-500'"
                                 class="rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide">
                                 {{ post.is_published ? 'Published' : 'Draft' }}
                             </span>
@@ -147,7 +147,7 @@ const togglePublish = (post) => {
                         <button
                             @click="togglePublish(post)"
                             :title="post.is_published ? 'Sembunyikan' : 'Publikasikan'"
-                            :class="post.is_published ? 'text-emerald-500 hover:text-emerald-700' : 'text-slate-400 hover:text-slate-600'"
+                            :class="post.is_published ? 'text-primary-500 hover:text-primary-700' : 'text-slate-400 hover:text-slate-600'"
                             class="flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-slate-50"
                         >
                             <!-- Eye open (published) -->
@@ -201,7 +201,7 @@ const togglePublish = (post) => {
                     v-html="link.label"
                     class="inline-flex min-w-[2rem] items-center justify-center rounded-lg px-3 py-1.5 text-sm transition-colors"
                     :class="link.active
-                        ? 'bg-emerald-500 font-semibold text-white'
+                        ? 'bg-primary-500 font-semibold text-white'
                         : link.url
                             ? 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                             : 'cursor-not-allowed border border-slate-100 bg-white text-slate-300'"

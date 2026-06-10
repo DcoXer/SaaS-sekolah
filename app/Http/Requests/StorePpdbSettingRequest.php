@@ -6,7 +6,10 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StorePpdbSettingRequest extends FormRequest
 {
-    public function authorize(): bool { return true; }
+    public function authorize(): bool
+    {
+        return $this->user()->hasRole('operator');
+    }
 
     public function rules(): array
     {

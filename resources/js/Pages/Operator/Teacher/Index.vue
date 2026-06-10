@@ -29,14 +29,39 @@ const filtered = computed(() => {
     return list;
 });
 
+// ── Sort ──────────────────────────────────────────────────────────────────────
+const sortKey = ref('name');
+const sortDir = ref('asc');
+
+const toggleSort = (key) => {
+    if (sortKey.value === key) {
+        sortDir.value = sortDir.value === 'asc' ? 'desc' : 'asc';
+    } else {
+        sortKey.value = key;
+        sortDir.value = 'asc';
+    }
+    currentPage.value = 1;
+};
+
+const sorted = computed(() => {
+    const list = [...filtered.value];
+    const dir  = sortDir.value === 'asc' ? 1 : -1;
+    return list.sort((a, b) => {
+        let va = '', vb = '';
+        if (sortKey.value === 'name') { va = a.user?.name ?? ''; vb = b.user?.name ?? ''; }
+        else if (sortKey.value === 'nip')  { va = a.nip ?? ''; vb = b.nip ?? ''; }
+        return va.localeCompare(vb, 'id') * dir;
+    });
+});
+
 // ── Pagination ────────────────────────────────────────────────────────────────
 const PER_PAGE   = 10;
 const currentPage = ref(1);
 
-const totalPages = computed(() => Math.ceil(filtered.value.length / PER_PAGE));
+const totalPages = computed(() => Math.ceil(sorted.value.length / PER_PAGE));
 const paginated  = computed(() => {
     const start = (currentPage.value - 1) * PER_PAGE;
-    return filtered.value.slice(start, start + PER_PAGE);
+    return sorted.value.slice(start, start + PER_PAGE);
 });
 
 // Reset to page 1 when filter/search changes
@@ -145,7 +170,7 @@ const positionConfig = {
                     </Link>
                     <Link
                         :href="route('operator.teachers.create')"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-primary-600"
                     >
                         <svg class="size-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -187,7 +212,7 @@ const positionConfig = {
                         v-model="search"
                         type="search"
                         placeholder="Cari nama, email, NIP..."
-                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"
+                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-400/20"
                     />
                 </div>
                 <div class="h-5 w-px bg-slate-200"/>
@@ -218,7 +243,7 @@ const positionConfig = {
                 <p class="mt-1 text-xs text-slate-400">Tambah guru untuk mulai mengatur data mengajar.</p>
                 <Link
                     :href="route('operator.teachers.create')"
-                    class="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600"
+                    class="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600"
                 >
                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -234,7 +259,7 @@ const positionConfig = {
             >
                 <p class="text-sm font-semibold text-slate-700">Tidak ada hasil</p>
                 <p class="mt-1 text-xs text-slate-400">Coba ubah kata kunci atau hapus filter.</p>
-                <button @click="search = ''; filterType = ''" class="mt-3 text-xs font-semibold text-emerald-600 hover:underline">Reset pencarian</button>
+                <button @click="search = ''; filterType = ''" class="mt-3 text-xs font-semibold text-primary-600 hover:underline">Reset pencarian</button>
             </div>
 
             <template v-else>
@@ -248,7 +273,7 @@ const positionConfig = {
                 >
                     <div class="flex items-start justify-between p-4">
                         <div class="flex items-center gap-3 min-w-0">
-                            <div class="flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-semibold text-emerald-700">
+                            <div class="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-100 text-xs font-semibold text-primary-700">
                                 {{ initials(teacher.user.name) }}
                             </div>
                             <div class="min-w-0">
@@ -302,9 +327,25 @@ const positionConfig = {
                 <table class="min-w-full divide-y divide-slate-100">
                     <thead>
                         <tr class="bg-slate-50">
-                            <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Guru</th>
+                            <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">
+                                <button @click="toggleSort('name')" class="inline-flex items-center gap-1 hover:text-slate-800 transition-colors duration-150">
+                                    Guru
+                                    <span class="flex flex-col leading-none">
+                                        <svg class="size-2.5 transition-colors" :class="sortKey === 'name' && sortDir === 'asc' ? 'text-primary-500' : 'text-slate-300'" viewBox="0 0 10 6" fill="currentColor"><path d="M5 0L10 6H0z"/></svg>
+                                        <svg class="size-2.5 transition-colors" :class="sortKey === 'name' && sortDir === 'desc' ? 'text-primary-500' : 'text-slate-300'" viewBox="0 0 10 6" fill="currentColor"><path d="M5 6L0 0h10z"/></svg>
+                                    </span>
+                                </button>
+                            </th>
                             <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Tipe</th>
-                            <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">NIP</th>
+                            <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">
+                                <button @click="toggleSort('nip')" class="inline-flex items-center gap-1 hover:text-slate-800 transition-colors duration-150">
+                                    NIP
+                                    <span class="flex flex-col leading-none">
+                                        <svg class="size-2.5 transition-colors" :class="sortKey === 'nip' && sortDir === 'asc' ? 'text-primary-500' : 'text-slate-300'" viewBox="0 0 10 6" fill="currentColor"><path d="M5 0L10 6H0z"/></svg>
+                                        <svg class="size-2.5 transition-colors" :class="sortKey === 'nip' && sortDir === 'desc' ? 'text-primary-500' : 'text-slate-300'" viewBox="0 0 10 6" fill="currentColor"><path d="M5 6L0 0h10z"/></svg>
+                                    </span>
+                                </button>
+                            </th>
                             <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Kelamin</th>
                             <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">Telepon</th>
                             <th class="px-5 py-3.5 text-right text-xs font-semibold text-slate-500">Aksi</th>
@@ -318,7 +359,7 @@ const positionConfig = {
                         >
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center gap-3">
-                                    <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-semibold text-emerald-700">
+                                    <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary-100 text-xs font-semibold text-primary-700">
                                         {{ initials(teacher.user.name) }}
                                     </div>
                                     <div>

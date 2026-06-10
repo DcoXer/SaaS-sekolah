@@ -547,22 +547,22 @@ const wilayahCls = (f, disabled) => [
                                     :class="fileErrors[doc.field] || err(doc.field)
                                         ? 'border-red-300 bg-red-50'
                                         : fileNames[doc.field]
-                                            ? 'border-emerald-400 bg-emerald-50'
+                                            ? 'border-primary-400 bg-primary-50'
                                             : 'border-slate-200 hover:border-amber-400 hover:bg-amber-50'">
                                     <input type="file" :accept="doc.accept" class="sr-only"
                                         @change="handleFileChange(doc.field, $event)"/>
 
                                     <!-- Uploaded state -->
                                     <template v-if="fileNames[doc.field]">
-                                        <div class="flex size-10 items-center justify-center rounded-full bg-emerald-100">
+                                        <div class="flex size-10 items-center justify-center rounded-full bg-primary-100">
                                             <svg class="size-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
                                             </svg>
                                         </div>
                                         <div>
-                                            <p class="text-xs font-bold text-emerald-700">{{ doc.label }}</p>
-                                            <p class="mt-0.5 text-[10px] text-emerald-600 break-all line-clamp-2">{{ fileNames[doc.field] }}</p>
-                                            <p class="mt-1 text-[10px] text-emerald-500 underline">Ganti file</p>
+                                            <p class="text-xs font-bold text-primary-700">{{ doc.label }}</p>
+                                            <p class="mt-0.5 text-[10px] text-primary-600 break-all line-clamp-2">{{ fileNames[doc.field] }}</p>
+                                            <p class="mt-1 text-[10px] text-primary-500 underline">Ganti file</p>
                                         </div>
                                     </template>
 
@@ -739,7 +739,7 @@ const wilayahCls = (f, disabled) => [
                                 { field: 'document_akta', label: 'Akta Lahir' },
                             ]" :key="doc.field" class="flex flex-col items-center gap-1.5 p-4 text-center">
                                 <div class="flex size-8 items-center justify-center rounded-full"
-                                    :class="fileNames[doc.field] ? 'bg-emerald-100' : 'bg-red-100'">
+                                    :class="fileNames[doc.field] ? 'bg-primary-100' : 'bg-red-100'">
                                     <svg class="size-4" :class="fileNames[doc.field] ? 'text-emerald-600' : 'text-red-400'"
                                         fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                         <path v-if="fileNames[doc.field]" stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
@@ -747,7 +747,7 @@ const wilayahCls = (f, disabled) => [
                                     </svg>
                                 </div>
                                 <p class="text-[10px] font-semibold text-slate-600">{{ doc.label }}</p>
-                                <p class="text-[10px]" :class="fileNames[doc.field] ? 'text-emerald-600' : 'text-red-500'">
+                                <p class="text-[10px]" :class="fileNames[doc.field] ? 'text-primary-600' : 'text-red-500'">
                                     {{ fileNames[doc.field] ? 'Terunggah' : 'Belum ada' }}
                                 </p>
                             </div>
@@ -778,7 +778,7 @@ const wilayahCls = (f, disabled) => [
 
                     <!-- Submit (step 5 review) -->
                     <button v-else type="submit" :disabled="form.processing"
-                        class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-2.5 text-sm font-bold text-white shadow transition-all hover:bg-emerald-500 disabled:opacity-60 active:scale-95">
+                        class="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-8 py-2.5 text-sm font-bold text-white shadow transition-all hover:bg-primary-500 disabled:opacity-60 active:scale-95">
                         <svg v-if="form.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>

@@ -109,9 +109,9 @@ const hasSemester = (s) => !!props.reportCards[s];
                             <!-- Status badge -->
                             <span
                                 v-if="hasSemester(s)"
-                                class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200"
+                                class="inline-flex items-center gap-1 rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold text-primary-700 ring-1 ring-primary-200"
                             >
-                                <span class="size-1.5 rounded-full bg-emerald-500"></span>
+                                <span class="size-1.5 rounded-full bg-primary-500"></span>
                                 Tersedia
                             </span>
                             <span v-else class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-400 ring-1 ring-slate-200">

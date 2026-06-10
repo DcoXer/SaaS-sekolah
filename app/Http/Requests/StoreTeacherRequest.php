@@ -16,7 +16,7 @@ class StoreTeacherRequest extends FormRequest
         return [
             'name'     => ['required', 'string', 'max:100'],
             'email'    => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8'],
+            'password' => ['required', 'string', 'min:8', 'max:100'],
             'type'     => ['required', 'in:guru_kelas,guru_bidang'],
             'nip'      => ['nullable', 'string', 'max:20', 'unique:teachers,nip'],
             'gender'   => ['required', 'in:L,P'],

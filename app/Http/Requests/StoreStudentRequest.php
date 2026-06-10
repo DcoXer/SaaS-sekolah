@@ -29,7 +29,7 @@ class StoreStudentRequest extends FormRequest
             'parent_phone'     => ['nullable', 'string', 'max:20'],
             'parent_name'      => ['nullable', 'string', 'max:100'],
             'email'            => ['nullable', 'email', 'unique:users,email'],
-            'password'         => ['nullable', 'string', 'min:8'],
+            'password'         => ['nullable', 'string', 'min:8', 'max:100'],
             'classroom_id'     => ['nullable', 'exists:classrooms,id'],
             'academic_year_id' => ['nullable', 'exists:academic_years,id'],
         ];

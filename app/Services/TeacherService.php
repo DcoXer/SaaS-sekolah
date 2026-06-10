@@ -72,13 +72,19 @@ class TeacherService
 
     public function bulkGenerateAccounts(): array
     {
-        $teachers    = Teacher::with('user')->get();
+        $teachers = Teacher::with('user')->get();
+        if ($teachers->isEmpty()) return [];
+
         $credentials = [];
         $chars       = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
 
-        DB::transaction(function () use ($teachers, $chars, &$credentials) {
+        // Pre-load existing @guru.sekolah.id emails untuk O(1) uniqueness check (1 query)
+        $takenEmails = User::where('email', 'like', '%@guru.sekolah.id')
+            ->pluck('email')
+            ->flip();
+
+        DB::transaction(function () use ($teachers, $chars, &$takenEmails, &$credentials) {
             foreach ($teachers as $teacher) {
-                // Generate password baru
                 $password = '';
                 for ($i = 0; $i < 10; $i++) {
                     $password .= $chars[random_int(0, strlen($chars) - 1)];
@@ -93,10 +99,11 @@ class TeacherService
                         : Str::slug($teacher->user->name, '.');
                     $newEmail = $base . '@guru.sekolah.id';
                     $suffix   = 1;
-                    while (User::where('email', $newEmail)->where('id', '!=', $teacher->user->id)->exists()) {
-                        $newEmail = $base . $suffix . '@guru.sekolah.id';
-                        $suffix++;
+                    // Cek uniqueness dari memory — hindari N query per guru
+                    while (isset($takenEmails[$newEmail])) {
+                        $newEmail = $base . $suffix++ . '@guru.sekolah.id';
                     }
+                    $takenEmails[$newEmail] = true;
                     $email = $newEmail;
                     $teacher->user->update(['email' => $email, 'password' => Hash::make($password)]);
                 } else {

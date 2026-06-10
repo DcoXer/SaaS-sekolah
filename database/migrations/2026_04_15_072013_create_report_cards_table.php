@@ -17,9 +17,10 @@ return new class extends Migration
             $table->foreignId('classroom_id')->constrained()->cascadeOnDelete();
             $table->foreignId('academic_year_id')->constrained()->cascadeOnDelete();
             $table->tinyInteger('semester'); // 1 atau 2
-            $table->enum('status', ['draft', 'published'])->default('draft');
-            $table->timestamp('published_at')->nullable();
-            $table->foreignId('published_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->enum('status', ['draft', 'waiting_approval', 'approved'])->default('draft');
+            $table->string('verify_code')->nullable()->unique();
+            $table->timestamp('approved_at')->nullable();
+            $table->foreignId('approved_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
 
             $table->unique(

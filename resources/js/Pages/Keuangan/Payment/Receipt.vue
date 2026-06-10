@@ -12,7 +12,7 @@ const { invoice, student, payment_type, total_paid, remaining, status, receipt_c
 const statusColor = {
     unpaid:  'bg-red-100 text-red-700',
     partial: 'bg-amber-100 text-amber-700',
-    paid:    'bg-emerald-100 text-emerald-700',
+    paid:    'bg-primary-100 text-primary-700',
 };
 const statusLabel = {
     unpaid:  'Belum Bayar',
@@ -51,7 +51,7 @@ const formatDate = (val) => {
                 :class="[
                     'relative overflow-hidden rounded-2xl p-6 sm:p-8',
                     status === 'paid'
-                        ? 'bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700'
+                        ? 'bg-gradient-to-br from-primary-500 via-primary-600 to-teal-700'
                         : status === 'partial'
                             ? 'bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600'
                             : 'bg-gradient-to-br from-red-400 via-red-500 to-rose-700'
@@ -134,8 +134,8 @@ const formatDate = (val) => {
                 </div>
                 <!-- Dikonfirmasi oleh -->
                 <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3.5 shadow-sm">
-                    <div class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50">
-                        <svg class="size-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <div class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary-50">
+                        <svg class="size-4 text-primary-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                         </svg>
                     </div>
@@ -162,27 +162,27 @@ const formatDate = (val) => {
                             <span class="tabular-nums text-sm font-semibold text-slate-700">{{ formatRupiah(invoice?.amount) }}</span>
                         </div>
                         <!-- Terbayar -->
-                        <div class="flex items-center justify-between rounded-xl bg-emerald-50 px-4 py-3">
+                        <div class="flex items-center justify-between rounded-xl bg-primary-50 px-4 py-3">
                             <div class="flex items-center gap-2.5">
-                                <div class="size-2 rounded-full bg-emerald-400"></div>
-                                <span class="text-sm text-emerald-700">Sudah Dibayar</span>
+                                <div class="size-2 rounded-full bg-primary-400"></div>
+                                <span class="text-sm text-primary-700">Sudah Dibayar</span>
                             </div>
-                            <span class="tabular-nums text-sm font-bold text-emerald-600">{{ formatRupiah(total_paid) }}</span>
+                            <span class="tabular-nums text-sm font-bold text-primary-600">{{ formatRupiah(total_paid) }}</span>
                         </div>
                         <!-- Sisa -->
                         <div
                             :class="[
                                 'flex items-center justify-between rounded-xl px-4 py-3',
-                                remaining > 0 ? 'bg-red-50' : 'bg-emerald-50'
+                                remaining > 0 ? 'bg-red-50' : 'bg-primary-50'
                             ]"
                         >
                             <div class="flex items-center gap-2.5">
-                                <div :class="['size-2 rounded-full', remaining > 0 ? 'bg-red-400' : 'bg-emerald-400']"></div>
-                                <span :class="['text-sm font-semibold', remaining > 0 ? 'text-red-700' : 'text-emerald-700']">
+                                <div :class="['size-2 rounded-full', remaining > 0 ? 'bg-red-400' : 'bg-primary-400']"></div>
+                                <span :class="['text-sm font-semibold', remaining > 0 ? 'text-red-700' : 'text-primary-700']">
                                     Sisa Tagihan
                                 </span>
                             </div>
-                            <span :class="['tabular-nums text-sm font-bold', remaining > 0 ? 'text-red-600' : 'text-emerald-600']">
+                            <span :class="['tabular-nums text-sm font-bold', remaining > 0 ? 'text-red-600' : 'text-primary-600']">
                                 {{ formatRupiah(remaining) }}
                             </span>
                         </div>
@@ -242,13 +242,13 @@ const formatDate = (val) => {
                                         </span>
                                     </td>
                                     <td class="py-3 text-slate-400">{{ pay.note ?? '-' }}</td>
-                                    <td class="py-3 text-right font-bold tabular-nums text-emerald-600">{{ formatRupiah(pay.amount) }}</td>
+                                    <td class="py-3 text-right font-bold tabular-nums text-primary-600">{{ formatRupiah(pay.amount) }}</td>
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr class="border-t-2 border-slate-200">
                                     <td colspan="3" class="pt-3 text-xs font-bold uppercase tracking-wide text-slate-500">Total Terbayar</td>
-                                    <td class="pt-3 text-right text-base font-bold tabular-nums text-emerald-600">{{ formatRupiah(total_paid) }}</td>
+                                    <td class="pt-3 text-right text-base font-bold tabular-nums text-primary-600">{{ formatRupiah(total_paid) }}</td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -269,15 +269,15 @@ const formatDate = (val) => {
                         <!-- QR / Kode Verifikasi -->
                         <div class="text-center">
                             <div v-if="receipt_code" class="flex flex-col items-center gap-2">
-                                <div class="flex size-20 items-center justify-center rounded-xl border-2 border-dashed border-emerald-200 bg-emerald-50">
-                                    <svg class="size-9 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <div class="flex size-20 items-center justify-center rounded-xl border-2 border-dashed border-primary-200 bg-primary-50">
+                                    <svg class="size-9 text-primary-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75V16.5zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" />
                                     </svg>
                                 </div>
                                 <p class="text-xs text-slate-400">QR tersedia di PDF</p>
                                 <a :href="verify_url" target="_blank"
-                                   class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 hover:underline">
+                                   class="inline-flex items-center gap-1 text-xs font-semibold text-primary-600 hover:underline">
                                     <svg class="size-3" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                                     </svg>
@@ -302,11 +302,11 @@ const formatDate = (val) => {
                     </div>
 
                     <!-- Kode verifikasi pill -->
-                    <div v-if="receipt_code" class="mt-5 flex items-center justify-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-5 py-2.5">
-                        <svg class="size-3.5 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <div v-if="receipt_code" class="mt-5 flex items-center justify-center gap-2 rounded-xl border border-primary-100 bg-primary-50 px-5 py-2.5">
+                        <svg class="size-3.5 shrink-0 text-primary-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
                         </svg>
-                        <span class="font-mono text-xs font-semibold tracking-widest text-emerald-700">{{ receipt_code }}</span>
+                        <span class="font-mono text-xs font-semibold tracking-widest text-primary-700">{{ receipt_code }}</span>
                     </div>
                 </div>
 

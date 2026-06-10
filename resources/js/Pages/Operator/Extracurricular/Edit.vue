@@ -36,7 +36,7 @@ const submit = () => {
         });
 };
 
-const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20';
+const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20';
 </script>
 
 <template>
@@ -158,7 +158,7 @@ const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-
                                 <input
                                     type="checkbox"
                                     v-model="form.is_active"
-                                    class="size-4 rounded border-slate-300 accent-emerald-500"
+                                    class="size-4 rounded border-slate-300 accent-primary-500"
                                 />
                                 <span class="text-sm text-slate-700">Aktif (tampil di halaman profil)</span>
                             </label>
@@ -176,7 +176,7 @@ const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-
                         <button
                             type="submit"
                             :disabled="form.processing"
-                            class="rounded-lg bg-emerald-500 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-600 disabled:opacity-60"
+                            class="rounded-lg bg-primary-500 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-600 disabled:opacity-60"
                         >
                             {{ form.processing ? 'Menyimpan...' : 'Simpan Perubahan' }}
                         </button>

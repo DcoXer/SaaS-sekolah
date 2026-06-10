@@ -29,7 +29,7 @@ const roleLabel = {
 };
 
 const roleBadge = {
-    kamad:       'bg-emerald-50 text-emerald-700 ring-emerald-200',
+    kamad:       'bg-primary-50 text-primary-700 ring-primary-200',
     tu_keuangan: 'bg-sky-50 text-sky-700 ring-sky-200',
 };
 
@@ -159,7 +159,7 @@ const submitDelete = () => {
                 </div>
                 <button
                     @click="showCreate = true"
-                    class="inline-flex w-fit items-center gap-1.5 rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600"
+                    class="inline-flex w-fit items-center gap-1.5 rounded-lg bg-primary-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-primary-600"
                 >
                     <svg class="size-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -178,7 +178,7 @@ const submitDelete = () => {
                         v-model="search"
                         type="search"
                         placeholder="Cari nama atau email..."
-                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"
+                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-400/20"
                     />
                 </div>
             </div>
@@ -195,7 +195,7 @@ const submitDelete = () => {
                 <p class="mt-1 text-xs text-slate-400">Klik "Tambah Staff" untuk membuat akun baru.</p>
                 <button
                     @click="showCreate = true"
-                    class="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600"
+                    class="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600"
                 >
                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -211,7 +211,7 @@ const submitDelete = () => {
             >
                 <p class="text-sm font-semibold text-slate-700">Tidak ada hasil</p>
                 <p class="mt-1 text-xs text-slate-400">Coba ubah kata kunci pencarian.</p>
-                <button @click="search = ''" class="mt-3 text-xs font-semibold text-emerald-600 hover:underline">Reset pencarian</button>
+                <button @click="search = ''" class="mt-3 text-xs font-semibold text-primary-600 hover:underline">Reset pencarian</button>
             </div>
 
             <template v-else>
@@ -227,7 +227,7 @@ const submitDelete = () => {
                             <div class="flex items-center gap-3 min-w-0">
                                 <div
                                     class="flex size-9 shrink-0 items-center justify-center rounded-full text-xs font-bold"
-                                    :class="s.role === 'kamad' ? 'bg-emerald-100 text-emerald-700' : 'bg-sky-100 text-sky-700'"
+                                    :class="s.role === 'kamad' ? 'bg-primary-100 text-primary-700' : 'bg-sky-100 text-sky-700'"
                                 >
                                     {{ s.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) }}
                                 </div>
@@ -286,7 +286,7 @@ const submitDelete = () => {
                                     <div class="flex items-center gap-3">
                                         <div
                                             class="flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold"
-                                            :class="s.role === 'kamad' ? 'bg-emerald-100 text-emerald-700' : 'bg-sky-100 text-sky-700'"
+                                            :class="s.role === 'kamad' ? 'bg-primary-100 text-primary-700' : 'bg-sky-100 text-sky-700'"
                                         >
                                             {{ s.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) }}
                                         </div>
@@ -349,7 +349,7 @@ const submitDelete = () => {
                         v-model="createForm.name"
                         type="text"
                         placeholder="Nama lengkap"
-                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', createForm.errors.name ? 'border-red-400' : 'border-slate-200']"
+                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', createForm.errors.name ? 'border-red-400' : 'border-slate-200']"
                     />
                     <p v-if="createForm.errors.name" class="mt-1 text-xs text-red-500">{{ createForm.errors.name }}</p>
                 </div>
@@ -373,7 +373,7 @@ const submitDelete = () => {
                         type="email"
                         placeholder="email@sekolah.id"
                         autocomplete="off"
-                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', createForm.errors.email ? 'border-red-400' : 'border-slate-200']"
+                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', createForm.errors.email ? 'border-red-400' : 'border-slate-200']"
                     />
                     <p v-if="createForm.errors.email" class="mt-1 text-xs text-red-500">{{ createForm.errors.email }}</p>
                 </div>
@@ -387,7 +387,7 @@ const submitDelete = () => {
                         :type="showCreatePass ? 'text' : 'password'"
                         placeholder="Min. 8 karakter"
                         autocomplete="new-password"
-                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', createForm.errors.password ? 'border-red-400' : 'border-slate-200']"
+                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', createForm.errors.password ? 'border-red-400' : 'border-slate-200']"
                     />
                     <p v-if="createForm.errors.password" class="mt-1 text-xs text-red-500">{{ createForm.errors.password }}</p>
                 </div>
@@ -397,7 +397,7 @@ const submitDelete = () => {
                 <button
                     @click="submitCreate"
                     :disabled="createForm.processing"
-                    class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600 disabled:opacity-60"
                 >
                     <svg v-if="createForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -420,7 +420,7 @@ const submitDelete = () => {
                         v-model="editForm.name"
                         type="text"
                         placeholder="Nama lengkap"
-                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.name ? 'border-red-400' : 'border-slate-200']"
+                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', editForm.errors.name ? 'border-red-400' : 'border-slate-200']"
                     />
                     <p v-if="editForm.errors.name" class="mt-1 text-xs text-red-500">{{ editForm.errors.name }}</p>
                 </div>
@@ -431,7 +431,7 @@ const submitDelete = () => {
                         type="email"
                         placeholder="email@sekolah.id"
                         autocomplete="off"
-                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.email ? 'border-red-400' : 'border-slate-200']"
+                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', editForm.errors.email ? 'border-red-400' : 'border-slate-200']"
                     />
                     <p v-if="editForm.errors.email" class="mt-1 text-xs text-red-500">{{ editForm.errors.email }}</p>
                 </div>
@@ -445,7 +445,7 @@ const submitDelete = () => {
                         :type="showEditPass ? 'text' : 'password'"
                         placeholder="Kosongkan jika tidak diubah"
                         autocomplete="new-password"
-                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.password ? 'border-red-400' : 'border-slate-200']"
+                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', editForm.errors.password ? 'border-red-400' : 'border-slate-200']"
                     />
                     <p v-if="editForm.errors.password" class="mt-1 text-xs text-red-500">{{ editForm.errors.password }}</p>
                 </div>
@@ -455,7 +455,7 @@ const submitDelete = () => {
                 <button
                     @click="submitEdit"
                     :disabled="editForm.processing"
-                    class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600 disabled:opacity-60"
                 >
                     <svg v-if="editForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />

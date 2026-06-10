@@ -113,11 +113,24 @@ class TeacherImportExportController extends Controller
 
         $count = 0;
 
-        DB::transaction(function () use ($result, &$count) {
-            foreach ($result['rows'] as $row) {
-                $existing = !empty($row['nip'])
-                    ? Teacher::where('nip', $row['nip'])->first()
-                    : null;
+        $rows = $result['rows'];
+
+        // ── Batch lookup: 1 query untuk semua NIP ─────────────────────────────
+        $nips            = array_filter(array_column($rows, 'nip'));
+        $existingTeachers = Teacher::whereIn('nip', $nips)
+            ->with('user')
+            ->get()
+            ->keyBy('nip');
+
+        // ── Pre-generate email slugs unik (1 query) ───────────────────────────
+        // Ambil semua email @sekolah.local yang sudah ada agar tidak ada collision
+        $takenEmails = User::where('email', 'like', '%@sekolah.local')
+            ->pluck('email')
+            ->flip(); // flip → key = email, value = index (untuk isset O(1))
+
+        DB::transaction(function () use ($rows, $existingTeachers, &$takenEmails, &$count) {
+            foreach ($rows as $row) {
+                $existing = !empty($row['nip']) ? ($existingTeachers[$row['nip']] ?? null) : null;
 
                 if ($existing) {
                     $existing->update([
@@ -130,15 +143,14 @@ class TeacherImportExportController extends Controller
                         $existing->user->update(['name' => $row['name']]);
                     }
                 } else {
-                    // Generate a placeholder email
+                    // Generate email unik tanpa query per row
                     $nipSlug = $row['nip'] ? Str::slug($row['nip']) : Str::random(8);
                     $email   = $nipSlug . '@sekolah.local';
-                    // Ensure uniqueness
                     $suffix  = 1;
-                    while (User::where('email', $email)->exists()) {
-                        $email = $nipSlug . $suffix . '@sekolah.local';
-                        $suffix++;
+                    while (isset($takenEmails[$email])) {
+                        $email = $nipSlug . $suffix++ . '@sekolah.local';
                     }
+                    $takenEmails[$email] = true;
 
                     $user = User::create([
                         'name'     => $row['name'],

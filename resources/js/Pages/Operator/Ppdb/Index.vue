@@ -163,7 +163,7 @@ const statusLabel = {
                             </div>
                             <div v-if="setting.dp_amount">
                                 <p class="text-xs font-bold uppercase tracking-wide text-slate-400">DP (Uang Muka)</p>
-                                <p class="mt-0.5 font-medium text-emerald-700">{{ Number(setting.dp_amount).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }) }}</p>
+                                <p class="mt-0.5 font-medium text-primary-700">{{ Number(setting.dp_amount).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }) }}</p>
                             </div>
                         </div>
                     </div>
@@ -190,7 +190,7 @@ const statusLabel = {
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803 7.5 7.5 0 0016.803 15.803z"/>
                         </svg>
                         <input v-model="search" type="search" placeholder="Cari nama, nomor, telepon..."
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"
+                            class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-400/20"
                             @keyup.enter="applyFilter"/>
                     </div>
                     <FilterSelect
@@ -528,9 +528,9 @@ const statusLabel = {
                             <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg>
                             Foto Siswa
                         </a>
-                        <a v-if="detail?.document_kk" :href="`/storage/${detail.document_kk}`" target="_blank"
+                        <a v-if="detail?.document_kk" :href="route('operator.ppdb.document', { registration: detail.id, type: 'document_kk' })" target="_blank"
                             class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50">Kartu Keluarga</a>
-                        <a v-if="detail?.document_akta" :href="`/storage/${detail.document_akta}`" target="_blank"
+                        <a v-if="detail?.document_akta" :href="route('operator.ppdb.document', { registration: detail.id, type: 'document_akta' })" target="_blank"
                             class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50">Akta Lahir</a>
                         <span v-if="!detail?.photo && !detail?.document_kk && !detail?.document_akta" class="text-xs text-slate-400">Tidak ada dokumen.</span>
                     </div>

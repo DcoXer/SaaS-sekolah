@@ -26,7 +26,6 @@ class AboutPageController extends Controller
             'tagline'        => $setting->tagline,
             'npsn'           => $setting->npsn,
             'principal_name' => $setting->principal_name,
-            'principal_nip'  => $setting->principal_nip,
             'address'        => $setting->address,
             'phone'          => $setting->phone,
             'email'          => $setting->email,

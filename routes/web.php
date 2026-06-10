@@ -15,6 +15,7 @@ use App\Http\Controllers\PublicPpdbController;
 use App\Http\Controllers\PublicSchoolPostController;
 use App\Http\Controllers\ManifestController;
 use App\Http\Controllers\Operator\PpdbController as OperatorPpdb;
+use App\Http\Controllers\Operator\PpdbDocumentController;
 use App\Http\Controllers\Operator\SchoolPostController as OperatorSchoolPost;
 use App\Http\Controllers\Kamad\PpdbController as KamadPpdb;
 
@@ -108,6 +109,11 @@ Route::get('receipt/{code}', [ReceiptVerifyController::class, 'show'])
 Route::get('slip-honor/{code}', [HonorariumVerifyController::class, 'show'])
     ->middleware('throttle:30,1')
     ->name('honor.verify');
+
+// Temp slip PDF — diakses Fonnte saat kirim WA, wajib signed URL (expire 10 menit)
+Route::get('temp-slip/{uuid}', [KeuanganHonorarium::class, 'serveTempSlip'])
+    ->middleware(['signed', 'throttle:10,1'])
+    ->name('honorariums.temp-slip');
 
 // Verify raport — rate limit: 30 req/menit per IP
 Route::get('verify-raport/{verifyCode}', [KamadReportCard::class, 'verify'])
@@ -276,6 +282,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('ppdb/registrations/{registration}/accept', [OperatorPpdb::class, 'accept'])->name('ppdb.accept');
         Route::patch('ppdb/registrations/{registration}/reject', [OperatorPpdb::class, 'reject'])->name('ppdb.reject');
         Route::patch('ppdb/registrations/{registration}/waitlist', [OperatorPpdb::class, 'waitlist'])->name('ppdb.waitlist');
+        Route::get('ppdb/registrations/{registration}/document/{type}', [PpdbDocumentController::class, 'show'])->name('ppdb.document');
 
         // Staff management (kamad & keuangan accounts)
         Route::get('staff', [StaffController::class, 'index'])->name('staff.index');

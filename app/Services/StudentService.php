@@ -162,22 +162,36 @@ class StudentService
 
     public function bulkGenerateAccounts(): array
     {
-        $students    = Student::whereNull('user_id')->get();
+        $students = Student::whereNull('user_id')->get();
+        if ($students->isEmpty()) return [];
+
         $credentials = [];
+        $chars       = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
 
-        DB::transaction(function () use ($students, &$credentials) {
+        // Pre-load existing emails untuk O(1) uniqueness check (1 query)
+        $takenEmails = User::where('email', 'like', '%@siswa.sekolah.id')
+            ->pluck('email')
+            ->flip();
+
+        // Ambil role ID sekali — hindari N query Spatie (1 query)
+        $siswaRoleId = DB::table('roles')
+            ->where('name', 'siswa')
+            ->where('guard_name', 'web')
+            ->value('id');
+
+        DB::transaction(function () use ($students, $chars, $siswaRoleId, &$takenEmails, &$credentials) {
+            $newUserIds = []; // [student_id => user_id]
+
             foreach ($students as $student) {
-                $base  = $student->nisn ?? $student->nis ?? 'siswa' . $student->id;
-                $base  = Str::slug($base, '.');
-                $email = $base . '@siswa.sekolah.id';
-
+                $base   = $student->nisn ?? $student->nis ?? 'siswa' . $student->id;
+                $base   = Str::slug($base, '.');
+                $email  = $base . '@siswa.sekolah.id';
                 $suffix = 1;
-                while (User::where('email', $email)->exists()) {
-                    $email = $base . $suffix . '@siswa.sekolah.id';
-                    $suffix++;
+                while (isset($takenEmails[$email])) {
+                    $email = $base . $suffix++ . '@siswa.sekolah.id';
                 }
+                $takenEmails[$email] = true;
 
-                $chars    = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
                 $password = '';
                 for ($i = 0; $i < 10; $i++) {
                     $password .= $chars[random_int(0, strlen($chars) - 1)];
@@ -190,8 +204,8 @@ class StudentService
                     'email'    => $email,
                     'password' => Hash::make($password),
                 ]);
-                $user->assignRole('siswa');
-                $student->update(['user_id' => $user->id]);
+
+                $newUserIds[$student->id] = $user->id;
 
                 $credentials[] = [
                     'student_name' => $student->name,
@@ -200,7 +214,31 @@ class StudentService
                     'password'     => $password,
                 ];
             }
+
+            // Batch assign role — 1 insert ganti N assignRole() + N cache invalidation
+            if ($siswaRoleId && !empty($newUserIds)) {
+                DB::table('model_has_roles')->insert(array_map(fn($userId) => [
+                    'role_id'    => $siswaRoleId,
+                    'model_type' => 'App\\Models\\User',
+                    'model_id'   => $userId,
+                ], array_values($newUserIds)));
+            }
+
+            // Batch update student user_id — 1 query CASE WHEN ganti N individual updates
+            if (!empty($newUserIds)) {
+                $studentIds = array_keys($newUserIds);
+                $cases = implode(' ', array_map(
+                    fn($sid) => "WHEN {$sid} THEN {$newUserIds[$sid]}",
+                    $studentIds
+                ));
+                DB::statement(
+                    'UPDATE students SET user_id = CASE id ' . $cases . ' END WHERE id IN (' . implode(',', $studentIds) . ')'
+                );
+            }
         });
+
+        // Reset Spatie permission cache sekali setelah bulk insert
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         return $credentials;
     }

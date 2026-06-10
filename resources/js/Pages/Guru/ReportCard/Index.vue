@@ -140,7 +140,7 @@ const submitNotes = () => {
                         @click="switchSemester(sem)"
                         class="rounded-lg px-4 py-1.5 text-sm font-semibold transition-[background-color,color] duration-150"
                         :class="semester === sem
-                            ? 'bg-emerald-500 text-white shadow-sm'
+                            ? 'bg-primary-500 text-white shadow-sm'
                             : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700'"
                     >
                         Semester {{ sem }}
@@ -159,7 +159,7 @@ const submitNotes = () => {
                             @input="resetPage"
                             type="search"
                             placeholder="Cari nama siswa..."
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"
+                            class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-400/20"
                         />
                     </div>
 
@@ -237,7 +237,7 @@ const submitNotes = () => {
                                 <a
                                     :href="route('guru.report-cards.export', card.id)"
                                     target="_blank"
-                                    class="flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 shadow-sm transition-[background-color] duration-150 hover:bg-emerald-100 active:bg-emerald-200"
+                                    class="flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-xs font-semibold text-primary-700 shadow-sm transition-[background-color] duration-150 hover:bg-primary-100 active:bg-primary-200"
                                 >
                                     <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -312,7 +312,7 @@ const submitNotes = () => {
                                                 :href="route('guru.report-cards.export', card.id)"
                                                 target="_blank"
                                                 title="Export PDF"
-                                                class="inline-flex items-center justify-center whitespace-nowrap rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 shadow-sm transition-[background-color] duration-150 hover:bg-emerald-100 size-8 lg:size-auto lg:gap-1.5 lg:px-3 lg:py-1.5 lg:text-xs lg:font-semibold"
+                                                class="inline-flex items-center justify-center whitespace-nowrap rounded-lg border border-primary-200 bg-primary-50 text-primary-700 shadow-sm transition-[background-color] duration-150 hover:bg-primary-100 size-8 lg:size-auto lg:gap-1.5 lg:px-3 lg:py-1.5 lg:text-xs lg:font-semibold"
                                             >
                                                 <svg class="shrink-0 size-4 lg:size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -358,7 +358,7 @@ const submitNotes = () => {
                                     @click="currentPage = page"
                                     class="flex size-8 items-center justify-center rounded-lg text-xs font-semibold transition-[background-color,color] duration-150"
                                     :class="currentPage === page
-                                        ? 'bg-emerald-500 text-white shadow-sm'
+                                        ? 'bg-primary-500 text-white shadow-sm'
                                         : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50'"
                                 >
                                     {{ page }}
@@ -411,7 +411,7 @@ const submitNotes = () => {
                             v-model="notesForm.homeroom_notes"
                             rows="4"
                             placeholder="Tulis catatan wali kelas..."
-                            class="w-full resize-none rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+                            class="w-full resize-none rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20"
                         />
                         <p v-if="notesForm.errors.homeroom_notes" class="mt-1 text-xs text-red-500">
                             {{ notesForm.errors.homeroom_notes }}
@@ -439,7 +439,7 @@ const submitNotes = () => {
                         Batal
                     </button>
                     <button type="submit" :disabled="notesForm.processing"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60">
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600 disabled:opacity-60">
                         <svg v-if="notesForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                         </svg>

@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('teachers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->enum('type', ['guru_kelas', 'guru_bidang'])->default('guru_bidang');
+            $table->string('position')->nullable();
             $table->string('nip')->nullable()->unique();
             $table->enum('gender', ['L', 'P']);
             $table->string('phone')->nullable();

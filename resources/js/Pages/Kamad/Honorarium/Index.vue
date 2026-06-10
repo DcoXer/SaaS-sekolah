@@ -72,7 +72,7 @@ const avatarColor = (name) => {
     const colors = [
         'bg-violet-100 text-violet-700',
         'bg-sky-100 text-sky-700',
-        'bg-emerald-100 text-emerald-700',
+        'bg-primary-100 text-primary-700',
         'bg-rose-100 text-rose-700',
         'bg-amber-100 text-amber-700',
         'bg-indigo-100 text-indigo-700',
@@ -121,21 +121,21 @@ const avatarColor = (name) => {
                 </div>
 
                 <!-- Sudah Dibayar -->
-                <div class="relative overflow-hidden rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
-                    <div class="pointer-events-none absolute right-0 top-0 size-20 rounded-full bg-emerald-50 blur-2xl" />
+                <div class="relative overflow-hidden rounded-2xl border border-primary-100 bg-white p-5 shadow-sm">
+                    <div class="pointer-events-none absolute right-0 top-0 size-20 rounded-full bg-primary-50 blur-2xl" />
                     <div class="relative">
                         <div class="flex items-center justify-between">
-                            <div class="inline-flex size-10 items-center justify-center rounded-xl bg-emerald-50 ring-4 ring-emerald-100">
-                                <svg class="size-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+                            <div class="inline-flex size-10 items-center justify-center rounded-xl bg-primary-50 ring-4 ring-primary-100">
+                                <svg class="size-5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
-                            <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-600">
+                            <span class="rounded-full bg-primary-50 px-2 py-0.5 text-xs font-semibold text-primary-600">
                                 {{ filtered.filter(h => h.status === 'paid').length }} slip
                             </span>
                         </div>
                         <p class="mt-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Sudah Dibayar</p>
-                        <p class="mt-0.5 tabular-nums text-xl font-extrabold text-emerald-600">Rp {{ fmt(totalPaid) }}</p>
+                        <p class="mt-0.5 tabular-nums text-xl font-extrabold text-primary-600">Rp {{ fmt(totalPaid) }}</p>
                     </div>
                 </div>
 
@@ -176,7 +176,7 @@ const avatarColor = (name) => {
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803 7.5 7.5 0 0016.803 15.803z"/>
                     </svg>
                     <input v-model="search" type="search" placeholder="Cari nama guru..."
-                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"/>
+                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-400/20"/>
                 </div>
                 <div class="h-5 w-px bg-slate-200"/>
                 <div class="flex items-center gap-1 rounded-xl bg-slate-100 p-1">
@@ -205,7 +205,7 @@ const avatarColor = (name) => {
                 </div>
                 <p class="text-sm font-semibold text-slate-700">{{ hasFilter ? 'Tidak ada hasil' : 'Belum ada data honor' }}</p>
                 <p class="mt-1 text-xs text-slate-400">{{ hasFilter ? 'Coba ubah filter pencarian' : 'Data honor akan muncul di sini' }}</p>
-                <button v-if="hasFilter" @click="resetFilters" class="mt-3 text-xs font-semibold text-emerald-600 hover:underline">Reset filter</button>
+                <button v-if="hasFilter" @click="resetFilters" class="mt-3 text-xs font-semibold text-primary-600 hover:underline">Reset filter</button>
             </div>
 
             <!-- Table -->

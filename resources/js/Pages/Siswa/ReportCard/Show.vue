@@ -15,7 +15,7 @@ const formatDate = (val) => {
 };
 
 const predicateBadge = {
-    A: 'bg-emerald-100 text-emerald-700 ring-emerald-200',
+    A: 'bg-primary-100 text-primary-700 ring-primary-200',
     B: 'bg-sky-100 text-sky-700 ring-sky-200',
     C: 'bg-amber-100 text-amber-700 ring-amber-200',
     D: 'bg-red-100 text-red-700 ring-red-200',
@@ -23,7 +23,7 @@ const predicateBadge = {
 
 const scoreColor = (score) => {
     if (!score) return 'bg-slate-200';
-    if (score >= 85) return 'bg-emerald-500';
+    if (score >= 85) return 'bg-primary-500';
     if (score >= 70) return 'bg-sky-500';
     if (score >= 55) return 'bg-amber-500';
     return 'bg-red-500';
@@ -160,18 +160,18 @@ const scoreColor = (score) => {
                 class="grid grid-cols-1 gap-4 sm:grid-cols-2"
             >
                 <!-- Catatan Wali Kelas -->
-                <div class="relative overflow-hidden rounded-2xl border border-emerald-100 bg-emerald-50/40 p-5 shadow-sm">
+                <div class="relative overflow-hidden rounded-2xl border border-primary-100 bg-primary-50/40 p-5 shadow-sm">
                     <!-- Colored left border accent -->
-                    <div class="absolute inset-y-0 left-0 w-1 rounded-l-2xl bg-gradient-to-b from-emerald-400 to-emerald-600"></div>
+                    <div class="absolute inset-y-0 left-0 w-1 rounded-l-2xl bg-gradient-to-b from-primary-400 to-primary-600"></div>
                     <div class="pl-3">
                         <div class="mb-3 flex items-center gap-2">
                             <!-- Quote icon -->
-                            <div class="flex size-7 items-center justify-center rounded-lg bg-emerald-100">
-                                <svg class="size-4 text-emerald-600" fill="currentColor" viewBox="0 0 24 24">
+                            <div class="flex size-7 items-center justify-center rounded-lg bg-primary-100">
+                                <svg class="size-4 text-primary-600" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M11.192 15.757c0-.88-.23-1.618-.69-2.217-.326-.412-.768-.683-1.327-.812-.55-.128-1.07-.137-1.54-.028-.16-.95.1-1.956.76-3.022.66-1.065 1.515-1.867 2.558-2.403L9.373 5c-.8.396-1.56.898-2.26 1.505-.71.607-1.34 1.305-1.9 2.094s-.98 1.68-1.25 2.69-.346 2.04-.217 3.1c.168 1.4.62 2.52 1.356 3.35.735.84 1.652 1.26 2.748 1.26.965 0 1.766-.29 2.4-.878.628-.576.94-1.365.94-2.368l.002.003zm9.124 0c0-.88-.23-1.618-.69-2.217-.326-.42-.77-.692-1.327-.817-.56-.124-1.074-.13-1.54-.022-.16-.94.09-1.95.75-3.016.66-1.066 1.515-1.867 2.558-2.403L18.49 5c-.8.396-1.56.898-2.26 1.505-.71.607-1.34 1.305-1.9 2.094s-.978 1.68-1.25 2.69-.344 2.04-.215 3.1c.168 1.4.62 2.52 1.356 3.35.735.84 1.652 1.26 2.748 1.26.965 0 1.766-.29 2.4-.878.628-.576.942-1.365.942-2.368l.002.003z" />
                                 </svg>
                             </div>
-                            <p class="text-xs font-bold uppercase tracking-wider text-emerald-700">Catatan Wali Kelas</p>
+                            <p class="text-xs font-bold uppercase tracking-wider text-primary-700">Catatan Wali Kelas</p>
                         </div>
                         <p class="text-pretty text-sm leading-relaxed text-slate-700">
                             {{ reportCard.notes.homeroom_notes || '—' }}

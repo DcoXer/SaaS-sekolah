@@ -27,6 +27,10 @@ class InvoiceController extends Controller
             'invoices'      => $this->service->getByStudent($student, $activeYear),
             'hasExamAccess' => $this->service->hasExamAccess($student, $activeYear),
             'activeYear'    => $activeYear,
+            'midtrans'      => [
+                'client_key'    => config('services.midtrans.client_key'),
+                'is_production' => config('services.midtrans.is_production'),
+            ],
         ]);
     }
 }

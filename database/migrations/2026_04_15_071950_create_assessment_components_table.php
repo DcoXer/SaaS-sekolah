@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('classroom_id')->constrained()->cascadeOnDelete();
             $table->string('name'); // "Nilai Harian", "UTS", "TP-1"
             $table->enum('type', ['numeric', 'predicate', 'narrative']);
+            $table->enum('ki', ['ki3', 'ki4'])->nullable();
             $table->unsignedTinyInteger('weight')->default(0); // persen, total harus 100
             $table->unsignedTinyInteger('min_score')->default(0);
             $table->unsignedTinyInteger('max_score')->default(100);

@@ -339,7 +339,7 @@ const peerClassroomOptions = computed(() =>
                         <button
                             type="button"
                             @click="openAssignSiswa"
-                            class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600"
+                            class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-3 py-1.5 text-xs font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600"
                         >
                             <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -360,7 +360,7 @@ const peerClassroomOptions = computed(() =>
                                 type="button"
                                 @click="toggleInClass(student.id)"
                                 class="flex size-5 shrink-0 items-center justify-center rounded border border-slate-300 bg-white"
-                                :class="selectedInClass.includes(student.id) ? 'border-emerald-500 bg-emerald-500' : ''"
+                                :class="selectedInClass.includes(student.id) ? 'border-primary-500 bg-primary-500' : ''"
                                 :aria-label="selectedInClass.includes(student.id) ? 'Batalkan pilihan' : 'Pilih siswa'"
                             >
                                 <svg v-if="selectedInClass.includes(student.id)" class="size-3 text-white" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
@@ -405,7 +405,7 @@ const peerClassroomOptions = computed(() =>
                                 type="text"
                                 :class="[
                                     'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                    'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                    'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                     editForm.errors.name ? 'border-red-400' : 'border-slate-200',
                                 ]"
                             />
@@ -429,7 +429,7 @@ const peerClassroomOptions = computed(() =>
                         <button
                             type="submit"
                             :disabled="editForm.processing"
-                            class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60"
+                            class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600 disabled:opacity-60"
                         >
                             <svg v-if="editForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -449,7 +449,7 @@ const peerClassroomOptions = computed(() =>
                     </div>
                     <button
                         @click="openAssignGuruKelas"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-3 py-1.5 text-xs font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600"
                     >
                         <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -460,7 +460,7 @@ const peerClassroomOptions = computed(() =>
 
                 <div class="px-5 py-4">
                     <div v-if="classroom.homeroom_teacher" class="flex items-center gap-3">
-                        <div class="flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
+                        <div class="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-100 text-xs font-bold text-primary-700">
                             {{ classroom.homeroom_teacher.user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) }}
                         </div>
                         <div>
@@ -481,7 +481,7 @@ const peerClassroomOptions = computed(() =>
                     </div>
                     <button
                         @click="openAssignWaliKelas"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-3 py-1.5 text-xs font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600"
                     >
                         <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -492,7 +492,7 @@ const peerClassroomOptions = computed(() =>
 
                 <div class="px-5 py-4">
                     <div v-if="classroom.homeroom_teacher" class="flex items-center gap-3">
-                        <div class="flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
+                        <div class="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-100 text-xs font-bold text-primary-700">
                             {{ classroom.homeroom_teacher.user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) }}
                         </div>
                         <div>
@@ -517,7 +517,7 @@ const peerClassroomOptions = computed(() =>
                     <button
                         v-if="availableSubjectsToAdd.length > 0"
                         @click="openAddSubject"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-3 py-1.5 text-xs font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600"
                     >
                         <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -655,12 +655,12 @@ const peerClassroomOptions = computed(() =>
                         :class="[
                             'flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-[border-color,background-color] duration-150',
                             assignGuruKelasForm.teacher_id === String(teacher.id)
-                                ? 'border-emerald-400 bg-emerald-50'
+                                ? 'border-primary-400 bg-primary-50'
                                 : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50',
                         ]"
                     >
                         <input type="radio" :value="String(teacher.id)" v-model="assignGuruKelasForm.teacher_id" class="sr-only" />
-                        <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
+                        <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary-100 text-xs font-bold text-primary-700">
                             {{ teacher.user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) }}
                         </div>
                         <span class="text-sm font-medium text-slate-800">{{ teacher.user.name }}</span>
@@ -674,7 +674,7 @@ const peerClassroomOptions = computed(() =>
                 <button
                     @click="submitAssignGuruKelas"
                     :disabled="assignGuruKelasForm.processing || !assignGuruKelasForm.teacher_id"
-                    class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-600 disabled:opacity-60"
                 >
                     <svg v-if="assignGuruKelasForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -711,7 +711,7 @@ const peerClassroomOptions = computed(() =>
                         :class="[
                             'flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-[border-color,background-color] duration-150',
                             assignWaliKelasForm.teacher_id === String(teacher.id)
-                                ? 'border-emerald-400 bg-emerald-50'
+                                ? 'border-primary-400 bg-primary-50'
                                 : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50',
                         ]"
                     >
@@ -730,7 +730,7 @@ const peerClassroomOptions = computed(() =>
                 <button
                     @click="submitAssignWaliKelas"
                     :disabled="assignWaliKelasForm.processing || !assignWaliKelasForm.teacher_id"
-                    class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-600 disabled:opacity-60"
                 >
                     <svg v-if="assignWaliKelasForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -764,7 +764,7 @@ const peerClassroomOptions = computed(() =>
                         :class="[
                             'flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-2.5 transition-[border-color,background-color] duration-150',
                             selectedSubjectId === String(subject.id)
-                                ? 'border-emerald-400 bg-emerald-50'
+                                ? 'border-primary-400 bg-primary-50'
                                 : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50',
                         ]"
                     >
@@ -772,7 +772,7 @@ const peerClassroomOptions = computed(() =>
                         <div
                             :class="[
                                 'flex size-4 shrink-0 items-center justify-center rounded-full border-2 transition-[border-color,background-color] duration-150',
-                                selectedSubjectId === String(subject.id) ? 'border-emerald-500 bg-emerald-500' : 'border-slate-300',
+                                selectedSubjectId === String(subject.id) ? 'border-primary-500 bg-primary-500' : 'border-slate-300',
                             ]"
                         >
                             <div v-if="selectedSubjectId === String(subject.id)" class="size-1.5 rounded-full bg-white"></div>
@@ -788,7 +788,7 @@ const peerClassroomOptions = computed(() =>
                 <button
                     @click="submitAddSubject"
                     :disabled="addSubjectForm.processing || !selectedSubjectId"
-                    class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-600 disabled:opacity-60"
                 >
                     <svg v-if="addSubjectForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -824,7 +824,7 @@ const peerClassroomOptions = computed(() =>
                         :class="[
                             'flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-[border-color,background-color] duration-150',
                             assignTeacherForm.teacher_id === String(teacher.id)
-                                ? 'border-emerald-400 bg-emerald-50'
+                                ? 'border-primary-400 bg-primary-50'
                                 : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50',
                         ]"
                     >
@@ -843,7 +843,7 @@ const peerClassroomOptions = computed(() =>
                 <button
                     @click="submitAssignTeacher"
                     :disabled="assignTeacherForm.processing || !assignTeacherForm.teacher_id"
-                    class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-600 disabled:opacity-60"
                 >
                     <svg v-if="assignTeacherForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -915,7 +915,7 @@ const peerClassroomOptions = computed(() =>
                         :class="[
                             'flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-2.5 transition-[border-color,background-color] duration-150',
                             selectedStudentIds.includes(student.id)
-                                ? 'border-emerald-400 bg-emerald-50'
+                                ? 'border-primary-400 bg-primary-50'
                                 : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50',
                         ]"
                     >
@@ -930,7 +930,7 @@ const peerClassroomOptions = computed(() =>
                             :class="[
                                 'flex size-4 shrink-0 items-center justify-center rounded border-2 transition-[border-color,background-color] duration-150',
                                 selectedStudentIds.includes(student.id)
-                                    ? 'border-emerald-500 bg-emerald-500'
+                                    ? 'border-primary-500 bg-primary-500'
                                     : 'border-slate-300',
                             ]"
                         >
@@ -959,7 +959,7 @@ const peerClassroomOptions = computed(() =>
                     <button
                         @click="submitAssignSiswa"
                         :disabled="assignSiswaForm.processing || selectedStudentIds.length === 0"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-600 disabled:opacity-60"
                     >
                         <svg v-if="assignSiswaForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -1018,7 +1018,7 @@ const peerClassroomOptions = computed(() =>
                     <button
                         type="submit"
                         :disabled="moveStudentsForm.processing || !moveStudentsForm.target_classroom_id"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-600 disabled:opacity-60"
                     >
                         <svg v-if="moveStudentsForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />

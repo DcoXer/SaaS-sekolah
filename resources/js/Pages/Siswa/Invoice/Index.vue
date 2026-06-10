@@ -165,16 +165,16 @@ const filteredInvoices = computed(() => {
             <!-- Semua lunas -->
             <div
                 v-else-if="invoices.length > 0 && totalUnpaid === 0"
-                class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 p-5 shadow-lg shadow-emerald-200"
+                class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-500 via-primary-600 to-teal-600 p-5 shadow-lg shadow-primary-200"
             >
                 <div class="pointer-events-none absolute -right-8 -top-8 size-40 rounded-full bg-white/10"></div>
                 <div class="pointer-events-none absolute -bottom-6 right-16 size-24 rounded-full bg-white/10"></div>
 
                 <div class="relative flex items-start justify-between gap-4">
                     <div class="min-w-0">
-                        <p class="text-xs font-semibold uppercase tracking-widest text-emerald-100">Status Pembayaran</p>
+                        <p class="text-xs font-semibold uppercase tracking-widest text-primary-100">Status Pembayaran</p>
                         <p class="mt-2 text-xl font-extrabold text-white">Semua Tagihan Lunas</p>
-                        <p class="mt-1 text-sm text-emerald-100">
+                        <p class="mt-1 text-sm text-primary-100">
                             {{ invoices.length }} tagihan telah diselesaikan
                             <span v-if="activeYear"> &middot; {{ activeYear.name }}</span>
                         </p>
@@ -261,7 +261,7 @@ const filteredInvoices = computed(() => {
                         :key="invoice.id"
                         class="overflow-hidden rounded-2xl border bg-white shadow-sm transition-shadow duration-200 hover:shadow-md"
                         :class="invoice.status === 'paid'
-                            ? 'border-emerald-100 bg-gradient-to-br from-white to-emerald-50/40 opacity-80'
+                            ? 'border-primary-100 bg-gradient-to-br from-white to-primary-50/40 opacity-80'
                             : 'border-slate-200'"
                     >
                         <!-- Card header -->
@@ -291,7 +291,7 @@ const filteredInvoices = computed(() => {
                             <div class="mt-3 flex items-baseline gap-1.5">
                                 <p
                                     class="tabular-nums text-xl font-extrabold"
-                                    :class="invoice.status === 'paid' ? 'text-emerald-700' : 'text-slate-900'"
+                                    :class="invoice.status === 'paid' ? 'text-primary-700' : 'text-slate-900'"
                                 >{{ formatRupiah(invoice.amount) }}</p>
                                 <svg v-if="invoice.status === 'paid'" class="size-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
@@ -355,7 +355,7 @@ const filteredInvoices = computed(() => {
                                 :key="invoice.id"
                                 class="transition-colors duration-150"
                                 :class="invoice.status === 'paid'
-                                    ? 'bg-emerald-50/50 opacity-75 hover:bg-emerald-50 hover:opacity-100'
+                                    ? 'bg-primary-50/50 opacity-75 hover:bg-primary-50 hover:opacity-100'
                                     : 'hover:bg-rose-50/30'"
                             >
                                 <td class="px-5 py-4">
@@ -370,7 +370,7 @@ const filteredInvoices = computed(() => {
                                 <td class="px-5 py-4">
                                     <span
                                         class="tabular-nums text-sm font-bold"
-                                        :class="invoice.status === 'paid' ? 'text-emerald-700' : 'text-slate-900'"
+                                        :class="invoice.status === 'paid' ? 'text-primary-700' : 'text-slate-900'"
                                     >{{ formatRupiah(invoice.amount) }}</span>
                                 </td>
                                 <td class="px-5 py-4">
@@ -484,19 +484,19 @@ const filteredInvoices = computed(() => {
                 <button
                     type="button"
                     @click="payOnline"
-                    class="group flex w-full items-center gap-4 rounded-2xl border-2 border-slate-200 bg-white p-4 text-left transition-all duration-200 hover:border-emerald-400 hover:bg-emerald-50/50 hover:shadow-md"
+                    class="group flex w-full items-center gap-4 rounded-2xl border-2 border-slate-200 bg-white p-4 text-left transition-all duration-200 hover:border-primary-400 hover:bg-primary-50/50 hover:shadow-md"
                 >
-                    <div class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-emerald-100 transition-colors duration-200 group-hover:bg-emerald-200">
-                        <svg class="size-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+                    <div class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary-100 transition-colors duration-200 group-hover:bg-primary-200">
+                        <svg class="size-6 text-primary-600" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
                         </svg>
                     </div>
                     <div class="min-w-0 flex-1">
-                        <p class="text-sm font-bold text-slate-800 group-hover:text-emerald-900">Bayar Online</p>
-                        <p class="mt-0.5 text-xs leading-relaxed text-slate-400 group-hover:text-emerald-700">Transfer bank, kartu kredit, QRIS, dompet digital via Midtrans — langsung lunas</p>
+                        <p class="text-sm font-bold text-slate-800 group-hover:text-primary-900">Bayar Online</p>
+                        <p class="mt-0.5 text-xs leading-relaxed text-slate-400 group-hover:text-primary-700">Transfer bank, kartu kredit, QRIS, dompet digital via Midtrans — langsung lunas</p>
                     </div>
-                    <div class="shrink-0 rounded-full border-2 border-slate-200 p-0.5 transition-colors duration-200 group-hover:border-emerald-400">
-                        <div class="size-3 rounded-full transition-colors duration-200 group-hover:bg-emerald-400"></div>
+                    <div class="shrink-0 rounded-full border-2 border-slate-200 p-0.5 transition-colors duration-200 group-hover:border-primary-400">
+                        <div class="size-3 rounded-full transition-colors duration-200 group-hover:bg-primary-400"></div>
                     </div>
                 </button>
             </div>

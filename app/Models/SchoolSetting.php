@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
     'description', 'vision', 'mission', 'history',
     'logo', 'stamp',
     'hero_welcome', 'hero_tentang', 'hero_galeri', 'hero_ekskul',
+    'primary_color',
 ])]
 class SchoolSetting extends Model
 {

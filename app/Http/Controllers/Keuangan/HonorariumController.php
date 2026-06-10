@@ -17,8 +17,10 @@ use App\Helpers\QrCodeHelper;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class HonorariumController extends Controller
 {
@@ -253,11 +255,13 @@ class HonorariumController extends Controller
             'verify_url'   => $verifyUrl,
         ])->setPaper('a5', 'portrait');
 
-        // Simpan PDF sementara di storage public
-        $tempFilename = 'temp/slip-honor-' . Str::uuid() . '.pdf';
-        Storage::disk('public')->put($tempFilename, $pdf->output());
+        // Simpan PDF sementara di local disk (tidak dapat diakses publik secara langsung)
+        $uuid         = Str::uuid()->toString();
+        $tempFilename = 'temp/' . $uuid . '.pdf';
+        Storage::disk('local')->put($tempFilename, $pdf->output());
 
-        $fileUrl  = Storage::disk('public')->url($tempFilename);
+        // Buat signed URL yang expire 10 menit — hanya bisa diakses via signature
+        $fileUrl  = URL::temporarySignedRoute('honorariums.temp-slip', now()->addMinutes(10), ['uuid' => $uuid]);
         $filename = 'slip-honor-' . str($honorarium->teacher->user->name)->slug() . '-' . $honorarium->period_month . '-' . $honorarium->period_year . '.pdf';
 
         $fmt     = fn($n) => 'Rp ' . number_format($n, 0, ',', '.');
@@ -271,7 +275,7 @@ class HonorariumController extends Controller
         $result = $this->whatsAppService->sendDocument($phone, $message, $fileUrl, $filename);
 
         // Hapus file temp setelah dikirim
-        Storage::disk('public')->delete($tempFilename);
+        Storage::disk('local')->delete($tempFilename);
 
         if (!$result['success']) {
             return redirect()->back()->withErrors(['whatsapp' => 'Gagal kirim WA: ' . $result['message']]);
@@ -307,5 +311,25 @@ class HonorariumController extends Controller
         $filename = 'slip-honor-' . str($honorarium->teacher->user->name)->slug() . '-' . $honorarium->period_month . '-' . $honorarium->period_year . '.pdf';
 
         return $pdf->download($filename);
+    }
+
+    /**
+     * Serve temp slip PDF via signed URL (digunakan oleh WhatsApp/Fonnte saat download).
+     * Route ini public tapi wajib punya signature yang valid.
+     */
+    public function serveTempSlip(string $uuid): SymfonyResponse
+    {
+        // Validasi format UUID untuk mencegah path traversal
+        if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/', $uuid)) {
+            abort(404);
+        }
+
+        $path = 'temp/' . $uuid . '.pdf';
+
+        if (!Storage::disk('local')->exists($path)) {
+            abort(404);
+        }
+
+        return Storage::disk('local')->response($path, null, ['Content-Type' => 'application/pdf']);
     }
 }

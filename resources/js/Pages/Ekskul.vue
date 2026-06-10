@@ -46,7 +46,7 @@ const featured = computed(() => filtered.value[0] ?? null);
 const rest     = computed(() => filtered.value.slice(1));
 
 const colors = [
-    { bg: 'bg-green-100',  text: 'text-green-700',  ring: 'ring-green-200' },
+    { bg: 'bg-primary-100',  text: 'text-primary-700',  ring: 'ring-primary-200' },
     { bg: 'bg-amber-100',  text: 'text-amber-700',  ring: 'ring-amber-200' },
     { bg: 'bg-sky-100',    text: 'text-sky-700',    ring: 'ring-sky-200' },
     { bg: 'bg-violet-100', text: 'text-violet-700', ring: 'ring-violet-200' },
@@ -111,7 +111,7 @@ const jsonLd = computed(() => [
         <!-- ── Hero ────────────────────────────────────────────────────── -->
         <div
             class="relative overflow-hidden py-20 transition-all duration-1000"
-            :class="heroBgUrl ? '' : 'bg-gradient-to-br from-green-900 via-green-800 to-green-700'"
+            :class="heroBgUrl ? '' : 'bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700'"
             :style="heroBgUrl ? `background-image:url('${heroBgUrl}');background-size:cover;background-position:center` : ''"
         >
             <div v-if="heroBgUrl" class="absolute inset-0 bg-black/55"/>
@@ -124,7 +124,7 @@ const jsonLd = computed(() => [
                         Kegiatan Siswa
                     </span>
                     <h1 class="mt-4 text-4xl font-extrabold text-white lg:text-5xl">Ekstrakulikuler</h1>
-                    <p class="mt-3 text-base text-green-200">
+                    <p class="mt-3 text-base text-primary-200">
                         {{ extracurriculars.length }} kegiatan tersedia untuk mengembangkan potensi siswa
                     </p>
                 </div>
@@ -151,7 +151,7 @@ const jsonLd = computed(() => [
                     <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/>
                 </svg>
                 <p class="font-semibold text-slate-500">{{ search ? 'Tidak ditemukan' : 'Belum ada ekskul' }}</p>
-                <button v-if="search" @click="search = ''" class="mt-2 text-sm font-semibold text-green-600 hover:underline">Hapus pencarian</button>
+                <button v-if="search" @click="search = ''" class="mt-2 text-sm font-semibold text-primary-600 hover:underline">Hapus pencarian</button>
             </div>
 
             <template v-else>
@@ -171,12 +171,12 @@ const jsonLd = computed(() => [
                     </div>
                     <!-- Info -->
                     <div class="flex flex-col justify-center p-8 lg:flex-1">
-                        <span class="mb-3 inline-flex w-fit items-center rounded-full bg-green-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-green-700">
+                        <span class="mb-3 inline-flex w-fit items-center rounded-full bg-primary-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-primary-700">
                             Unggulan
                         </span>
                         <h2 class="text-2xl font-extrabold text-slate-900 lg:text-3xl">{{ featured.name }}</h2>
                         <p v-if="featured.description" class="mt-3 leading-relaxed text-slate-500">{{ featured.description }}</p>
-                        <div class="mt-6 flex items-center gap-2 text-sm font-semibold text-green-700">
+                        <div class="mt-6 flex items-center gap-2 text-sm font-semibold text-primary-700">
                             Lihat Detail
                             <svg class="size-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>

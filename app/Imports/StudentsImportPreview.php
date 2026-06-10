@@ -58,17 +58,21 @@ class StudentsImportPreview
 
     private function parseXlsx(string $path): array
     {
-        $spreadsheet = IOFactory::load($path);
+        // setReadDataOnly(true) skip semua styling/formula → jauh lebih cepat
+        $reader = IOFactory::createReaderForFile($path);
+        $reader->setReadDataOnly(true);
+        $spreadsheet = $reader->load($path);
         $sheet       = $spreadsheet->getActiveSheet();
         $rows        = [];
 
         foreach ($sheet->getRowIterator() as $row) {
             $cells = [];
-            foreach ($row->getCellIterator() as $cell) {
-                $val = $cell->getFormattedValue();
-                // Strip leading apostrophe (Excel text-force prefix)
-                $val = ltrim((string) $val, "'");
-                $cells[] = $val;
+            $iter  = $row->getCellIterator();
+            $iter->setIterateOnlyExistingCells(false);
+            foreach ($iter as $cell) {
+                $val     = $cell->getValue();
+                $val     = ltrim((string) $val, "'");
+                $cells[] = trim($val);
             }
             $rows[] = $cells;
         }

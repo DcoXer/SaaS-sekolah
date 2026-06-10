@@ -57,8 +57,8 @@ const formatDate = (val) => {
                 </div>
 
                 <!-- Approved info -->
-                <div v-if="letter.status === 'approved'" class="border-b border-slate-100 bg-emerald-50 px-6 py-3">
-                    <p class="text-xs text-emerald-700">
+                <div v-if="letter.status === 'approved'" class="border-b border-slate-100 bg-primary-50 px-6 py-3">
+                    <p class="text-xs text-primary-700">
                         Disetujui oleh <strong>{{ letter.approved_by?.name ?? '—' }}</strong>
                         pada {{ formatDate(letter.approved_at) }}
                     </p>
@@ -87,22 +87,22 @@ const formatDate = (val) => {
             <!-- Approved: download + verifikasi -->
             <div
                 v-if="letter.status === 'approved' && letter.barcode_code"
-                class="overflow-hidden rounded-xl border border-emerald-200 bg-emerald-50"
+                class="overflow-hidden rounded-xl border border-primary-200 bg-primary-50"
             >
                 <div class="flex items-center justify-between gap-3 px-4 py-3.5">
                     <div class="flex items-center gap-3">
-                        <svg class="size-5 shrink-0 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <svg class="size-5 shrink-0 text-primary-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <div>
-                            <p class="text-sm font-semibold text-emerald-800">Surat disetujui — siap diunduh</p>
-                            <p class="mt-0.5 font-mono text-xs text-emerald-600">{{ letter.barcode_code }}</p>
+                            <p class="text-sm font-semibold text-primary-800">Surat disetujui — siap diunduh</p>
+                            <p class="mt-0.5 font-mono text-xs text-primary-600">{{ letter.barcode_code }}</p>
                         </div>
                     </div>
                     <a
                         :href="route('siswa.letters.pdf', letter.id)"
                         target="_blank"
-                        class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-700"
+                        class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary-600 px-3.5 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-700"
                     >
                         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />

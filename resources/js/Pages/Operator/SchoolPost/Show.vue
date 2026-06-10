@@ -69,7 +69,7 @@ const doDeleteImage = () => {
                                     class="rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide">
                                     {{ post.category === 'pengumuman' ? 'Pengumuman' : 'Berita' }}
                                 </span>
-                                <span :class="post.is_published ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'"
+                                <span :class="post.is_published ? 'bg-primary-100 text-primary-700' : 'bg-slate-100 text-slate-500'"
                                     class="rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide">
                                     {{ post.is_published ? 'Published' : 'Draft' }}
                                 </span>
@@ -95,7 +95,7 @@ const doDeleteImage = () => {
                         <h3 class="text-sm font-bold text-slate-800">Foto Konten</h3>
                         <p class="text-xs text-slate-500 mt-0.5">Foto-foto yang ditampilkan sebagai galeri di halaman detail berita.</p>
                     </div>
-                    <label class="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-emerald-500 px-3.5 py-2 text-xs font-semibold text-white hover:bg-emerald-600 transition-colors"
+                    <label class="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-primary-500 px-3.5 py-2 text-xs font-semibold text-white hover:bg-primary-600 transition-colors"
                         :class="uploading ? 'opacity-60 pointer-events-none' : ''">
                         <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
@@ -123,7 +123,7 @@ const doDeleteImage = () => {
                     </div>
 
                     <!-- Upload slot -->
-                    <label class="flex aspect-video cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 transition-colors hover:border-emerald-400 hover:bg-emerald-50"
+                    <label class="flex aspect-video cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 transition-colors hover:border-primary-400 hover:bg-primary-50"
                         :class="uploading ? 'opacity-60 pointer-events-none' : ''">
                         <svg class="size-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>

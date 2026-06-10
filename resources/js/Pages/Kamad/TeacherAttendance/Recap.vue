@@ -65,13 +65,13 @@ const typeLabel = { guru_kelas: 'Guru Kelas', guru_bidang: 'Guru Bidang' };
             </div>
         </template>
 
-        <div class="mx-auto max-w-6xl space-y-6 p-6">
+        <div class="mx-auto max-w-6xl space-y-6">
 
             <!-- Summary cards -->
             <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
-                <div class="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
-                    <p class="text-xs font-semibold uppercase tracking-wide text-emerald-600">Total Hadir</p>
-                    <p class="mt-1 text-3xl font-extrabold text-emerald-700">{{ totals.hadir }}</p>
+                <div class="rounded-2xl border border-primary-100 bg-primary-50 p-4">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-primary-600">Total Hadir</p>
+                    <p class="mt-1 text-3xl font-extrabold text-primary-700">{{ totals.hadir }}</p>
                 </div>
                 <div class="rounded-2xl border border-sky-100 bg-sky-50 p-4">
                     <p class="text-xs font-semibold uppercase tracking-wide text-sky-600">Total Izin</p>
@@ -121,7 +121,7 @@ const typeLabel = { guru_kelas: 'Guru Kelas', guru_bidang: 'Guru Bidang' };
                                     </span>
                                 </td>
                                 <td class="px-5 py-3.5 text-center">
-                                    <span class="inline-flex size-8 items-center justify-center rounded-xl bg-emerald-50 text-sm font-bold text-emerald-700">
+                                    <span class="inline-flex size-8 items-center justify-center rounded-xl bg-primary-50 text-sm font-bold text-primary-700">
                                         {{ row.hadir }}
                                     </span>
                                 </td>
@@ -146,7 +146,7 @@ const typeLabel = { guru_kelas: 'Guru Kelas', guru_bidang: 'Guru Bidang' };
                                     <template v-if="row.total > 0">
                                         <div class="flex items-center gap-2">
                                             <div class="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
-                                                <div class="h-full rounded-full bg-emerald-500 transition-all"
+                                                <div class="h-full rounded-full bg-primary-500 transition-all"
                                                     :style="{ width: ((row.hadir / row.total) * 100).toFixed(0) + '%' }" />
                                             </div>
                                             <span class="w-10 text-right text-xs font-semibold text-slate-600">
@@ -161,13 +161,13 @@ const typeLabel = { guru_kelas: 'Guru Kelas', guru_bidang: 'Guru Bidang' };
                         <tfoot v-if="recap.length" class="border-t-2 border-slate-200 bg-slate-50">
                             <tr class="text-sm font-bold text-slate-700">
                                 <td class="px-5 py-3.5" colspan="2">Total ({{ recap.length }} guru)</td>
-                                <td class="px-5 py-3.5 text-center text-emerald-700">{{ totals.hadir }}</td>
+                                <td class="px-5 py-3.5 text-center text-primary-700">{{ totals.hadir }}</td>
                                 <td class="px-5 py-3.5 text-center text-sky-700">{{ totals.izin }}</td>
                                 <td class="px-5 py-3.5 text-center text-amber-700">{{ totals.sakit }}</td>
                                 <td class="px-5 py-3.5 text-center text-red-700">{{ totals.alpha }}</td>
                                 <td class="px-5 py-3.5 text-center">{{ totals.total }}</td>
                                 <td class="px-5 py-3.5 text-center">
-                                    <span v-if="totals.total > 0" class="text-sm font-bold text-emerald-700">
+                                    <span v-if="totals.total > 0" class="text-sm font-bold text-primary-700">
                                         {{ ((totals.hadir / totals.total) * 100).toFixed(0) }}%
                                     </span>
                                 </td>

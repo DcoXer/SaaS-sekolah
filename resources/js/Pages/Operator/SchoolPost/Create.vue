@@ -26,7 +26,7 @@ const submit = () => {
     form.post(route('operator.school-posts.store'), { forceFormData: true });
 };
 
-const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20';
+const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20';
 
 const categoryOptions = [
     { value: 'berita',     label: 'Berita' },
@@ -86,7 +86,7 @@ const categoryOptions = [
                             <p v-if="form.errors.category" class="mt-1 text-xs text-red-500">{{ form.errors.category }}</p>
                         </div>
                         <div class="flex items-center gap-2.5 pb-0.5">
-                            <input id="is_published" v-model="form.is_published" type="checkbox" class="size-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-400" />
+                            <input id="is_published" v-model="form.is_published" type="checkbox" class="size-4 rounded border-slate-300 text-primary-500 focus:ring-primary-400" />
                             <label for="is_published" class="text-sm font-medium text-slate-700 cursor-pointer">Langsung publikasikan</label>
                         </div>
                     </div>
@@ -142,7 +142,7 @@ const categoryOptions = [
                         <button
                             type="submit"
                             :disabled="form.processing"
-                            class="rounded-lg bg-emerald-500 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60 transition-colors"
+                            class="rounded-lg bg-primary-500 px-5 py-2 text-sm font-semibold text-white hover:bg-primary-600 disabled:opacity-60 transition-colors"
                         >
                             {{ form.processing ? 'Menyimpan...' : 'Buat Post' }}
                         </button>

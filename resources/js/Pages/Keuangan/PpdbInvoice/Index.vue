@@ -21,7 +21,7 @@ const formatDate = (val) => {
 const statusColor = {
     unpaid:  'bg-red-100 text-red-700 ring-1 ring-red-200',
     partial: 'bg-amber-100 text-amber-700 ring-1 ring-amber-200',
-    paid:    'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-200',
+    paid:    'bg-primary-100 text-primary-700 ring-1 ring-primary-200',
 };
 const statusLabel = {
     unpaid:  'Belum Bayar',
@@ -83,7 +83,7 @@ const submitPay = () => {
         <div class="space-y-6">
 
             <!-- Header -->
-            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-600 via-emerald-500 to-teal-500 px-6 py-6 shadow-lg shadow-emerald-200/60">
+            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-600 via-primary-500 to-teal-500 px-6 py-6 shadow-lg shadow-primary-200/60">
                 <div class="pointer-events-none absolute -right-8 -top-8 size-40 rounded-full bg-white/10"></div>
                 <div class="pointer-events-none absolute -bottom-10 right-16 size-28 rounded-full bg-white/8"></div>
                 <div class="relative flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -95,7 +95,7 @@ const submitPay = () => {
                         </div>
                         <div>
                             <h1 class="text-xl font-bold text-white">Tagihan PPDB</h1>
-                            <p class="mt-0.5 text-sm text-emerald-100">Uang masuk pendaftar yang telah diterima</p>
+                            <p class="mt-0.5 text-sm text-primary-100">Uang masuk pendaftar yang telah diterima</p>
                         </div>
                     </div>
                 </div>
@@ -108,7 +108,7 @@ const submitPay = () => {
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
                     </svg>
                     <input v-model="search" type="search" placeholder="Cari nama, no. daftar, telepon..."
-                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"
+                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-400/20"
                         @keyup.enter="applyFilter"/>
                 </div>
                 <FilterSelect
@@ -122,7 +122,7 @@ const submitPay = () => {
                     ]"
                 />
                 <button @click="applyFilter"
-                    class="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-500">
+                    class="rounded-xl bg-primary-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-500">
                     Filter
                 </button>
             </div>
@@ -154,7 +154,7 @@ const submitPay = () => {
                             </div>
                             <div class="flex shrink-0 items-center gap-1 ml-2">
                                 <button v-if="inv.status !== 'paid'" @click="openPay(inv)" title="Catat Pembayaran"
-                                    class="flex size-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 transition-colors hover:bg-emerald-100">
+                                    class="flex size-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600 transition-colors hover:bg-primary-100">
                                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/>
                                     </svg>
@@ -172,7 +172,7 @@ const submitPay = () => {
                         <div class="flex flex-wrap items-center gap-1.5 border-t border-slate-100 px-4 py-2.5">
                             <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold" :class="statusColor[inv.status]">
                                 <span class="size-1.5 rounded-full"
-                                    :class="{ 'bg-red-500': inv.status === 'unpaid', 'bg-amber-500': inv.status === 'partial', 'bg-emerald-500': inv.status === 'paid' }"/>
+                                    :class="{ 'bg-red-500': inv.status === 'unpaid', 'bg-amber-500': inv.status === 'partial', 'bg-primary-500': inv.status === 'paid' }"/>
                                 {{ statusLabel[inv.status] }}
                             </span>
                             <span class="text-xs font-semibold tabular-nums text-slate-700">{{ formatRupiah(inv.amount) }}</span>
@@ -219,14 +219,14 @@ const submitPay = () => {
                                     <td class="px-4 py-3">
                                         <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold" :class="statusColor[inv.status]">
                                             <span class="size-1.5 rounded-full"
-                                                :class="{ 'bg-red-500': inv.status === 'unpaid', 'bg-amber-500': inv.status === 'partial', 'bg-emerald-500': inv.status === 'paid' }"/>
+                                                :class="{ 'bg-red-500': inv.status === 'unpaid', 'bg-amber-500': inv.status === 'partial', 'bg-primary-500': inv.status === 'paid' }"/>
                                             {{ statusLabel[inv.status] }}
                                         </span>
                                     </td>
                                     <td class="px-4 py-3">
                                         <div class="flex items-center gap-1.5">
                                             <button v-if="inv.status !== 'paid'" @click="openPay(inv)" title="Catat Pembayaran"
-                                                class="flex size-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 transition-colors hover:bg-emerald-100">
+                                                class="flex size-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600 transition-colors hover:bg-primary-100">
                                                 <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/>
                                                 </svg>
@@ -255,7 +255,7 @@ const submitPay = () => {
                                 v-html="link.label"
                                 class="rounded-lg px-3 py-1.5 text-xs font-medium transition-colors"
                                 :class="link.active
-                                    ? 'bg-emerald-600 text-white'
+                                    ? 'bg-primary-600 text-white'
                                     : link.url ? 'border border-slate-200 text-slate-600 hover:bg-slate-50' : 'cursor-not-allowed text-slate-300 pointer-events-none'"
                             />
                         </div>
@@ -271,7 +271,7 @@ const submitPay = () => {
                             v-html="link.label"
                             class="rounded-lg px-3 py-1.5 text-xs font-medium transition-colors"
                             :class="link.active
-                                ? 'bg-emerald-600 text-white'
+                                ? 'bg-primary-600 text-white'
                                 : link.url ? 'border border-slate-200 text-slate-600 hover:bg-slate-50' : 'cursor-not-allowed text-slate-300 pointer-events-none'"
                         />
                     </div>
@@ -300,7 +300,7 @@ const submitPay = () => {
                     </div>
                     <div class="mt-1 flex justify-between">
                         <span class="text-slate-500">Sudah Bayar</span>
-                        <span class="font-semibold text-emerald-600">{{ formatRupiah(payTarget?.total_paid) }}</span>
+                        <span class="font-semibold text-primary-600">{{ formatRupiah(payTarget?.total_paid) }}</span>
                     </div>
                     <div class="mt-1 flex justify-between border-t border-slate-200 pt-1">
                         <span class="font-semibold text-slate-700">Sisa</span>
@@ -314,7 +314,7 @@ const submitPay = () => {
                     <div class="relative">
                         <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400">Rp</span>
                         <input v-model="payForm.amount" type="number" min="1000" :max="payTarget?.remaining_amount"
-                            class="w-full rounded-xl border py-2.5 pl-9 pr-4 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+                            class="w-full rounded-xl border py-2.5 pl-9 pr-4 text-sm outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100"
                             :class="payForm.errors.amount ? 'border-red-300 bg-red-50' : 'border-slate-200'"/>
                     </div>
                     <p v-if="payForm.errors.amount" class="mt-1 text-xs text-red-500">{{ payForm.errors.amount }}</p>
@@ -324,14 +324,14 @@ const submitPay = () => {
                 <div>
                     <label class="mb-1.5 block text-xs font-semibold text-slate-700">Catatan</label>
                     <input v-model="payForm.note" type="text" placeholder="Opsional"
-                        class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"/>
+                        class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100"/>
                 </div>
 
                 <!-- Bukti -->
                 <div>
                     <label class="mb-1.5 block text-xs font-semibold text-slate-700">Bukti Pembayaran</label>
                     <input type="file" accept=".jpg,.jpeg,.png,.pdf" @change="onProofChange"
-                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-emerald-700 hover:file:bg-emerald-100"/>
+                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-primary-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-primary-700 hover:file:bg-primary-100"/>
                     <p v-if="payForm.errors.proof_file" class="mt-1 text-xs text-red-500">{{ payForm.errors.proof_file }}</p>
                 </div>
 
@@ -341,7 +341,7 @@ const submitPay = () => {
                         Batal
                     </button>
                     <button type="submit" :disabled="payForm.processing"
-                        class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-5 py-2 text-sm font-bold text-white transition-colors hover:bg-emerald-500 disabled:opacity-60">
+                        class="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-5 py-2 text-sm font-bold text-white transition-colors hover:bg-primary-500 disabled:opacity-60">
                         <svg v-if="payForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
                         Simpan Pembayaran
                     </button>

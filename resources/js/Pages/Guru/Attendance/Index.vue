@@ -223,7 +223,7 @@ function handleCellClick(entry) {
         <div class="space-y-5 pb-8">
 
             <!-- ── Summary banner ─────────────────────────────────────────── -->
-            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 p-5 shadow-lg shadow-emerald-200">
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary-500 via-teal-500 to-cyan-600 p-5 shadow-lg shadow-primary-200">
                 <div class="pointer-events-none absolute -right-6 -top-6 size-36 rounded-full bg-white/10 blur-2xl" />
                 <div class="pointer-events-none absolute -bottom-4 left-1/3 size-24 rounded-full bg-white/10 blur-xl" />
 
@@ -236,7 +236,7 @@ function handleCellClick(entry) {
                         </svg>
                     </button>
                     <div class="text-center">
-                        <p class="text-xs font-semibold uppercase tracking-widest text-emerald-100">Absensi Saya</p>
+                        <p class="text-xs font-semibold uppercase tracking-widest text-primary-100">Absensi Saya</p>
                         <h2 class="text-lg font-extrabold text-white">{{ monthNames[currentMonth] }} {{ currentYear }}</h2>
                     </div>
                     <button @click="nextMonth" :disabled="isCurrentMonth"
@@ -248,22 +248,22 @@ function handleCellClick(entry) {
                 </div>
 
                 <!-- Stats -->
-                <div class="relative grid grid-cols-4 gap-2">
+                <div class="relative grid grid-cols-2 gap-2 sm:grid-cols-4">
                     <div class="flex flex-col items-center gap-0.5 rounded-2xl bg-white/15 py-3 backdrop-blur-sm">
                         <span class="tabular-nums text-xl font-extrabold text-white">{{ summary.hadir }}</span>
-                        <span class="text-[11px] font-semibold text-emerald-100">Hadir</span>
+                        <span class="text-[11px] font-semibold text-primary-100">Hadir</span>
                     </div>
                     <div class="flex flex-col items-center gap-0.5 rounded-2xl bg-white/15 py-3 backdrop-blur-sm">
                         <span class="tabular-nums text-xl font-extrabold text-white">{{ summary.izin }}</span>
-                        <span class="text-[11px] font-semibold text-emerald-100">Izin</span>
+                        <span class="text-[11px] font-semibold text-primary-100">Izin</span>
                     </div>
                     <div class="flex flex-col items-center gap-0.5 rounded-2xl bg-white/15 py-3 backdrop-blur-sm">
                         <span class="tabular-nums text-xl font-extrabold text-white">{{ summary.sakit }}</span>
-                        <span class="text-[11px] font-semibold text-emerald-100">Sakit</span>
+                        <span class="text-[11px] font-semibold text-primary-100">Sakit</span>
                     </div>
                     <div class="flex flex-col items-center gap-0.5 rounded-2xl bg-white/15 py-3 backdrop-blur-sm">
                         <span class="tabular-nums text-xl font-extrabold text-white">{{ summary.alpha }}</span>
-                        <span class="text-[11px] font-semibold text-emerald-100">Alpha</span>
+                        <span class="text-[11px] font-semibold text-primary-100">Alpha</span>
                     </div>
                 </div>
 
@@ -272,7 +272,7 @@ function handleCellClick(entry) {
                     <div class="flex h-1.5 overflow-hidden rounded-full bg-white/20">
                         <div class="h-full bg-white transition-all" :style="{ width: hadirPct + '%' }" />
                     </div>
-                    <p class="mt-1.5 text-right text-xs font-semibold text-emerald-100">
+                    <p class="mt-1.5 text-right text-xs font-semibold text-primary-100">
                         {{ hadirPct }}% kehadiran · {{ summary.total }} hari tercatat
                     </p>
                 </div>
@@ -330,20 +330,20 @@ function handleCellClick(entry) {
             <!-- ── Today CTA ───────────────────────────────────────────────── -->
             <div v-if="isCurrentMonth && todayEntry && !todayEntry.is_weekend"
                 class="overflow-hidden rounded-2xl border bg-white shadow-sm"
-                :class="todayEntry.attendance ? 'border-slate-100' : 'border-emerald-200 shadow-emerald-100'">
+                :class="todayEntry.attendance ? 'border-slate-100' : 'border-primary-200 shadow-primary-100'">
                 <div class="flex flex-wrap items-center gap-3 px-5 py-4">
                     <div class="flex size-11 shrink-0 items-center justify-center rounded-2xl"
                         :class="todayEntry.attendance
                             ? (statusConfig[todayEntry.attendance.status]?.light ?? 'bg-slate-100')
-                            : 'bg-emerald-50 ring-4 ring-emerald-100'">
-                        <svg v-if="!todayEntry.attendance" class="size-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+                            : 'bg-primary-50 ring-4 ring-primary-100'">
+                        <svg v-if="!todayEntry.attendance" class="size-5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                         </svg>
                         <span v-else class="size-3 rounded-full" :class="statusConfig[todayEntry.attendance.status]?.dot"></span>
                     </div>
                     <div class="min-w-0 flex-1">
                         <p class="text-[11px] font-bold uppercase tracking-wider"
-                            :class="todayEntry.attendance ? 'text-slate-400' : 'text-emerald-600'">Hari Ini</p>
+                            :class="todayEntry.attendance ? 'text-slate-400' : 'text-primary-600'">Hari Ini</p>
                         <p class="text-sm font-bold text-slate-900">
                             {{ todayEntry.day_name }}, {{ todayEntry.day }} {{ monthNames[currentMonth] }}
                         </p>
@@ -364,7 +364,7 @@ function handleCellClick(entry) {
                             </button>
                         </template>
                         <button v-else @click="openAdd(todayEntry.date)"
-                            class="inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-bold text-white shadow-sm shadow-emerald-200 transition hover:bg-emerald-600 active:scale-95">
+                            class="inline-flex items-center gap-2 rounded-xl bg-primary-500 px-4 py-2.5 text-sm font-bold text-white shadow-sm shadow-primary-200 transition hover:bg-primary-600 active:scale-95">
                             <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
                             </svg>
@@ -396,7 +396,7 @@ function handleCellClick(entry) {
                         class="relative flex min-h-[3.75rem] flex-col items-center pt-2.5 bg-white transition-colors"
                         :class="[
                             entry.is_weekend ? 'bg-slate-50/60' : '',
-                            entry.date === todayStr ? 'bg-emerald-50/40' : '',
+                            entry.date === todayStr ? 'bg-primary-50/40' : '',
                             !entry.is_weekend && entry.date <= todayStr ? 'cursor-pointer hover:bg-slate-50' : '',
                         ]"
                         @click="handleCellClick(entry)"
@@ -404,7 +404,7 @@ function handleCellClick(entry) {
                         <!-- Day number -->
                         <span class="flex size-7 items-center justify-center rounded-full text-xs font-bold transition-colors"
                             :class="entry.date === todayStr
-                                ? 'bg-emerald-500 text-white shadow-sm'
+                                ? 'bg-primary-500 text-white shadow-sm'
                                 : entry.is_weekend
                                     ? 'text-red-300'
                                     : entry.date > todayStr
@@ -420,7 +420,7 @@ function handleCellClick(entry) {
                                     :class="statusConfig[entry.attendance.status]?.dot ?? 'bg-slate-300'" />
                                 <span class="hidden text-[9px] font-bold sm:block"
                                     :class="{
-                                        'text-emerald-600': entry.attendance.status === 'hadir',
+                                        'text-primary-600': entry.attendance.status === 'hadir',
                                         'text-sky-600':     entry.attendance.status === 'izin',
                                         'text-amber-600':   entry.attendance.status === 'sakit',
                                         'text-red-500':     entry.attendance.status === 'alpha',
@@ -458,17 +458,17 @@ function handleCellClick(entry) {
                     <template v-for="entry in [...calendar].reverse()" :key="entry.date">
                         <li v-if="!entry.is_weekend && entry.date <= todayStr"
                             class="group flex items-center gap-3.5 px-5 py-3 transition-colors"
-                            :class="entry.date === todayStr ? 'bg-emerald-50/50' : 'hover:bg-slate-50/70'"
+                            :class="entry.date === todayStr ? 'bg-primary-50/50' : 'hover:bg-slate-50/70'"
                         >
                             <!-- Day badge -->
                             <div class="flex size-9 shrink-0 flex-col items-center justify-center rounded-xl text-center"
-                                :class="entry.date === todayStr ? 'bg-emerald-500 shadow-sm shadow-emerald-200' : 'bg-slate-100'">
+                                :class="entry.date === todayStr ? 'bg-primary-500 shadow-sm shadow-primary-200' : 'bg-slate-100'">
                                 <span class="text-xs font-extrabold leading-none"
                                     :class="entry.date === todayStr ? 'text-white' : 'text-slate-700'">
                                     {{ entry.day }}
                                 </span>
                                 <span class="text-[9px] font-semibold"
-                                    :class="entry.date === todayStr ? 'text-emerald-100' : 'text-slate-400'">
+                                    :class="entry.date === todayStr ? 'text-primary-100' : 'text-slate-400'">
                                     {{ entry.day_name.slice(0, 3) }}
                                 </span>
                             </div>
@@ -478,7 +478,7 @@ function handleCellClick(entry) {
                                 <div class="flex flex-wrap items-center gap-2">
                                     <span class="text-sm font-semibold text-slate-800">{{ entry.day_name }}</span>
                                     <span v-if="entry.date === todayStr"
-                                        class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                                        class="rounded-full bg-primary-100 px-2 py-0.5 text-[10px] font-bold text-primary-700">
                                         Hari ini
                                     </span>
                                 </div>
@@ -502,7 +502,7 @@ function handleCellClick(entry) {
                             <!-- Actions -->
                             <div class="flex shrink-0 gap-1.5 opacity-0 transition-opacity group-hover:opacity-100">
                                 <button v-if="!entry.attendance" @click="openAdd(entry.date)"
-                                    class="rounded-lg bg-emerald-500 px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-emerald-600">
+                                    class="rounded-lg bg-primary-500 px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-primary-600">
                                     Input
                                 </button>
                                 <template v-if="entry.attendance">
@@ -527,8 +527,8 @@ function handleCellClick(entry) {
         <Modal :show="showAdd" @close="showAdd = false" max-width="sm">
             <div class="overflow-hidden rounded-2xl">
                 <!-- Modal header -->
-                <div class="bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-5">
-                    <p class="text-xs font-bold uppercase tracking-widest text-emerald-100">Input Absensi</p>
+                <div class="bg-gradient-to-r from-primary-500 to-teal-500 px-6 py-5">
+                    <p class="text-xs font-bold uppercase tracking-widest text-primary-100">Input Absensi</p>
                     <h3 class="mt-0.5 text-lg font-extrabold text-white">
                         {{ addForm.date ? new Date(addForm.date + 'T00:00:00').toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : '' }}
                     </h3>
@@ -549,13 +549,13 @@ function handleCellClick(entry) {
                         </div>
 
                         <div v-else-if="geoStatus === 'success' && isInRange" class="flex items-center gap-2.5">
-                            <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-100">
+                            <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary-100">
                                 <svg class="size-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-sm font-bold text-emerald-700">Dalam jangkauan sekolah</p>
+                                <p class="text-sm font-bold text-primary-700">Dalam jangkauan sekolah</p>
                                 <p class="text-xs text-slate-500">{{ fmtDist(geoDistance) }} dari sekolah · batas {{ fmtDist(schoolRadius) }}</p>
                             </div>
                         </div>
@@ -604,7 +604,7 @@ function handleCellClick(entry) {
                         <div v-else class="flex items-center justify-between">
                             <p class="text-sm text-slate-500">Lokasi belum diverifikasi.</p>
                             <button @click="checkGeo"
-                                class="rounded-xl bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-600">
+                                class="rounded-xl bg-primary-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-primary-600">
                                 Ambil Lokasi
                             </button>
                         </div>
@@ -630,7 +630,7 @@ function handleCellClick(entry) {
                                         ? 'cursor-not-allowed opacity-40 border-slate-100'
                                         : 'cursor-pointer',
                                     addForm.status === val
-                                        ? 'border-emerald-400 bg-emerald-50/70 shadow-sm'
+                                        ? 'border-primary-400 bg-primary-50/70 shadow-sm'
                                         : 'border-slate-150 hover:border-slate-200 hover:bg-slate-50',
                                 ]">
                                 <input type="radio" v-model="addForm.status" :value="val" class="sr-only"
@@ -655,7 +655,7 @@ function handleCellClick(entry) {
                         </label>
                         <input v-model="addForm.notes" type="text"
                             placeholder="Contoh: izin keperluan keluarga"
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none transition focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"/>
+                            class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none transition focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-400/20"/>
                         <p v-if="addForm.errors.notes" class="mt-1 text-xs text-red-500">{{ addForm.errors.notes }}</p>
                     </div>
 
@@ -666,7 +666,7 @@ function handleCellClick(entry) {
                             Batal
                         </button>
                         <button @click="submitAdd" :disabled="addForm.processing || !canSubmitAdd"
-                            class="flex-1 rounded-xl bg-emerald-500 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-600 disabled:opacity-50">
+                            class="flex-1 rounded-xl bg-primary-500 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-primary-600 disabled:opacity-50">
                             {{ addForm.processing ? 'Menyimpan...' : 'Simpan' }}
                         </button>
                     </div>

@@ -8,7 +8,7 @@ class StoreSchoolPostRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->hasRole('operator');
     }
 
     public function rules(): array

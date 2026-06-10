@@ -58,16 +58,20 @@ class TeachersImportPreview
 
     private function parseXlsx(string $path): array
     {
-        $spreadsheet = IOFactory::load($path);
+        $reader = IOFactory::createReaderForFile($path);
+        $reader->setReadDataOnly(true);
+        $spreadsheet = $reader->load($path);
         $sheet       = $spreadsheet->getActiveSheet();
         $rows        = [];
 
         foreach ($sheet->getRowIterator() as $row) {
             $cells = [];
-            foreach ($row->getCellIterator() as $cell) {
-                $val = $cell->getFormattedValue();
-                $val = ltrim((string) $val, "'");
-                $cells[] = $val;
+            $iter  = $row->getCellIterator();
+            $iter->setIterateOnlyExistingCells(false);
+            foreach ($iter as $cell) {
+                $val     = $cell->getValue();
+                $val     = ltrim((string) $val, "'");
+                $cells[] = trim($val);
             }
             $rows[] = $cells;
         }

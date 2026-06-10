@@ -1,7 +1,8 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Head, useForm, router } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { Head, useForm, router, usePage } from '@inertiajs/vue3';
+import { ref, computed, watch } from 'vue';
+import { applyPrimaryColor } from '@/utils/colorShades.js';
 
 const props = defineProps({
     setting:    { type: Object, default: null },
@@ -15,6 +16,7 @@ const tabs = [
     { key: 'profil',    label: 'Profil' },
     { key: 'lokasi',    label: 'Lokasi & Absensi' },
     { key: 'media',     label: 'Media' },
+    { key: 'tampilan',  label: 'Tampilan' },
 ];
 
 const form = useForm({
@@ -36,6 +38,12 @@ const form = useForm({
     history:            props.setting?.history            ?? '',
     logo:               null,
     stamp:              null,
+    primary_color:      props.setting?.primary_color ?? '#10b981',
+});
+
+// Live preview: apply color changes langsung ke halaman
+watch(() => form.primary_color, (hex) => {
+    if (/^#[0-9a-fA-F]{6}$/.test(hex)) applyPrimaryColor(hex);
 });
 
 // Error badge per tab
@@ -44,7 +52,22 @@ const tabErrors = computed(() => ({
     profil:    ['description','vision','mission','history'].some(k => form.errors[k]),
     lokasi:    ['latitude','longitude','attendance_radius'].some(k => form.errors[k]),
     media:     ['logo','stamp'].some(k => form.errors[k]),
+    tampilan:  ['primary_color'].some(k => form.errors[k]),
 }));
+
+// Preset warna populer
+const colorPresets = [
+    { label: 'Hijau (default)', value: '#10b981' },
+    { label: 'Biru',            value: '#3b82f6' },
+    { label: 'Indigo',          value: '#6366f1' },
+    { label: 'Ungu',            value: '#8b5cf6' },
+    { label: 'Merah',           value: '#ef4444' },
+    { label: 'Oranye',          value: '#f97316' },
+    { label: 'Kuning',          value: '#eab308' },
+    { label: 'Teal',            value: '#14b8a6' },
+    { label: 'Pink',            value: '#ec4899' },
+    { label: 'Slate',           value: '#64748b' },
+];
 
 // ── Logo & Stempel preview ────────────────────────────────────────────────────
 const logoPreview  = ref(props.setting?.logo  ? `/storage/${props.setting.logo}`  : null);
@@ -100,7 +123,7 @@ const submit = () => {
 
 // shared input class
 const inp = (err) => [
-    'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+    'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
     err ? 'border-red-400' : 'border-slate-200',
 ];
 </script>
@@ -128,7 +151,7 @@ const inp = (err) => [
                 <button
                     type="submit"
                     :disabled="form.processing"
-                    class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60"
+                    class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-primary-600 disabled:opacity-60"
                 >
                     <svg v-if="form.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -364,7 +387,7 @@ const inp = (err) => [
                         <div v-for="page in heroPages" :key="page.key" class="px-6 py-5">
                             <div class="mb-3 flex items-center justify-between gap-3">
                                 <span class="text-xs font-semibold text-slate-700">{{ page.label }}</span>
-                                <label class="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition-[background-color] duration-150 hover:bg-emerald-100">
+                                <label class="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-primary-200 bg-primary-50 px-3 py-1.5 text-xs font-semibold text-primary-700 transition-[background-color] duration-150 hover:bg-primary-100">
                                     <svg v-if="uploadingPage === page.key" class="size-3.5 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                                     </svg>
@@ -404,6 +427,95 @@ const inp = (err) => [
                             </div>
                             <p v-else class="text-xs text-slate-400 italic">Belum ada foto — tampil gradien hijau default.</p>
                         </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── Tab: Tampilan ─────────────────────────────────────────── -->
+            <div v-show="activeTab === 'tampilan'" class="space-y-5">
+
+                <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                    <div class="border-b border-slate-100 px-6 py-4">
+                        <h3 class="text-sm font-bold text-slate-800">Warna Utama Website</h3>
+                        <p class="mt-0.5 text-xs text-slate-400">
+                            Warna ini dipakai untuk tombol, navigasi aktif, dan elemen interaktif di seluruh aplikasi. Perubahan langsung terlihat sebagai preview.
+                        </p>
+                    </div>
+                    <div class="px-6 py-5 space-y-6">
+
+                        <!-- Color picker + hex input -->
+                        <div>
+                            <label class="mb-2 block text-xs font-semibold text-slate-600">Pilih Warna</label>
+                            <div class="flex items-center gap-3">
+                                <!-- Native color picker -->
+                                <label class="relative cursor-pointer">
+                                    <div
+                                        class="size-10 rounded-lg border-2 border-slate-200 shadow-sm transition-[border-color] hover:border-slate-400 overflow-hidden"
+                                        :style="{ backgroundColor: form.primary_color }"
+                                    />
+                                    <input
+                                        type="color"
+                                        v-model="form.primary_color"
+                                        class="absolute inset-0 opacity-0 cursor-pointer"
+                                    />
+                                </label>
+                                <!-- Hex input -->
+                                <input
+                                    v-model="form.primary_color"
+                                    type="text"
+                                    maxlength="7"
+                                    placeholder="#10b981"
+                                    :class="inp(form.errors.primary_color)"
+                                    class="!w-36 font-mono uppercase"
+                                />
+                                <!-- Preview badge -->
+                                <div class="flex items-center gap-2">
+                                    <span
+                                        class="inline-flex items-center rounded-lg px-3 py-1.5 text-sm font-semibold text-white shadow-sm"
+                                        :style="{ backgroundColor: form.primary_color }"
+                                    >
+                                        Preview Tombol
+                                    </span>
+                                </div>
+                            </div>
+                            <p v-if="form.errors.primary_color" class="mt-1.5 text-xs text-red-500">{{ form.errors.primary_color }}</p>
+                        </div>
+
+                        <!-- Preset colors -->
+                        <div>
+                            <label class="mb-2 block text-xs font-semibold text-slate-600">Warna Preset</label>
+                            <div class="flex flex-wrap gap-2">
+                                <button
+                                    v-for="preset in colorPresets"
+                                    :key="preset.value"
+                                    type="button"
+                                    @click="form.primary_color = preset.value"
+                                    :title="preset.label"
+                                    class="group relative flex size-9 items-center justify-center rounded-lg border-2 shadow-sm transition-[transform,border-color] duration-150 hover:scale-110"
+                                    :style="{ backgroundColor: preset.value }"
+                                    :class="form.primary_color === preset.value ? 'border-slate-700 scale-110' : 'border-transparent'"
+                                >
+                                    <svg
+                                        v-if="form.primary_color === preset.value"
+                                        class="size-4 text-white drop-shadow"
+                                        fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"
+                                    >
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="mt-2 text-xs text-slate-400">Klik preset untuk langsung apply. Bisa juga ketik kode hex sendiri di atas.</p>
+                        </div>
+
+                        <!-- Info -->
+                        <div class="rounded-lg bg-slate-50 border border-slate-200 px-4 py-3 text-xs text-slate-500 space-y-1">
+                            <p class="font-semibold text-slate-700">Catatan:</p>
+                            <p>• Preview warna langsung terlihat tanpa harus simpan dulu.</p>
+                            <p>• Klik <span class="font-semibold">Simpan</span> di atas untuk menyimpan pilihan warna secara permanen.</p>
+                            <p>• Warna yang terlalu terang mungkin sulit dibaca — pilih warna dengan kontras cukup.</p>
+                        </div>
+
                     </div>
                 </div>
 

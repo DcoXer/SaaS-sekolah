@@ -52,7 +52,7 @@ const check = () => {
 
 const statusColor = {
     pending:    'bg-amber-100 text-amber-800 border-amber-200',
-    accepted:   'bg-green-100 text-green-800 border-green-200',
+    accepted:   'bg-primary-100 text-primary-800 border-primary-200',
     rejected:   'bg-red-100 text-red-800 border-red-200',
     waitlisted: 'bg-sky-100 text-sky-800 border-sky-200',
 };
@@ -130,7 +130,7 @@ const statusIcon = {
                 <!-- Status header -->
                 <div class="px-8 py-6" :class="{
                     'bg-amber-50 border-b border-amber-100': result.status === 'pending',
-                    'bg-green-50 border-b border-green-100': result.status === 'accepted',
+                    'bg-primary-50 border-b border-primary-100': result.status === 'accepted',
                     'bg-red-50 border-b border-red-100':    result.status === 'rejected',
                     'bg-sky-50 border-b border-sky-100':    result.status === 'waitlisted',
                 }">
@@ -138,13 +138,13 @@ const statusIcon = {
                         <div class="flex size-14 shrink-0 items-center justify-center rounded-2xl"
                             :class="{
                                 'bg-amber-100': result.status === 'pending',
-                                'bg-green-100': result.status === 'accepted',
+                                'bg-primary-100': result.status === 'accepted',
                                 'bg-red-100':   result.status === 'rejected',
                                 'bg-sky-100':   result.status === 'waitlisted',
                             }">
                             <svg class="size-7" :class="{
                                 'text-amber-600': result.status === 'pending',
-                                'text-green-600': result.status === 'accepted',
+                                'text-primary-600': result.status === 'accepted',
                                 'text-red-600':   result.status === 'rejected',
                                 'text-sky-600':   result.status === 'waitlisted',
                             }" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
@@ -155,7 +155,7 @@ const statusIcon = {
                             <p class="text-xs font-bold uppercase tracking-widest"
                                 :class="{
                                     'text-amber-600': result.status === 'pending',
-                                    'text-green-600': result.status === 'accepted',
+                                    'text-primary-600': result.status === 'accepted',
                                     'text-red-600':   result.status === 'rejected',
                                     'text-sky-600':   result.status === 'waitlisted',
                                 }">Status Pendaftaran</p>
@@ -207,17 +207,17 @@ const statusIcon = {
                     <!-- Info tagihan DP (hanya jika diterima & ada invoice) -->
                     <div v-if="result.status === 'accepted' && invoice" class="py-4">
                         <p class="mb-3 text-xs font-bold uppercase tracking-wide text-slate-400">Tagihan Uang Masuk</p>
-                        <div class="rounded-2xl border border-green-100 bg-green-50 p-4">
+                        <div class="rounded-2xl border border-primary-100 bg-primary-50 p-4">
                             <!-- Status lunas -->
                             <div v-if="invoice.status === 'paid'" class="flex items-center gap-3">
-                                <div class="flex size-10 shrink-0 items-center justify-center rounded-full bg-green-100">
-                                    <svg class="size-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <div class="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-100">
+                                    <svg class="size-5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="font-bold text-green-700">Pembayaran Lunas</p>
-                                    <p class="text-sm text-green-600">{{ formatRupiah(invoice.amount) }}</p>
+                                    <p class="font-bold text-primary-700">Pembayaran Lunas</p>
+                                    <p class="text-sm text-primary-600">{{ formatRupiah(invoice.amount) }}</p>
                                 </div>
                             </div>
 
@@ -226,7 +226,7 @@ const statusIcon = {
                                 <div class="flex items-start justify-between gap-4">
                                     <div>
                                         <p class="text-sm font-bold text-slate-800">Uang Masuk Sekolah</p>
-                                        <p class="mt-0.5 text-2xl font-extrabold text-green-700">{{ formatRupiah(invoice.amount) }}</p>
+                                        <p class="mt-0.5 text-2xl font-extrabold text-primary-700">{{ formatRupiah(invoice.amount) }}</p>
                                         <p v-if="invoice.status === 'partial'" class="mt-1 text-sm text-amber-700">
                                             Sudah dibayar {{ formatRupiah(invoice.total_paid) }} · Sisa {{ formatRupiah(invoice.remaining_amount) }}
                                         </p>
@@ -242,7 +242,7 @@ const statusIcon = {
                                     </svg>
                                     Batas pembayaran: <span class="font-semibold text-slate-700">{{ formatDate(invoice.due_date) }}</span>
                                 </div>
-                                <div class="mt-4 rounded-xl border border-green-200 bg-white px-4 py-3 text-sm text-slate-600">
+                                <div class="mt-4 rounded-xl border border-primary-200 bg-white px-4 py-3 text-sm text-slate-600">
                                     <p class="font-semibold text-slate-700">Cara Pembayaran</p>
                                     <p class="mt-1">Datang ke kantor sekolah dan tunjukkan nomor pendaftaran <span class="font-mono font-bold text-slate-800">{{ result.registration_number }}</span> kepada petugas keuangan. Pembayaran dilakukan secara tunai.</p>
                                 </div>

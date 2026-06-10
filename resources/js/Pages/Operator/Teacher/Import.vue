@@ -99,12 +99,12 @@ const genderLabel = (g) => g === 'L' ? 'Laki-laki' : g === 'P' ? 'Perempuan' : g
             <!-- Step indicator -->
             <div class="flex items-center gap-3">
                 <div class="flex items-center gap-2">
-                    <div :class="['flex size-7 items-center justify-center rounded-full text-xs font-bold', step === 1 ? 'bg-emerald-500 text-white' : 'bg-emerald-100 text-emerald-700']">1</div>
+                    <div :class="['flex size-7 items-center justify-center rounded-full text-xs font-bold', step === 1 ? 'bg-primary-500 text-white' : 'bg-primary-100 text-primary-700']">1</div>
                     <span :class="['text-sm font-semibold', step === 1 ? 'text-slate-900' : 'text-slate-500']">Upload File</span>
                 </div>
                 <div class="h-px flex-1 bg-slate-200"></div>
                 <div class="flex items-center gap-2">
-                    <div :class="['flex size-7 items-center justify-center rounded-full text-xs font-bold', step === 2 ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400']">2</div>
+                    <div :class="['flex size-7 items-center justify-center rounded-full text-xs font-bold', step === 2 ? 'bg-primary-500 text-white' : 'bg-slate-100 text-slate-400']">2</div>
                     <span :class="['text-sm font-semibold', step === 2 ? 'text-slate-900' : 'text-slate-400']">Preview & Konfirmasi</span>
                 </div>
             </div>
@@ -132,13 +132,13 @@ const genderLabel = (g) => g === 'L' ? 'Laki-laki' : g === 'P' ? 'Perempuan' : g
                             @click="fileInput.click()"
                             :class="[
                                 'flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-10 text-center transition-[border-color,background-color] duration-150',
-                                dragOver ? 'border-emerald-400 bg-emerald-50' : 'border-slate-200 hover:border-emerald-300 hover:bg-slate-50',
+                                dragOver ? 'border-primary-400 bg-primary-50' : 'border-slate-200 hover:border-primary-300 hover:bg-slate-50',
                             ]"
                         >
                             <svg class="mb-3 size-10 text-slate-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12l-3-3m0 0l-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                             </svg>
-                            <p v-if="selectedFile" class="text-sm font-semibold text-emerald-700">{{ selectedFile.name }}</p>
+                            <p v-if="selectedFile" class="text-sm font-semibold text-primary-700">{{ selectedFile.name }}</p>
                             <p v-else class="text-sm font-semibold text-slate-700">Klik atau seret file ke sini</p>
                             <p class="mt-1 text-xs text-slate-400">Format: .xlsx, .xls, .csv — Maks. 5 MB</p>
                             <input
@@ -153,7 +153,7 @@ const genderLabel = (g) => g === 'L' ? 'Laki-laki' : g === 'P' ? 'Perempuan' : g
                         <div class="flex items-center justify-between gap-3">
                             <a
                                 :href="route('operator.teachers.import.template')"
-                                class="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600 hover:underline"
+                                class="inline-flex items-center gap-1.5 text-sm font-semibold text-primary-600 hover:underline"
                             >
                                 <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -171,7 +171,7 @@ const genderLabel = (g) => g === 'L' ? 'Laki-laki' : g === 'P' ? 'Perempuan' : g
                                 <button
                                     :disabled="!selectedFile || uploading"
                                     @click="uploadPreview"
-                                    class="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-50"
+                                    class="inline-flex items-center gap-2 rounded-lg bg-primary-500 px-5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-primary-600 disabled:opacity-50"
                                 >
                                     <svg v-if="uploading" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -197,7 +197,7 @@ const genderLabel = (g) => g === 'L' ? 'Laki-laki' : g === 'P' ? 'Perempuan' : g
 
                 <div class="flex flex-wrap items-center gap-3 text-sm">
                     <span class="font-semibold text-slate-700">{{ preview.rows.length }} baris ditemukan</span>
-                    <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">
+                    <span class="inline-flex items-center gap-1 rounded-full bg-primary-50 px-2.5 py-0.5 text-xs font-semibold text-primary-700 ring-1 ring-primary-200">
                         Baru: {{ preview.rows.filter(r => !existingSet.has(r.nip)).length }}
                     </span>
                     <span class="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 ring-1 ring-amber-200">
@@ -225,7 +225,7 @@ const genderLabel = (g) => g === 'L' ? 'Laki-laki' : g === 'P' ? 'Perempuan' : g
                                     <td class="px-3 py-2.5 text-slate-400">{{ i + 1 }}</td>
                                     <td class="px-3 py-2.5">
                                         <span v-if="existingSet.has(row.nip)" class="inline-flex rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700 ring-1 ring-amber-200">Update</span>
-                                        <span v-else class="inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">Baru</span>
+                                        <span v-else class="inline-flex rounded-full bg-primary-50 px-2 py-0.5 text-xs font-semibold text-primary-700 ring-1 ring-primary-200">Baru</span>
                                     </td>
                                     <td class="px-3 py-2.5 font-mono text-slate-700">{{ row.nip || '—' }}</td>
                                     <td class="px-3 py-2.5 font-semibold text-slate-800">{{ row.name }}</td>
@@ -233,7 +233,7 @@ const genderLabel = (g) => g === 'L' ? 'Laki-laki' : g === 'P' ? 'Perempuan' : g
                                     <td class="px-3 py-2.5 text-slate-600">{{ row.phone || '—' }}</td>
                                     <td class="px-3 py-2.5">
                                         <span v-if="row.type" class="inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ring-1"
-                                            :class="row.type === 'guru_kelas' ? 'bg-emerald-50 text-emerald-700 ring-emerald-200' : 'bg-violet-50 text-violet-700 ring-violet-200'">
+                                            :class="row.type === 'guru_kelas' ? 'bg-primary-50 text-primary-700 ring-primary-200' : 'bg-violet-50 text-violet-700 ring-violet-200'">
                                             {{ typeLabel(row.type) }}
                                         </span>
                                         <span v-else class="text-slate-400">—</span>
@@ -260,7 +260,7 @@ const genderLabel = (g) => g === 'L' ? 'Laki-laki' : g === 'P' ? 'Perempuan' : g
                         v-if="!hasErrors"
                         :disabled="confirming"
                         @click="confirmImport"
-                        class="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60"
+                        class="inline-flex items-center gap-2 rounded-lg bg-primary-500 px-5 py-2 text-sm font-semibold text-white shadow-sm transition-[background-color] duration-150 hover:bg-primary-600 disabled:opacity-60"
                     >
                         <svg v-if="confirming" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />

@@ -19,7 +19,7 @@ const levelOptions = {
     kota:          { label: 'Kota',          cls: 'bg-blue-100 text-blue-700' },
     provinsi:      { label: 'Provinsi',      cls: 'bg-violet-100 text-violet-700' },
     nasional:      { label: 'Nasional',      cls: 'bg-amber-100 text-amber-700' },
-    internasional: { label: 'Internasional', cls: 'bg-emerald-100 text-emerald-700' },
+    internasional: { label: 'Internasional', cls: 'bg-primary-100 text-primary-700' },
 };
 
 const levelLabel = (val) => levelOptions[val]?.label ?? val;
@@ -119,7 +119,7 @@ const jsonLd = computed(() => ({
             :dashboard-route="dashboardRoute" active-page="ekskul" :ppdb-active="ppdbActive"/>
 
         <!-- ── Hero Slideshow ──────────────────────────────────────────────── -->
-        <div class="relative h-72 overflow-hidden sm:h-[26rem] bg-gradient-to-br from-green-900 via-green-800 to-green-700">
+        <div class="relative h-72 overflow-hidden sm:h-[26rem] bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700">
 
             <!-- Slides -->
             <template v-if="hasSlides">
@@ -183,8 +183,8 @@ const jsonLd = computed(() => ({
                 <div class="flex flex-wrap items-center justify-between gap-y-3">
 
                     <div v-if="extracurricular.coach" class="flex items-center gap-3">
-                        <div class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-green-50">
-                            <svg class="size-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <div class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary-50">
+                            <svg class="size-4 text-primary-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
                             </svg>
                         </div>
@@ -227,7 +227,7 @@ const jsonLd = computed(() => ({
             <!-- Description -->
             <section v-if="extracurricular.description">
                 <div class="mb-6 flex items-center gap-4">
-                    <div class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-green-600">
+                    <div class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary-600">
                         <svg class="size-4.5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
                         </svg>
@@ -235,7 +235,7 @@ const jsonLd = computed(() => ({
                     <h2 class="text-xl font-extrabold text-slate-800">Tentang Ekskul</h2>
                     <div class="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent"/>
                 </div>
-                <div class="rounded-2xl border border-green-100 bg-gradient-to-br from-green-50 to-white p-6 sm:p-8">
+                <div class="rounded-2xl border border-primary-100 bg-gradient-to-br from-primary-50 to-white p-6 sm:p-8">
                     <p class="text-base leading-relaxed text-slate-700">{{ extracurricular.description }}</p>
                 </div>
             </section>

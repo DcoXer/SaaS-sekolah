@@ -244,7 +244,7 @@ const formatDate = (d) => d
                             <div class="flex items-center justify-between px-4 py-2.5">
                                 <dt class="text-xs text-slate-400">Status</dt>
                                 <dd>
-                                    <span class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">
+                                    <span class="inline-flex items-center rounded-full bg-primary-50 px-2 py-0.5 text-xs font-semibold text-primary-700 ring-1 ring-primary-200">
                                         Aktif
                                     </span>
                                 </dd>
@@ -291,7 +291,7 @@ const formatDate = (d) => d
                             <p class="text-xs text-slate-400">Belum pernah ditempatkan di kelas manapun.</p>
                             <p class="mt-0.5 text-xs text-slate-400">
                                 Kelola dari menu
-                                <Link href="/operator/classrooms" class="font-semibold text-emerald-600 hover:underline">Kelas</Link>.
+                                <Link href="/operator/classrooms" class="font-semibold text-primary-600 hover:underline">Kelas</Link>.
                             </p>
                         </div>
                     </div>
@@ -321,7 +321,7 @@ const formatDate = (d) => d
                                         type="text"
                                         :class="[
                                             'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                            'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                            'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                             editForm.errors.nisn ? 'border-red-400' : 'border-slate-200',
                                         ]"
                                     />
@@ -337,7 +337,7 @@ const formatDate = (d) => d
                                         type="text"
                                         :class="[
                                             'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                            'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                            'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                             editForm.errors.name ? 'border-red-400' : 'border-slate-200',
                                         ]"
                                     />
@@ -355,7 +355,7 @@ const formatDate = (d) => d
                                     type="text"
                                     :class="[
                                         'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                        'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                         editForm.errors.nis ? 'border-red-400' : 'border-slate-200',
                                     ]"
                                 />
@@ -383,7 +383,7 @@ const formatDate = (d) => d
                                         type="date"
                                         :class="[
                                             'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                            'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                            'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                             editForm.errors.birth_date ? 'border-red-400' : 'border-slate-200',
                                         ]"
                                     />
@@ -402,7 +402,7 @@ const formatDate = (d) => d
                                         :class="[
                                             'flex flex-1 cursor-pointer items-center justify-center rounded-lg border px-3 py-2.5 text-xs font-medium transition-[border-color,background-color] duration-150',
                                             editForm.gender === opt.value
-                                                ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
+                                                ? 'border-primary-400 bg-primary-50 text-primary-700'
                                                 : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50',
                                         ]"
                                     >
@@ -421,7 +421,7 @@ const formatDate = (d) => d
                                         v-model="editForm.birth_place"
                                         type="text"
                                         placeholder="Kota tempat lahir"
-                                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.birth_place ? 'border-red-400' : 'border-slate-200']"
+                                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', editForm.errors.birth_place ? 'border-red-400' : 'border-slate-200']"
                                     />
                                 </div>
                                 <div>
@@ -431,7 +431,7 @@ const formatDate = (d) => d
                                         v-model="editForm.nik"
                                         type="text"
                                         placeholder="16 digit NIK"
-                                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.nik ? 'border-red-400' : 'border-slate-200']"
+                                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', editForm.errors.nik ? 'border-red-400' : 'border-slate-200']"
                                     />
                                     <p v-if="editForm.errors.nik" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.nik }}</p>
                                 </div>
@@ -445,7 +445,7 @@ const formatDate = (d) => d
                                     rows="2"
                                     :class="[
                                         'w-full resize-none rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                        'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                        'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                         editForm.errors.address ? 'border-red-400' : 'border-slate-200',
                                     ]"
                                 />
@@ -467,7 +467,7 @@ const formatDate = (d) => d
                                         v-model="editForm.father_name"
                                         type="text"
                                         placeholder="Nama lengkap ayah"
-                                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.father_name ? 'border-red-400' : 'border-slate-200']"
+                                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', editForm.errors.father_name ? 'border-red-400' : 'border-slate-200']"
                                     />
                                 </div>
                                 <div>
@@ -477,7 +477,7 @@ const formatDate = (d) => d
                                         v-model="editForm.mother_name"
                                         type="text"
                                         placeholder="Nama lengkap ibu"
-                                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.mother_name ? 'border-red-400' : 'border-slate-200']"
+                                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', editForm.errors.mother_name ? 'border-red-400' : 'border-slate-200']"
                                     />
                                 </div>
                             </div>
@@ -490,7 +490,7 @@ const formatDate = (d) => d
                                         v-model="editForm.guardian_name"
                                         type="text"
                                         placeholder="Kosongkan jika sama dengan ayah/ibu"
-                                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.guardian_name ? 'border-red-400' : 'border-slate-200']"
+                                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', editForm.errors.guardian_name ? 'border-red-400' : 'border-slate-200']"
                                     />
                                 </div>
                                 <div>
@@ -500,7 +500,7 @@ const formatDate = (d) => d
                                         v-model="editForm.parent_phone"
                                         type="text"
                                         placeholder="08xxxxxxxxxx"
-                                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.parent_phone ? 'border-red-400' : 'border-slate-200']"
+                                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', editForm.errors.parent_phone ? 'border-red-400' : 'border-slate-200']"
                                     />
                                     <p v-if="editForm.errors.parent_phone" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.parent_phone }}</p>
                                 </div>
@@ -524,7 +524,7 @@ const formatDate = (d) => d
                                         :disabled="!student.user"
                                         :class="[
                                             'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150',
-                                            'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                            'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                             !student.user ? 'cursor-not-allowed bg-slate-50 text-slate-400' : '',
                                             editForm.errors.parent_name ? 'border-red-400' : 'border-slate-200',
                                         ]"
@@ -542,7 +542,7 @@ const formatDate = (d) => d
                                         :disabled="!student.user"
                                         :class="[
                                             'w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150',
-                                            'focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20',
+                                            'focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20',
                                             !student.user ? 'cursor-not-allowed bg-slate-50' : '',
                                             editForm.errors.password ? 'border-red-400' : 'border-slate-200',
                                         ]"
@@ -557,7 +557,7 @@ const formatDate = (d) => d
                             <button
                                 type="submit"
                                 :disabled="editForm.processing"
-                                class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60"
+                                class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600 disabled:opacity-60"
                             >
                                 <svg v-if="editForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -587,7 +587,7 @@ const formatDate = (d) => d
                         v-model="createAccountForm.parent_name"
                         type="text"
                         placeholder="Nama orang tua/wali"
-                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', createAccountForm.errors.parent_name ? 'border-red-400' : 'border-slate-200']"
+                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', createAccountForm.errors.parent_name ? 'border-red-400' : 'border-slate-200']"
                     />
                     <p v-if="createAccountForm.errors.parent_name" class="mt-1 text-xs text-red-500">{{ createAccountForm.errors.parent_name }}</p>
                 </div>
@@ -601,7 +601,7 @@ const formatDate = (d) => d
                         type="email"
                         placeholder="email@siswa.sekolah.id"
                         autocomplete="off"
-                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', createAccountForm.errors.email ? 'border-red-400' : 'border-slate-200']"
+                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', createAccountForm.errors.email ? 'border-red-400' : 'border-slate-200']"
                     />
                     <p v-if="createAccountForm.errors.email" class="mt-1 text-xs text-red-500">{{ createAccountForm.errors.email }}</p>
                 </div>
@@ -615,7 +615,7 @@ const formatDate = (d) => d
                         :type="showGenPass ? 'text' : 'password'"
                         placeholder="Min. 8 karakter"
                         autocomplete="new-password"
-                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', createAccountForm.errors.password ? 'border-red-400' : 'border-slate-200']"
+                        :class="['w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', createAccountForm.errors.password ? 'border-red-400' : 'border-slate-200']"
                     />
                     <p v-if="createAccountForm.errors.password" class="mt-1 text-xs text-red-500">{{ createAccountForm.errors.password }}</p>
                 </div>
@@ -627,7 +627,7 @@ const formatDate = (d) => d
                 <button
                     @click="submitCreateAccount"
                     :disabled="createAccountForm.processing"
-                    class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-emerald-600 disabled:opacity-60"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-[background-color] duration-150 hover:bg-primary-600 disabled:opacity-60"
                 >
                     <svg v-if="createAccountForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />

@@ -7,12 +7,12 @@ use Illuminate\Support\Facades\Log;
 
 class WhatsAppService
 {
-    private string $token;
+    private string $token = '';
     private string $apiUrl = 'https://api.fonnte.com/send';
 
     public function __construct()
     {
-        $this->token = config('services.fonnte.token', '');
+        $this->token = config('services.fonnte.token') ?? '';
     }
 
     /**

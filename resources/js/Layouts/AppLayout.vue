@@ -125,9 +125,9 @@ const typeColor = {
     cash_request:    'bg-amber-100 text-amber-600',
     letter_request:  'bg-blue-100 text-blue-600',
     letter_submitted:'bg-violet-100 text-violet-600',
-    letter_approved: 'bg-emerald-100 text-emerald-600',
+    letter_approved: 'bg-primary-100 text-primary-600',
     letter_rejected: 'bg-red-100 text-red-600',
-    payment_recorded:'bg-emerald-100 text-emerald-600',
+    payment_recorded:'bg-primary-100 text-primary-600',
 };
 
 const csrfToken = () => document.querySelector('meta[name="csrf-token"]')?.content ?? '';
@@ -294,7 +294,7 @@ const iconPaths = {
                     collapsed ? 'justify-center' : 'gap-3',
                 ]"
             >
-                <div class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500 shadow-sm">
+                <div class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary-500 shadow-sm">
                     <svg class="size-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" :d="iconPaths.building" />
                     </svg>
@@ -341,20 +341,20 @@ const iconPaths = {
                             'group relative mx-2 mb-0.5 flex items-center rounded-lg transition-[background-color,color] duration-150',
                             collapsed ? 'justify-center px-0 py-3' : 'gap-3 px-3 py-2.5',
                             isActive(item.href)
-                                ? 'bg-emerald-500/15 text-emerald-400'
+                                ? 'bg-primary-500/15 text-primary-400'
                                 : 'text-white/50 hover:bg-white/5 hover:text-white/90',
                         ]"
                     >
                         <!-- Active bar -->
                         <span
                             v-if="isActive(item.href)"
-                            class="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-emerald-400"
+                            class="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-primary-400"
                         />
 
                         <!-- Icon -->
                         <svg
                             class="size-5 shrink-0"
-                            :class="isActive(item.href) ? 'text-emerald-400' : 'text-white/40 group-hover:text-white/70'"
+                            :class="isActive(item.href) ? 'text-primary-400' : 'text-white/40 group-hover:text-white/70'"
                             fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor"
                         >
                             <path stroke-linecap="round" stroke-linejoin="round" :d="iconPaths[item.icon] || iconPaths.document" />
@@ -390,7 +390,7 @@ const iconPaths = {
                         collapsed ? 'justify-center' : 'gap-3',
                     ]"
                 >
-                    <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-xs font-semibold text-white overflow-hidden">
+                    <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary-600 text-xs font-semibold text-white overflow-hidden">
                         <img v-if="user?.avatar_url" :src="user.avatar_url" class="size-full object-cover" alt="" />
                         <span v-else>{{ userInitials }}</span>
                     </div>
@@ -505,7 +505,7 @@ const iconPaths = {
                                     <button
                                         v-if="unreadCount > 0"
                                         @click="markAllRead"
-                                        class="text-xs font-semibold text-emerald-600 hover:underline"
+                                        class="text-xs font-semibold text-primary-600 hover:underline"
                                     >
                                         Tandai semua dibaca
                                     </button>
@@ -529,7 +529,7 @@ const iconPaths = {
                                         @click="markRead(notif.id)"
                                         :class="[
                                             'flex w-full items-start gap-3 px-4 py-3 text-left transition-[background-color] duration-150 hover:bg-slate-50',
-                                            !notif.read_at ? 'bg-emerald-50/50' : '',
+                                            !notif.read_at ? 'bg-primary-50/50' : '',
                                         ]"
                                     >
                                         <!-- Icon -->
@@ -550,7 +550,7 @@ const iconPaths = {
                                                 <p class="text-xs font-semibold text-slate-800">{{ notif.title }}</p>
                                                 <span
                                                     v-if="!notif.read_at"
-                                                    class="mt-0.5 size-2 shrink-0 rounded-full bg-emerald-500"
+                                                    class="mt-0.5 size-2 shrink-0 rounded-full bg-primary-500"
                                                 />
                                             </div>
                                             <p class="text-pretty mt-0.5 text-xs text-slate-500 line-clamp-2">{{ notif.message }}</p>
@@ -562,7 +562,7 @@ const iconPaths = {
                         </Transition>
                     </div>
 
-                    <div class="hidden size-8 items-center justify-center rounded-full bg-emerald-600 text-xs font-semibold text-white overflow-hidden lg:flex">
+                    <div class="hidden size-8 items-center justify-center rounded-full bg-primary-600 text-xs font-semibold text-white overflow-hidden lg:flex">
                         <img v-if="user?.avatar_url" :src="user.avatar_url" class="size-full object-cover" alt="" />
                         <span v-else>{{ userInitials }}</span>
                     </div>
@@ -602,7 +602,7 @@ const iconPaths = {
                 <!-- Icon -->
                 <svg
                     v-if="toast.type === 'success'"
-                    class="mt-0.5 size-4 shrink-0 text-emerald-500"
+                    class="mt-0.5 size-4 shrink-0 text-primary-500"
                     fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 >
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -636,7 +636,7 @@ const iconPaths = {
                 <div class="h-0.5 overflow-hidden rounded-full bg-slate-100">
                     <div
                         class="toast-progress h-full rounded-full"
-                        :class="toast.type === 'success' ? 'bg-emerald-400' : 'bg-red-400'"
+                        :class="toast.type === 'success' ? 'bg-primary-400' : 'bg-red-400'"
                     />
                 </div>
             </div>

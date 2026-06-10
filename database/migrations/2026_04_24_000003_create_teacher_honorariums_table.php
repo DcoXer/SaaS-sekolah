@@ -19,6 +19,8 @@ return new class extends Migration
             $table->unsignedInteger('hourly_rate');
             $table->unsignedSmallInteger('transport_days');
             $table->unsignedInteger('daily_transport_rate');
+            $table->string('position_name')->nullable();
+            $table->unsignedBigInteger('position_allowance')->default(0);
             // kalkulasi
             $table->unsignedBigInteger('teaching_hours_amount');
             $table->unsignedBigInteger('transport_amount');

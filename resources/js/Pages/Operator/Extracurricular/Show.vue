@@ -27,7 +27,7 @@ const levelBadge = (level) => ({
     kota:          'bg-blue-100 text-blue-700',
     provinsi:      'bg-violet-100 text-violet-700',
     nasional:      'bg-amber-100 text-amber-700',
-    internasional: 'bg-emerald-100 text-emerald-700',
+    internasional: 'bg-primary-100 text-primary-700',
 })[level] ?? 'bg-slate-100 text-slate-600';
 
 // ── Edit ekskul ───────────────────────────────────────────────────────────────
@@ -157,7 +157,7 @@ const doDeletePhoto = () => {
 };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20';
+const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20';
 </script>
 
 <template>
@@ -189,7 +189,7 @@ const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-
                             Lihat Halaman Publik
                         </a>
                         <button @click="showEditEkskul = true"
-                            class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-600">
+                            class="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-primary-600">
                             <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
                             </svg>
@@ -217,7 +217,7 @@ const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-
                         <div>
                             <div class="flex items-center gap-3">
                                 <h3 class="text-xl font-extrabold text-slate-900">{{ extracurricular.name }}</h3>
-                                <span :class="extracurricular.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'"
+                                <span :class="extracurricular.is_active ? 'bg-primary-50 text-primary-700' : 'bg-slate-100 text-slate-500'"
                                     class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold">
                                     {{ extracurricular.is_active ? 'Aktif' : 'Nonaktif' }}
                                 </span>
@@ -284,7 +284,7 @@ const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-
                         <h2 class="text-sm font-bold text-slate-800">Foto Banner</h2>
                         <p class="mt-0.5 text-xs text-slate-400">Foto-foto ini akan ditampilkan sebagai slideshow di halaman publik</p>
                     </div>
-                    <label class="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-600">
+                    <label class="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-primary-500 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-primary-600">
                         <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
                         </svg>
@@ -322,7 +322,7 @@ const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-
                     </div>
 
                     <!-- Loading indicator -->
-                    <div v-if="photoForm.processing" class="mt-3 flex items-center gap-2 text-xs text-emerald-600">
+                    <div v-if="photoForm.processing" class="mt-3 flex items-center gap-2 text-xs text-primary-600">
                         <svg class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/>
                         </svg>
@@ -465,7 +465,7 @@ const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-
                             <input v-model.number="editForm.sort_order" type="number" min="0" :class="INPUT_CLS"/>
                         </div>
                         <label class="flex cursor-pointer items-center gap-2">
-                            <input type="checkbox" v-model="editForm.is_active" class="size-4 rounded border-slate-300 accent-emerald-500"/>
+                            <input type="checkbox" v-model="editForm.is_active" class="size-4 rounded border-slate-300 accent-primary-500"/>
                             <span class="text-sm text-slate-700">Aktif</span>
                         </label>
                     </div>
@@ -475,7 +475,7 @@ const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-
                             Batal
                         </button>
                         <button type="submit" :disabled="editForm.processing"
-                            class="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60">
+                            class="rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-600 disabled:opacity-60">
                             {{ editForm.processing ? 'Menyimpan...' : 'Simpan' }}
                         </button>
                     </div>
@@ -567,7 +567,7 @@ const INPUT_CLS = 'w-full rounded-lg border border-slate-200 bg-white px-3.5 py-
                             Batal
                         </button>
                         <button type="submit" :disabled="editAchievementForm.processing"
-                            class="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60">
+                            class="rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-600 disabled:opacity-60">
                             {{ editAchievementForm.processing ? 'Menyimpan...' : 'Simpan' }}
                         </button>
                     </div>

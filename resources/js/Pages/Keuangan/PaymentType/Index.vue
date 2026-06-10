@@ -166,7 +166,7 @@ const resetFilters = () => {
         <div class="space-y-5">
 
             <!-- Hero Banner -->
-            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-600 via-emerald-500 to-teal-500 px-6 py-6 shadow-sm sm:px-8">
+            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-600 via-primary-500 to-teal-500 px-6 py-6 shadow-sm sm:px-8">
                 <!-- Decorative shapes -->
                 <div class="pointer-events-none absolute -right-6 -top-6 size-36 rounded-full bg-white/10"></div>
                 <div class="pointer-events-none absolute -bottom-8 -left-4 size-28 rounded-full bg-white/5"></div>
@@ -199,7 +199,7 @@ const resetFilters = () => {
                         </button>
                         <button
                             @click="openCreate"
-                            class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-emerald-700 shadow-sm transition-all duration-150 hover:bg-emerald-50"
+                            class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-primary-700 shadow-sm transition-all duration-150 hover:bg-primary-50"
                         >
                             <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -229,8 +229,8 @@ const resetFilters = () => {
                 v-else-if="paymentTypes.length === 0"
                 class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center"
             >
-                <div class="mb-4 flex size-14 items-center justify-center rounded-2xl bg-emerald-50">
-                    <svg class="size-7 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <div class="mb-4 flex size-14 items-center justify-center rounded-2xl bg-primary-50">
+                    <svg class="size-7 text-primary-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
                     </svg>
                 </div>
@@ -245,7 +245,7 @@ const resetFilters = () => {
                         Generate SPP
                     </button>
                     <button @click="openCreate"
-                        class="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-emerald-600">
+                        class="inline-flex items-center gap-1.5 rounded-xl bg-primary-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-primary-600">
                         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
@@ -267,7 +267,7 @@ const resetFilters = () => {
                             v-model="search"
                             type="search"
                             placeholder="Cari nama tagihan..."
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"
+                            class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-[border-color,box-shadow] focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-400/20"
                         />
                     </div>
                     <div class="h-5 w-px bg-slate-200"/>
@@ -314,7 +314,7 @@ const resetFilters = () => {
                     </svg>
                     <p class="text-sm font-semibold text-slate-700">Tidak ada hasil</p>
                     <p class="mt-1 text-xs text-slate-400">Coba ubah kata kunci atau hapus filter.</p>
-                    <button @click="resetFilters" class="mt-3 text-xs font-semibold text-emerald-600 hover:underline">Reset pencarian</button>
+                    <button @click="resetFilters" class="mt-3 text-xs font-semibold text-primary-600 hover:underline">Reset pencarian</button>
                 </div>
 
                 <template v-else>
@@ -394,7 +394,7 @@ const resetFilters = () => {
                                 <tr
                                     v-for="pt in paginated"
                                     :key="pt.id"
-                                    class="group transition-colors duration-100 hover:bg-emerald-50/40"
+                                    class="group transition-colors duration-100 hover:bg-primary-50/40"
                                     :class="!pt.is_active ? 'opacity-60' : ''"
                                 >
                                     <!-- Nama + badge ujian -->
@@ -439,11 +439,11 @@ const resetFilters = () => {
                                     <td class="px-5 py-4">
                                         <span
                                             :class="pt.is_active
-                                                ? 'bg-emerald-50 text-emerald-700 ring-emerald-200'
+                                                ? 'bg-primary-50 text-primary-700 ring-primary-200'
                                                 : 'bg-slate-100 text-slate-500 ring-slate-200'"
                                             class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1"
                                         >
-                                            <span :class="['mr-1.5 size-1.5 rounded-full', pt.is_active ? 'bg-emerald-500' : 'bg-slate-400']"></span>
+                                            <span :class="['mr-1.5 size-1.5 rounded-full', pt.is_active ? 'bg-primary-500' : 'bg-slate-400']"></span>
                                             {{ pt.is_active ? 'Aktif' : 'Nonaktif' }}
                                         </span>
                                     </td>
@@ -451,7 +451,7 @@ const resetFilters = () => {
                                     <td class="px-5 py-4">
                                         <div class="flex items-center justify-end gap-1 opacity-0 transition-opacity duration-100 group-hover:opacity-100">
                                             <button @click="openEdit(pt)" aria-label="Edit tagihan"
-                                                class="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 transition-all duration-150 hover:bg-emerald-100 hover:text-emerald-600">
+                                                class="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 transition-all duration-150 hover:bg-primary-100 hover:text-primary-600">
                                                 <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                                 </svg>
@@ -488,7 +488,7 @@ const resetFilters = () => {
         <Modal :show="showSpp" max-width="sm" @close="showSpp = false">
             <form @submit.prevent="submitSpp">
                 <!-- Modal header gradient -->
-                <div class="flex items-center justify-between bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-4">
+                <div class="flex items-center justify-between bg-gradient-to-r from-primary-500 to-teal-600 px-6 py-4">
                     <div class="flex items-center gap-3">
                         <div class="flex size-8 items-center justify-center rounded-lg bg-white/20">
                             <svg class="size-4 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -512,7 +512,7 @@ const resetFilters = () => {
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Nominal SPP <span class="text-red-500">*</span></label>
                         <input v-model.number="sppForm.amount" type="number" min="1000" placeholder="Contoh: 150000"
-                            :class="['w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', sppForm.errors.amount ? 'border-red-400' : 'border-slate-200']" />
+                            :class="['w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', sppForm.errors.amount ? 'border-red-400' : 'border-slate-200']" />
                         <p v-if="sppForm.errors.amount" class="mt-1.5 text-xs text-red-500">{{ sppForm.errors.amount }}</p>
                     </div>
                 </div>
@@ -522,7 +522,7 @@ const resetFilters = () => {
                         Batal
                     </button>
                     <button type="submit" :disabled="sppForm.processing"
-                        class="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-emerald-600 disabled:opacity-60">
+                        class="inline-flex items-center gap-1.5 rounded-xl bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-primary-600 disabled:opacity-60">
                         <svg v-if="sppForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                         </svg>
@@ -536,7 +536,7 @@ const resetFilters = () => {
         <Modal :show="showCreate" max-width="lg" @close="showCreate = false">
             <form @submit.prevent="submitCreate">
                 <!-- Modal header gradient -->
-                <div class="flex items-center justify-between bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-4">
+                <div class="flex items-center justify-between bg-gradient-to-r from-primary-500 to-teal-600 px-6 py-4">
                     <div class="flex items-center gap-3">
                         <div class="flex size-8 items-center justify-center rounded-lg bg-white/20">
                             <svg class="size-4 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
@@ -557,7 +557,7 @@ const resetFilters = () => {
                     <div class="col-span-2">
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Nama Tagihan <span class="text-red-500">*</span></label>
                         <input v-model="createForm.name" type="text" placeholder="Contoh: Uang Gedung"
-                            :class="['w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', createForm.errors.name ? 'border-red-400' : 'border-slate-200']" />
+                            :class="['w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', createForm.errors.name ? 'border-red-400' : 'border-slate-200']" />
                         <p v-if="createForm.errors.name" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.name }}</p>
                     </div>
                     <!-- Siklus -->
@@ -570,14 +570,14 @@ const resetFilters = () => {
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Nominal (Rp) <span class="text-red-500">*</span></label>
                         <input v-model.number="createForm.amount" type="number" min="1000" placeholder="150000"
-                            :class="['w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', createForm.errors.amount ? 'border-red-400' : 'border-slate-200']" />
+                            :class="['w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-300 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', createForm.errors.amount ? 'border-red-400' : 'border-slate-200']" />
                         <p v-if="createForm.errors.amount" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.amount }}</p>
                     </div>
                     <!-- Jatuh tempo -->
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Jatuh Tempo <span class="text-red-500">*</span></label>
                         <input v-model="createForm.due_date" type="date"
-                            :class="['w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', createForm.errors.due_date ? 'border-red-400' : 'border-slate-200']" />
+                            :class="['w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', createForm.errors.due_date ? 'border-red-400' : 'border-slate-200']" />
                         <p v-if="createForm.errors.due_date" class="mt-1.5 text-xs text-red-500">{{ createForm.errors.due_date }}</p>
                     </div>
                     <!-- Kelas (opsional) -->
@@ -619,7 +619,7 @@ const resetFilters = () => {
                         Batal
                     </button>
                     <button type="submit" :disabled="createForm.processing"
-                        class="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-emerald-600 disabled:opacity-60">
+                        class="inline-flex items-center gap-1.5 rounded-xl bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-primary-600 disabled:opacity-60">
                         <svg v-if="createForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                         </svg>
@@ -633,7 +633,7 @@ const resetFilters = () => {
         <Modal :show="!!editTarget" max-width="lg" @close="editTarget = null">
             <form @submit.prevent="submitEdit">
                 <!-- Modal header gradient -->
-                <div class="flex items-center justify-between bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-4">
+                <div class="flex items-center justify-between bg-gradient-to-r from-primary-500 to-teal-600 px-6 py-4">
                     <div class="flex items-center gap-3">
                         <div class="flex size-8 items-center justify-center rounded-lg bg-white/20">
                             <svg class="size-4 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -656,19 +656,19 @@ const resetFilters = () => {
                     <div class="col-span-2">
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Nama Tagihan <span class="text-red-500">*</span></label>
                         <input v-model="editForm.name" type="text"
-                            :class="['w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.name ? 'border-red-400' : 'border-slate-200']" />
+                            :class="['w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', editForm.errors.name ? 'border-red-400' : 'border-slate-200']" />
                         <p v-if="editForm.errors.name" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.name }}</p>
                     </div>
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Nominal (Rp) <span class="text-red-500">*</span></label>
                         <input v-model.number="editForm.amount" type="number" min="1000"
-                            :class="['w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20', editForm.errors.amount ? 'border-red-400' : 'border-slate-200']" />
+                            :class="['w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-[border-color,box-shadow] duration-150 focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20', editForm.errors.amount ? 'border-red-400' : 'border-slate-200']" />
                         <p v-if="editForm.errors.amount" class="mt-1.5 text-xs text-red-500">{{ editForm.errors.amount }}</p>
                     </div>
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Jatuh Tempo</label>
                         <input v-model="editForm.due_date" type="date"
-                            class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20" />
+                            class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20" />
                     </div>
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Kelas (opsional)</label>
@@ -678,14 +678,14 @@ const resetFilters = () => {
                     <div>
                         <label class="mb-1.5 block text-xs font-semibold text-slate-600">Status</label>
                         <label class="flex cursor-pointer items-center justify-between rounded-xl border px-4 py-3 transition-colors"
-                            :class="editForm.is_active ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-slate-50'"
+                            :class="editForm.is_active ? 'border-primary-200 bg-primary-50' : 'border-slate-200 bg-slate-50'"
                         >
-                            <span :class="['text-sm font-semibold', editForm.is_active ? 'text-emerald-700' : 'text-slate-500']">
+                            <span :class="['text-sm font-semibold', editForm.is_active ? 'text-primary-700' : 'text-slate-500']">
                                 {{ editForm.is_active ? 'Aktif' : 'Nonaktif' }}
                             </span>
                             <div class="relative">
                                 <input id="e-active" v-model="editForm.is_active" type="checkbox" class="sr-only" />
-                                <div :class="['h-6 w-11 rounded-full transition-colors duration-200', editForm.is_active ? 'bg-emerald-500' : 'bg-slate-300']"></div>
+                                <div :class="['h-6 w-11 rounded-full transition-colors duration-200', editForm.is_active ? 'bg-primary-500' : 'bg-slate-300']"></div>
                                 <div :class="['absolute left-0.5 top-0.5 size-5 rounded-full bg-white shadow transition-transform duration-200', editForm.is_active ? 'translate-x-5' : 'translate-x-0']"></div>
                             </div>
                         </label>
@@ -713,7 +713,7 @@ const resetFilters = () => {
                         Batal
                     </button>
                     <button type="submit" :disabled="editForm.processing"
-                        class="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-emerald-600 disabled:opacity-60">
+                        class="inline-flex items-center gap-1.5 rounded-xl bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-primary-600 disabled:opacity-60">
                         <svg v-if="editForm.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                         </svg>

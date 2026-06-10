@@ -102,7 +102,6 @@ class StudentImportExportController extends Controller
 
         $path = $request->input('temp_path');
 
-        // Security: ensure path is within imports/temp
         if (!str_starts_with($path, 'imports/temp')) {
             abort(422, 'Path tidak valid.');
         }
@@ -117,14 +116,34 @@ class StudentImportExportController extends Controller
             return back()->withErrors(['import' => 'File mengandung ' . count($result['errors']) . ' error. Perbaiki file dan upload ulang.']);
         }
 
+        $rows = $result['rows'];
+
+        // ── Batch lookup: 1 query untuk semua NISN ────────────────────────────
+        $nisns           = array_filter(array_column($rows, 'nisn'));
+        $existingStudents = Student::whereIn('nisn', $nisns)
+            ->get(['id', 'nisn'])
+            ->keyBy('nisn');
+
+        // ── Pre-generate NIS untuk siswa baru (1 query, bukan N) ──────────────
+        $newCount  = collect($rows)->filter(fn($r) => !isset($existingStudents[$r['nisn']]))->count();
+        $nisPrefix = now()->format('Ym');
+        $lastNis   = Student::where('nis', 'like', $nisPrefix . '%')
+            ->orderByDesc('nis')
+            ->value('nis');
+        $nisSeq    = $lastNis ? ((int) substr($lastNis, strlen($nisPrefix)) + 1) : 1;
+
         $count = 0;
 
-        DB::transaction(function () use ($result, &$count) {
-            foreach ($result['rows'] as $row) {
-                $existing = Student::where('nisn', $row['nisn'])->first();
+        DB::transaction(function () use ($rows, $existingStudents, $nisPrefix, &$nisSeq, &$count) {
+            $toInsert = [];
+            $now      = now();
+
+            foreach ($rows as $row) {
+                $existing = $existingStudents[$row['nisn']] ?? null;
 
                 if ($existing) {
-                    $existing->update([
+                    // Update langsung via PK — tidak perlu query lagi
+                    Student::where('id', $existing->id)->update([
                         'name'          => $row['name'],
                         'nik'           => $row['nik'] ?: null,
                         'birth_place'   => $row['birth_place'] ?: null,
@@ -137,10 +156,11 @@ class StudentImportExportController extends Controller
                         'guardian_name' => $row['guardian_name'] ?: null,
                     ]);
                 } else {
-                    Student::create([
+                    // Kumpulkan untuk batch insert
+                    $toInsert[] = [
                         'nisn'          => $row['nisn'],
                         'nik'           => $row['nik'] ?: null,
-                        'nis'           => $this->studentService->generateNis(),
+                        'nis'           => $nisPrefix . str_pad($nisSeq++, 3, '0', STR_PAD_LEFT),
                         'name'          => $row['name'],
                         'gender'        => $row['gender'],
                         'grade'         => $row['grade'] ?? 1,
@@ -151,10 +171,19 @@ class StudentImportExportController extends Controller
                         'mother_name'   => $row['mother_name'] ?: null,
                         'guardian_name' => $row['guardian_name'] ?: null,
                         'status'        => 'active',
-                    ]);
+                        'created_at'    => $now,
+                        'updated_at'    => $now,
+                    ];
                 }
 
                 $count++;
+            }
+
+            // Batch insert semua siswa baru sekaligus (1 query)
+            if (!empty($toInsert)) {
+                foreach (array_chunk($toInsert, 500) as $chunk) {
+                    Student::insert($chunk);
+                }
             }
         });
 

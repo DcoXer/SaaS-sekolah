@@ -15,7 +15,7 @@ const fmt = (val) =>
 const statusLabel = { draft: 'Belum Dibayar', paid: 'Lunas' };
 const statusColor = {
     draft: 'bg-amber-100 text-amber-700',
-    paid:  'bg-emerald-100 text-emerald-700',
+    paid:  'bg-primary-100 text-primary-700',
 };
 </script>
 
@@ -49,8 +49,8 @@ const statusColor = {
                 <!-- Header -->
                 <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
                     <div class="flex items-center gap-3">
-                        <div class="flex size-10 items-center justify-center rounded-full bg-emerald-100">
-                            <svg class="size-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <div class="flex size-10 items-center justify-center rounded-full bg-primary-100">
+                            <svg class="size-5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
                             </svg>
                         </div>
@@ -112,8 +112,8 @@ const statusColor = {
                     </div>
 
                     <!-- Pembayaran -->
-                    <div v-if="honorarium.status === 'paid'" class="rounded-lg border border-emerald-100 bg-emerald-50 px-4 py-3">
-                        <p class="text-xs font-semibold uppercase text-emerald-600">Pembayaran</p>
+                    <div v-if="honorarium.status === 'paid'" class="rounded-lg border border-primary-100 bg-primary-50 px-4 py-3">
+                        <p class="text-xs font-semibold uppercase text-primary-600">Pembayaran</p>
                         <p class="mt-0.5 text-sm font-bold text-slate-800">Lunas — {{ honorarium.paid_at }}</p>
                         <p v-if="processed_by" class="text-xs text-slate-500">Diproses oleh: {{ processed_by }}</p>
                     </div>

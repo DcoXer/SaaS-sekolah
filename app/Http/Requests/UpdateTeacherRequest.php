@@ -19,7 +19,7 @@ class UpdateTeacherRequest extends FormRequest
         return [
             'name'     => ['required', 'string', 'max:100'],
             'email'    => ['required', 'email', "unique:users,email,{$userId}"],
-            'password' => ['nullable', 'string', 'min:8'],
+            'password' => ['nullable', 'string', 'min:8', 'max:100'],
             'type'     => ['required', 'in:guru_kelas,guru_bidang'],
             'position' => ['nullable', 'in:wakamad_kesiswaan,wakamad_kurikulum'],
             'nip'      => ['nullable', 'string', 'max:20', "unique:teachers,nip,{$teacherId}"],

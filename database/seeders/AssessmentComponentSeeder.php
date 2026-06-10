@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\AcademicYear;
 use App\Models\AssessmentComponent;
 use App\Models\Classroom;
-use App\Models\Subject;
+use App\Models\TeacherSubject;
 use Illuminate\Database\Seeder;
 
 class AssessmentComponentSeeder extends Seeder
@@ -16,16 +16,20 @@ class AssessmentComponentSeeder extends Seeder
         $classrooms = Classroom::where('academic_year_id', $year->id)->get();
 
         foreach ($classrooms as $classroom) {
-            $subjects = Subject::where('grade', $classroom->grade)->get();
+            // Ambil mapel yang sudah dimasukkan ke kelas ini via teacher_subjects
+            $subjectIds = TeacherSubject::where('classroom_id', $classroom->id)
+                ->where('academic_year_id', $year->id)
+                ->pluck('subject_id')
+                ->unique();
 
-            foreach ($subjects as $subject) {
+            foreach ($subjectIds as $subjectId) {
                 foreach ([1, 2] as $semester) {
                     foreach (['ki3', 'ki4'] as $ki) {
                         // Tugas Harian
                         AssessmentComponent::create([
                             'academic_year_id' => $year->id,
                             'classroom_id'     => $classroom->id,
-                            'subject_id'       => $subject->id,
+                            'subject_id'       => $subjectId,
                             'name'             => 'Tugas Harian',
                             'type'             => 'numeric',
                             'ki'               => $ki,
@@ -40,7 +44,7 @@ class AssessmentComponentSeeder extends Seeder
                         AssessmentComponent::create([
                             'academic_year_id' => $year->id,
                             'classroom_id'     => $classroom->id,
-                            'subject_id'       => $subject->id,
+                            'subject_id'       => $subjectId,
                             'name'             => 'Penilaian Tengah Semester',
                             'type'             => 'numeric',
                             'ki'               => $ki,
@@ -55,7 +59,7 @@ class AssessmentComponentSeeder extends Seeder
                         AssessmentComponent::create([
                             'academic_year_id' => $year->id,
                             'classroom_id'     => $classroom->id,
-                            'subject_id'       => $subject->id,
+                            'subject_id'       => $subjectId,
                             'name'             => 'Penilaian Akhir Semester',
                             'type'             => 'numeric',
                             'ki'               => $ki,
@@ -67,11 +71,11 @@ class AssessmentComponentSeeder extends Seeder
                         ]);
                     }
 
-                    // Narasi (tidak perlu ki)
+                    // Narasi (tidak pakai ki)
                     AssessmentComponent::create([
                         'academic_year_id' => $year->id,
                         'classroom_id'     => $classroom->id,
-                        'subject_id'       => $subject->id,
+                        'subject_id'       => $subjectId,
                         'name'             => 'Deskripsi Capaian',
                         'type'             => 'narrative',
                         'ki'               => null,
