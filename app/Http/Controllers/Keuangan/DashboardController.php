@@ -42,11 +42,13 @@ class DashboardController extends Controller
             ->get()
             ->map(fn ($y) => ['id' => $y->id, 'name' => $y->name, 'status' => $y->status]);
 
+        $activeYearId = AcademicYear::where('status', 'active')->value('id');
+
         return Inertia::render('Keuangan/Dashboard', [
             'stats' => [
-                'unpaid'       => Invoice::where('status', 'unpaid')->count(),
-                'partial'      => Invoice::where('status', 'partial')->count(),
-                'paid'         => Invoice::where('status', 'paid')->count(),
+                'unpaid'       => Invoice::where('status', 'unpaid')->where('academic_year_id', $activeYearId)->count(),
+                'partial'      => Invoice::where('status', 'partial')->where('academic_year_id', $activeYearId)->count(),
+                'paid'         => Invoice::where('status', 'paid')->where('academic_year_id', $activeYearId)->count(),
                 'total_amount' => (int) Payment::sum('amount'),
             ],
             'monthlyPayments' => $monthlyPayments,

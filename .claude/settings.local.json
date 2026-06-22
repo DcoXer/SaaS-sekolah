@@ -85,7 +85,11 @@
       "Bash(cp C:/laragon/www/school-management/.claude/worktrees/agent-a9ea3759/resources/js/Layouts/AppLayout.vue C:/laragon/www/school-management/resources/js/Layouts/AppLayout.vue)",
       "Bash(python3:*)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://school-management.test/login)",
-      "Bash(curl -s http://school-management.test/login)"
+      "Bash(curl -s http://school-management.test/login)",
+      "Bash(xargs cat:*)",
+      "Bash(sed -n '9p' \"C:\\\\laragon\\\\www\\\\school-management\\\\resources\\\\js\\\\Pages\\\\Operator\\\\Student\\\\Index.vue\")",
+      "Bash(sed -n '9p' \"C:\\\\laragon\\\\www\\\\school-management\\\\resources\\\\js\\\\Pages\\\\Operator\\\\Student\\\\Show.vue\")",
+      "Bash(sed -n '9p' \"C:\\\\laragon\\\\www\\\\school-management\\\\resources\\\\js\\\\Pages\\\\Operator\\\\Teacher\\\\Show.vue\")"
     ]
   }
 }

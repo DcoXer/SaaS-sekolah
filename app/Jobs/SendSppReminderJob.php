@@ -37,7 +37,7 @@ class SendSppReminderJob implements ShouldQueue
         $fmt       = fn($n) => 'Rp ' . number_format($n ?? 0, 0, ',', '.');
         $totalPaid = $invoice->total_paid;
         $remaining = $invoice->remaining_amount;
-        $wali      = $student->guardian_name ?: ($student->parent_name ?? $student->name);
+        $wali      = $student->guardian_name ?: ($student->father_name ?? $student->mother_name ?? $student->name);
 
         $message = "Assalamu'alaikum, {$wali}.\n\n"
             . "Ini pengingat tagihan *{$paymentType->name}* untuk {$student->name}.\n\n"

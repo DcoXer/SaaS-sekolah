@@ -4,6 +4,18 @@ import Modal from '@/Components/Modal.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
+const sanitizeHtml = (html) => {
+    if (!html) return '';
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    doc.querySelectorAll('script, iframe, object, embed').forEach(el => el.remove());
+    doc.querySelectorAll('*').forEach(el => {
+        [...el.attributes].forEach(attr => {
+            if (attr.name.toLowerCase().startsWith('on')) el.removeAttribute(attr.name);
+        });
+    });
+    return doc.body.innerHTML;
+};
+
 const props = defineProps({
     waitingLetters:  { type: Array, required: true },
     approvedLetters: { type: Array, required: true },
@@ -332,7 +344,7 @@ const formatDate = (dateStr) => {
                 <div class="px-6 py-5">
                     <div
                         class="prose prose-sm max-h-96 min-h-32 overflow-y-auto whitespace-pre-wrap rounded-lg border border-slate-100 bg-slate-50 p-4 text-sm text-slate-700"
-                        v-html="viewedLetter?.content ?? ''"
+                        v-html="sanitizeHtml(viewedLetter?.content)"
                     />
                 </div>
                 <div class="flex justify-end border-t border-slate-100 px-6 py-4">

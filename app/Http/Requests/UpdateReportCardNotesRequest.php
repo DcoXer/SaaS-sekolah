@@ -14,8 +14,7 @@ class UpdateReportCardNotesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'homeroom_notes'  => ['nullable', 'string'],
-            'principal_notes' => ['nullable', 'string'],
+            'homeroom_notes' => ['nullable', 'string'],
         ];
     }
 }

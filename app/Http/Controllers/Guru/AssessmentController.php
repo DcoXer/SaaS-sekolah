@@ -36,9 +36,11 @@ class AssessmentController extends Controller
         if ($assignments->isNotEmpty()) {
             $classroomIds = $assignments->pluck('classroom_id')->unique()->values();
             $subjectIds   = $assignments->pluck('subject_id')->unique()->values();
+            $activeYearId = $assignments->first()?->academic_year_id;
 
             $allComponents = AssessmentComponent::whereIn('classroom_id', $classroomIds)
                 ->whereIn('subject_id', $subjectIds)
+                ->when($activeYearId, fn($q) => $q->where('academic_year_id', $activeYearId))
                 ->orderBy('semester')
                 ->orderBy('order')
                 ->get()

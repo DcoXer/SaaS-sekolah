@@ -109,21 +109,21 @@ class InvoiceService
 
     public function getSummaryByAcademicYear(AcademicYear $academicYear): array
     {
-        $invoices = Invoice::with('paymentType')
+        $invoices = Invoice::with(['paymentType', 'payments'])
             ->where('academic_year_id', $academicYear->id)
             ->whereNotNull('student_id')
             ->whereNotNull('payment_type_id')
             ->get();
 
         $totalAmount    = $invoices->sum('amount');
-        $totalPaid      = $invoices->sum(fn($i) => $i->payments()->sum('amount'));
+        $totalPaid      = $invoices->sum(fn($i) => $i->payments->sum('amount'));
         $totalUnpaid    = $totalAmount - $totalPaid;
 
         // Breakdown per jenis pembayaran
         $breakdown = $invoices->groupBy('payment_type_id')->map(function ($group) {
             $paymentType    = $group->first()->paymentType;
             $totalAmount    = $group->sum('amount');
-            $totalPaid      = $group->sum(fn($i) => $i->payments()->sum('amount'));
+            $totalPaid      = $group->sum(fn($i) => $i->payments->sum('amount'));
 
             return [
                 'payment_type'  => $paymentType->name,

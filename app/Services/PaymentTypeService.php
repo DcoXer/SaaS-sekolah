@@ -48,18 +48,24 @@ class PaymentTypeService
         $paymentType->delete();
     }
 
-    public function generateMonthlySpp(AcademicYear $academicYear, int $amount): void
+    /**
+     * Generate SPP bulanan untuk seluruh tahun ajaran.
+     * Mengembalikan hanya PaymentType yang BARU dibuat (bukan yang sudah ada),
+     * agar controller hanya generate invoice untuk bulan yang baru.
+     */
+    public function generateMonthlySpp(AcademicYear $academicYear, int $amount): Collection
     {
         $start = $academicYear->start_date->copy();
         $end   = $academicYear->end_date->copy();
 
-        $current = $start->copy()->startOfMonth();
+        $current  = $start->copy()->startOfMonth();
+        $newTypes = new Collection();
 
         while ($current->lte($end)) {
             $name    = 'SPP ' . $current->isoFormat('MMMM YYYY');
             $dueDate = $current->copy()->endOfMonth();
 
-            PaymentType::firstOrCreate(
+            [$paymentType, $created] = PaymentType::firstOrCreate(
                 [
                     'academic_year_id' => $academicYear->id,
                     'name'             => $name,
@@ -74,7 +80,13 @@ class PaymentTypeService
                 ]
             );
 
+            if ($created) {
+                $newTypes->push($paymentType);
+            }
+
             $current->addMonth();
         }
+
+        return $newTypes;
     }
 }

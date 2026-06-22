@@ -27,9 +27,10 @@ class PaymentController extends Controller
 
         $this->service->createCashRequest($invoice, $student);
 
+        $paymentTypeName = $invoice->paymentType?->name ?? 'tagihan';
         $this->notif->sendToRole('tu_keuangan', 'cash_request',
             'Request Pembayaran Cash',
-            "{$student->name} mengajukan pembayaran cash untuk {$invoice->paymentType->name}",
+            "{$student->name} mengajukan pembayaran cash untuk {$paymentTypeName}",
             ['invoice_id' => $invoice->id, 'student_id' => $student->id]
         );
 
@@ -201,7 +202,9 @@ class PaymentController extends Controller
             'logo_mime'     => $data['logo_mime'],
         ])->setPaper('a5', 'portrait');
 
-        $filename = 'kwitansi-' . str($data['student']->name)->slug() . '-' . str($data['payment_type']->name)->slug() . '.pdf';
+        $studentSlug     = $data['student'] ? str($data['student']->name)->slug() : 'siswa';
+        $paymentTypeSlug = $data['payment_type'] ? str($data['payment_type']->name)->slug() : 'pembayaran';
+        $filename = 'kwitansi-' . $studentSlug . '-' . $paymentTypeSlug . '.pdf';
 
         return $pdf->download($filename);
     }

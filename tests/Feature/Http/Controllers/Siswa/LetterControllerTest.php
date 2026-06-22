@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Http\Controllers\Siswa;
 
+use App\Models\AcademicYear;
+use App\Models\Classroom;
 use App\Models\Letter;
 use App\Models\LetterTemplate;
 use App\Models\LetterType;
@@ -41,6 +43,24 @@ class LetterControllerTest extends TestCase
             'gender'  => 'L',
             'grade'   => 4,
             'status'  => 'active',
+        ]);
+
+        // Setup academic year + classroom agar requestLetter() tidak abort dengan 422
+        $activeYear = AcademicYear::create([
+            'name'       => '2025/2026',
+            'start_date' => '2025-07-01',
+            'end_date'   => '2026-06-30',
+            'status'     => 'active',
+        ]);
+
+        $classroom = Classroom::create([
+            'academic_year_id' => $activeYear->id,
+            'name'             => 'Kelas 4A',
+            'grade'            => 4,
+        ]);
+
+        $this->student->classrooms()->attach($classroom->id, [
+            'academic_year_id' => $activeYear->id,
         ]);
 
         $letterType = LetterType::create([

@@ -65,13 +65,11 @@ class PaymentTypeController extends Controller
             return redirect()->back()->with('error', 'Tidak ada tahun ajaran aktif.');
         }
 
-        $this->service->generateMonthlySpp($activeYear, $request->amount);
+        // generateMonthlySpp() hanya mengembalikan tipe yang BARU dibuat
+        $newSppTypes = $this->service->generateMonthlySpp($activeYear, $request->amount);
 
-        // Generate invoice untuk semua SPP yang baru dibuat
-        $sppTypes = $this->service->getByAcademicYear($activeYear)
-                                  ->where('cycle', 'monthly');
-
-        foreach ($sppTypes as $sppType) {
+        // Generate invoice hanya untuk SPP baru — skip yang sudah ada invoicenya
+        foreach ($newSppTypes as $sppType) {
             $this->invoiceService->generateForPaymentType($sppType);
         }
 

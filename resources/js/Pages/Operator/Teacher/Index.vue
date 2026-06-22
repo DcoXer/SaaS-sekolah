@@ -5,7 +5,7 @@ import Pagination from '@/Components/Pagination.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref, computed, watch, inject } from 'vue';
 
-const addToast = inject('addToast');
+const addToast = inject('addToast', () => {});
 
 const props = defineProps({
     teachers: { type: Array, required: true },

@@ -59,6 +59,12 @@ class LetterService
                               ->wherePivot('academic_year_id', $activeYear?->id)
                               ->first();
 
+        abort_if(
+            !$classroom,
+            422,
+            'Siswa belum terdaftar di kelas manapun pada tahun ajaran aktif. Hubungi operator untuk assign kelas terlebih dahulu.'
+        );
+
         // Replace placeholders dengan data siswa
         $content = $this->replacePlaceholders($template->content, $student, $classroom, $activeYear);
 

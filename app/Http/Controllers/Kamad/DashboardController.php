@@ -52,7 +52,7 @@ class DashboardController extends Controller
             'pending' => [
                 'years'   => AcademicYear::where('status', 'pending')->count(),
                 'letters' => Letter::where('status', 'waiting_approval')->count(),
-                'reports' => ReportCard::where('status', 'draft')->count(),
+                'reports' => ReportCard::where('status', 'waiting_approval')->count(),
             ],
             'ppdb'        => $ppdb,
             'honorarium'  => $honorarium,

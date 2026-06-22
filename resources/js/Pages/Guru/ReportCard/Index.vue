@@ -68,14 +68,12 @@ const showModal    = ref(false);
 const selectedCard = ref(null);
 
 const notesForm = useForm({
-    homeroom_notes:  '',
-    principal_notes: '',
+    homeroom_notes: '',
 });
 
 const openNotes = (card) => {
     selectedCard.value = card;
-    notesForm.homeroom_notes  = card.notes?.homeroom_notes  ?? '';
-    notesForm.principal_notes = card.notes?.principal_notes ?? '';
+    notesForm.homeroom_notes = card.notes?.homeroom_notes ?? '';
     notesForm.clearErrors();
     showModal.value = true;
 };
@@ -424,9 +422,10 @@ const submitNotes = () => {
                             <span class="ml-1 font-normal text-slate-400">(diisi oleh Kamad)</span>
                         </label>
                         <textarea
-                            v-model="notesForm.principal_notes"
+                            :value="selectedCard?.notes?.principal_notes ?? ''"
                             rows="3"
                             placeholder="Diisi oleh Kepala Madrasah..."
+                            readonly
                             disabled
                             class="w-full cursor-not-allowed resize-none rounded-lg border border-slate-100 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-400 placeholder-slate-300 outline-none"
                         />

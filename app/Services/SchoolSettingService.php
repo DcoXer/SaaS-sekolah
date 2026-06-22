@@ -32,6 +32,9 @@ class SchoolSettingService
             if (!empty($data[$field]) && is_object($data[$field])) {
                 $oldFiles[$field] = $setting->{$field};
                 $data[$field]     = $data[$field]->store($folder, 'public');
+            } else {
+                // Jangan overwrite file yang sudah ada jika tidak ada file baru yang diupload
+                unset($data[$field]);
             }
         }
 

@@ -63,6 +63,12 @@ const payOnline = async () => {
             const orderId = data.order_id;
             const finishBase = route('siswa.payments.finish');
 
+            if (!window.snap) {
+                paying.value = null;
+                addToast('Layanan pembayaran tidak tersedia. Silakan refresh halaman dan coba lagi.', 'error');
+                return;
+            }
+
             window.snap.pay(data.snap_token, {
                 onSuccess: () => {
                     paying.value = null;

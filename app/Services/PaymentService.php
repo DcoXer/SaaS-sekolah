@@ -259,12 +259,13 @@ class PaymentService
                 // Notifikasi ke siswa bahwa pembayaran online berhasil
                 $invoice->load('student.user', 'paymentType');
                 if ($invoice->student?->user) {
-                    $amount = 'Rp ' . number_format((int) $payload['gross_amount'], 0, ',', '.');
+                    $amount          = 'Rp ' . number_format((int) $payload['gross_amount'], 0, ',', '.');
+                    $paymentTypeName = $invoice->paymentType?->name ?? 'tagihan';
                     $this->notif->send(
                         $invoice->student->user,
                         'payment_confirmed',
                         'Pembayaran Berhasil',
-                        "Pembayaran {$invoice->paymentType->name} sebesar {$amount} via Midtrans telah dikonfirmasi.",
+                        "Pembayaran {$paymentTypeName} sebesar {$amount} via Midtrans telah dikonfirmasi.",
                         ['invoice_id' => $invoice->id]
                     );
                 }
@@ -348,7 +349,7 @@ class PaymentService
                                : null,
             'confirmed_by'  => $lastCashPayment?->tuKeuangan?->name,
             'is_online'     => $lastMidtransPayment !== null,
-            'wali_name'     => $invoice->student->user?->name,
+            'wali_name'     => $invoice->student?->user?->name,
             'school'        => $school,
             'logo_base64'   => $logoBase64,
             'logo_mime'     => $logoMime,

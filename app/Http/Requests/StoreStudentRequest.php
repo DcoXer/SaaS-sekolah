@@ -14,7 +14,7 @@ class StoreStudentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nisn'             => ['required', 'string', 'max:20', 'unique:students,nisn'],
+            'nisn'             => ['nullable', 'string', 'max:20', 'unique:students,nisn'],
             'nis'              => ['nullable', 'string', 'max:20', 'unique:students,nis'],
             'name'             => ['required', 'string', 'max:100'],
             'gender'           => ['required', 'in:L,P'],
@@ -38,7 +38,6 @@ class StoreStudentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'nisn.required'   => 'NISN wajib diisi.',
             'nisn.unique'     => 'NISN sudah terdaftar.',
             'nis.unique'      => 'NIS sudah terdaftar.',
             'name.required'   => 'Nama siswa wajib diisi.',

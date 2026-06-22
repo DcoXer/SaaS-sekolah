@@ -44,12 +44,13 @@ class PaymentController extends Controller
 
         $invoice->load('student.user', 'paymentType');
         if ($invoice->student?->user) {
-            $amountFmt = 'Rp ' . number_format($request->amount, 0, ',', '.');
+            $amountFmt       = 'Rp ' . number_format($request->amount, 0, ',', '.');
+            $paymentTypeName = $invoice->paymentType?->name ?? 'tagihan';
             $this->notif->send(
                 $invoice->student->user,
                 'payment_recorded',
                 'Pembayaran Dikonfirmasi',
-                "Pembayaran {$invoice->paymentType->name} sebesar {$amountFmt} telah dikonfirmasi oleh TU",
+                "Pembayaran {$paymentTypeName} sebesar {$amountFmt} telah dikonfirmasi oleh TU",
                 ['invoice_id' => $invoice->id]
             );
         }
@@ -95,7 +96,9 @@ class PaymentController extends Controller
             'logo_mime'     => $data['logo_mime'],
         ])->setPaper('a5', 'portrait');
 
-        $filename = 'kwitansi-' . str($data['student']->name)->slug() . '-' . str($data['payment_type']->name)->slug() . '.pdf';
+        $studentSlug     = $data['student'] ? str($data['student']->name)->slug() : 'siswa';
+        $paymentTypeSlug = $data['payment_type'] ? str($data['payment_type']->name)->slug() : 'pembayaran';
+        $filename = 'kwitansi-' . $studentSlug . '-' . $paymentTypeSlug . '.pdf';
 
         return $pdf->download($filename);
     }

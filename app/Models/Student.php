@@ -16,6 +16,7 @@ class Student extends Model
     public function classrooms()
     {
         return $this->belongsToMany(Classroom::class, 'student_classrooms')
+            ->withPivot('academic_year_id')
             ->withTimestamps();
     }
 

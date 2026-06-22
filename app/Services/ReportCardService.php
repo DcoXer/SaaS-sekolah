@@ -67,12 +67,16 @@ class ReportCardService
 
     public function updateNotes(ReportCard $reportCard, array $data): void
     {
+        $update = ['homeroom_notes' => $data['homeroom_notes'] ?? null];
+
+        // principal_notes hanya boleh diisi oleh Kamad — jika data ini datang dari guru, diabaikan
+        if (array_key_exists('principal_notes', $data)) {
+            $update['principal_notes'] = $data['principal_notes'];
+        }
+
         ReportCardNote::updateOrCreate(
             ['report_card_id' => $reportCard->id],
-            [
-                'homeroom_notes'  => $data['homeroom_notes'] ?? null,
-                'principal_notes' => $data['principal_notes'] ?? null,
-            ]
+            $update
         );
     }
 
@@ -122,6 +126,7 @@ class ReportCardService
         // Pre-load all components for this classroom+semester (1 query instead of N per subject)
         $allComponents = \App\Models\AssessmentComponent::where('classroom_id', $classroom->id)
             ->where('semester', $semester)
+            ->where('academic_year_id', $academicYear->id)
             ->get()
             ->groupBy('subject_id');
 
@@ -175,19 +180,19 @@ class ReportCardService
             return ['score' => null, 'predicate' => null];
         }
 
-        $totalWeight = $components->sum('weight');
-
-        if ($totalWeight === 0) {
-            return ['score' => null, 'predicate' => null];
-        }
-
         $weightedScore = 0;
+        $totalWeight   = 0;
 
         foreach ($components as $component) {
             $assessment = $assessments->get($component->id);
             if ($assessment?->score !== null) {
                 $weightedScore += ($assessment->score * $component->weight);
+                $totalWeight   += $component->weight;
             }
+        }
+
+        if ($totalWeight === 0) {
+            return ['score' => null, 'predicate' => null];
         }
 
         $finalScore = round($weightedScore / $totalWeight, 2);

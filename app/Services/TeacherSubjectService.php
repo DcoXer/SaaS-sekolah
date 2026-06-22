@@ -19,8 +19,11 @@ class TeacherSubjectService
 
     public function getByTeacher(Teacher $teacher): Collection
     {
+        $activeYearId = AcademicYear::where('status', 'active')->value('id');
+
         return TeacherSubject::with(['subject', 'classroom', 'academicYear'])
                              ->where('teacher_id', $teacher->id)
+                             ->where('academic_year_id', $activeYearId)
                              ->get();
     }
 

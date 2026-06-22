@@ -18,6 +18,7 @@ class FinancialReportService
     {
         $invoices = Invoice::with([
                 'paymentType',
+                'payments',
                 'student',
                 'student.classrooms' => fn ($q) => $q->wherePivot('academic_year_id', $academicYear->id),
             ])
@@ -35,7 +36,7 @@ class FinancialReportService
         foreach ($grouped as $group) {
             $type        = $group->first()->paymentType;
             $totalAmount = $group->sum('amount');
-            $totalPaid   = $group->sum(fn ($inv) => $inv->payments()->sum('amount'));
+            $totalPaid   = $group->sum(fn ($inv) => $inv->payments->sum('amount'));
 
             $summaryRows[] = [
                 'name'         => $type->name,
@@ -68,7 +69,7 @@ class FinancialReportService
             $type = $group->first()->paymentType;
 
             $invoiceRows = $group->sortBy('student.name')->values()->map(function ($inv, $i) {
-                $paid      = $inv->payments()->sum('amount');
+                $paid      = $inv->payments->sum('amount');
                 $classroom = $inv->student->classrooms->first()?->name ?? '-';
 
                 return [

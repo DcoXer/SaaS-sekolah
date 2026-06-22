@@ -7,7 +7,8 @@ const props = defineProps({
     receiptData: { type: Object, required: true },
 });
 
-const { invoice, student, payment_type, total_paid, remaining, status, receipt_code, verify_url, confirmed_by, wali_name } = props.receiptData;
+const receiptData   = props.receiptData ?? {};
+const { invoice, student, payment_type, total_paid, remaining, status, receipt_code, verify_url, confirmed_by, wali_name } = receiptData;
 
 const statusColor = {
     unpaid:  'bg-red-100 text-red-700',
@@ -51,7 +52,7 @@ const formatDate = (val) => {
                     <p class="text-sm text-slate-500">{{ payment_type?.name }}</p>
                 </div>
                 <a
-                    :href="`/siswa/invoices/${invoice?.id}/receipt/pdf`"
+                    :href="route('siswa.payments.receipt-pdf', invoice?.id)"
                     target="_blank"
                     class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-[background-color] duration-150 hover:bg-slate-50"
                 >

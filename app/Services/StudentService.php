@@ -34,6 +34,7 @@ class StudentService
     {
         $prefix = now()->format('Ym'); // e.g., "202606"
         $last   = Student::where('nis', 'like', $prefix . '%')
+                         ->lockForUpdate()
                          ->orderByDesc('nis')
                          ->value('nis');
         $seq    = $last ? ((int) substr($last, strlen($prefix)) + 1) : 1;

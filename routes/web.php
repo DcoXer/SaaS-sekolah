@@ -131,8 +131,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Kamad Routes
     Route::middleware('role:kamad')->prefix('kamad')->name('kamad.')->group(function () {
         Route::get('/dashboard', KamadDashboard::class)->name('dashboard');
-        Route::resource('academic-years', KamadAcademicYear::class);
-
         // Approve Tahun Ajaran
         Route::get('/academic-years', [KamadAcademicYear::class, 'index'])->name('academic-years.index');
         Route::patch('/academic-years/{academicYear}/approve', [KamadAcademicYear::class, 'approve'])->name('academic-years.approve');

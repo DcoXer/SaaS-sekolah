@@ -6,7 +6,7 @@ import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import { ref, inject } from 'vue';
 
-const addToast = inject('addToast');
+const addToast = inject('addToast', () => {});
 
 const props = defineProps({
     teacher: { type: Object, required: true },

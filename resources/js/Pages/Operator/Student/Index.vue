@@ -6,7 +6,7 @@ import FilterSelect from '@/Components/FilterSelect.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref, computed, watch, inject } from 'vue';
 
-const addToast = inject('addToast');
+const addToast = inject('addToast', () => {});
 
 const props = defineProps({
     students: { type: Array, required: true },
@@ -376,7 +376,7 @@ const initials = (name) => name.split(' ').map(n => n[0]).join('').toUpperCase()
                                 </div>
                             </td>
                             <td class="px-5 py-3.5">
-                                <div class="tabular-nums text-sm text-slate-700">{{ student.nisn ?? 'â€”' }}</div>
+                                <div class="tabular-nums text-sm text-slate-700">{{ student.nisn ?? '—' }}</div>
                                 <div v-if="student.nis" class="tabular-nums text-xs text-slate-400">NIS {{ student.nis }}</div>
                             </td>
                             <td class="px-5 py-3.5"><span class="inline-flex items-center rounded-full bg-violet-50 px-2.5 py-1 text-xs font-semibold text-violet-700 ring-1 ring-violet-200">{{ student.grade }}</span></td>

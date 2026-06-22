@@ -230,8 +230,10 @@ const openRemoveStudents = () => {
 };
 
 const submitRemoveStudents = () => {
-    removeStudentsForm.student_ids = selectedInClass.value;
-    removeStudentsForm.delete(route('operator.classrooms.remove-students', props.classroom.id), {
+    router.post(route('operator.classrooms.remove-students', props.classroom.id), {
+        _method: 'DELETE',
+        student_ids: selectedInClass.value,
+    }, {
         onSuccess: () => {
             showRemoveStudents.value = false;
             clearInClassSelection();

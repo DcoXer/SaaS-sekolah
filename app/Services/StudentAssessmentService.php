@@ -110,13 +110,8 @@ class StudentAssessmentService
             return ['score' => null, 'predicate' => null];
         }
 
-        $totalWeight = $components->sum('weight');
-
-        if ($totalWeight === 0) {
-            return ['score' => null, 'predicate' => null];
-        }
-
         $weightedScore = 0;
+        $totalWeight   = 0;
 
         foreach ($components as $component) {
             $assessment = StudentAssessment::where('student_id', $student->id)
@@ -126,7 +121,12 @@ class StudentAssessmentService
 
             if ($assessment?->score !== null) {
                 $weightedScore += ($assessment->score * $component->weight);
+                $totalWeight   += $component->weight;
             }
+        }
+
+        if ($totalWeight === 0) {
+            return ['score' => null, 'predicate' => null];
         }
 
         $finalScore = round($weightedScore / $totalWeight, 2);
