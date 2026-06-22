@@ -106,6 +106,11 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        // Akun dengan role admin tidak boleh dihapus via profil
+        if ($user->hasAnyRole(['kamad', 'operator', 'tu_keuangan', 'guru'])) {
+            return Redirect::route('profile.edit')->withErrors(['password' => 'Akun dengan role admin tidak dapat dihapus melalui profil.']);
+        }
+
         Auth::logout();
 
         if ($user->avatar) {

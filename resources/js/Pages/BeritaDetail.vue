@@ -12,6 +12,18 @@ const props = defineProps({
     ppdbActive:     { type: Boolean, default: false },
 });
 
+const sanitizeHtml = (html) => {
+    if (!html) return '';
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    doc.querySelectorAll('script, iframe, object, embed').forEach(el => el.remove());
+    doc.querySelectorAll('*').forEach(el => {
+        [...el.attributes].forEach(attr => {
+            if (attr.name.toLowerCase().startsWith('on')) el.removeAttribute(attr.name);
+        });
+    });
+    return doc.body.innerHTML;
+};
+
 // Lightbox
 const lightboxSrc = ref(null);
 </script>
@@ -90,7 +102,7 @@ const lightboxSrc = ref(null);
             </blockquote>
 
             <!-- Content -->
-            <div class="article-body" v-html="post.content"/>
+            <div class="article-body" v-html="sanitizeHtml(post.content)"/>
 
             <!-- Galeri Foto Konten -->
             <div v-if="post.images && post.images.length" class="mt-12">

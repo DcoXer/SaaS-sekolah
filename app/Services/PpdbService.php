@@ -182,15 +182,16 @@ class PpdbService
         $academicYear = AcademicYear::where('status', 'active')->first();
         if (! $academicYear) return;
 
-        Invoice::create([
+        $ppdbInvoice = new Invoice([
             'student_id'           => null,
             'ppdb_registration_id' => $reg->id,
             'payment_type_id'      => null,
             'academic_year_id'     => $academicYear->id,
             'amount'               => $setting->uang_masuk_amount,
-            'status'               => 'unpaid',
             'due_date'             => $setting->announcement_date ?? now()->addDays(14),
         ]);
+        $ppdbInvoice->status = 'unpaid';
+        $ppdbInvoice->save();
     }
 
     public function reject(PpdbRegistration $reg, int $userId, string $notes): void

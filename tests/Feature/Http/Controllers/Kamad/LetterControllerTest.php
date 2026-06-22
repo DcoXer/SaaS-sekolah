@@ -55,14 +55,15 @@ class LetterControllerTest extends TestCase
             'is_active'              => true,
         ]);
 
-        $this->letter = Letter::create([
+        $this->letter = new Letter([
             'letter_template_id' => $template->id,
             'category'           => 'keterangan',
             'requested_by'       => $siswaUser->id,
             'student_id'         => $this->student->id,
-            'status'             => 'waiting_approval',
             'content'            => 'Konten surat.',
         ]);
+        $this->letter->status = 'waiting_approval';
+        $this->letter->save();
     }
 
     public function test_kamad_can_view_letters(): void

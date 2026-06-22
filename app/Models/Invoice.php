@@ -8,7 +8,7 @@ use App\Models\PpdbRegistration;
 
 #[Fillable([
     'student_id', 'ppdb_registration_id', 'payment_type_id', 'academic_year_id',
-    'amount', 'status', 'due_date', 'receipt_code'
+    'amount', 'due_date',
 ])]
 class Invoice extends Model
 {

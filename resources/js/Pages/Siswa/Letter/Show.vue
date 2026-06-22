@@ -7,6 +7,18 @@ const props = defineProps({
     letter: { type: Object, required: true },
 });
 
+const sanitizeHtml = (html) => {
+    if (!html) return '—';
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    doc.querySelectorAll('script, iframe, object, embed').forEach(el => el.remove());
+    doc.querySelectorAll('*').forEach(el => {
+        [...el.attributes].forEach(attr => {
+            if (attr.name.toLowerCase().startsWith('on')) el.removeAttribute(attr.name);
+        });
+    });
+    return doc.body.innerHTML;
+};
+
 const statusConfig = {
     draft:            { label: 'Draft',                badge: 'bg-slate-100 text-slate-500' },
     waiting_approval: { label: 'Menunggu Persetujuan', badge: 'bg-amber-100 text-amber-700' },
@@ -79,7 +91,7 @@ const formatDate = (val) => {
                 <div class="px-6 py-5">
                     <div
                         class="prose prose-sm max-w-none whitespace-pre-wrap text-sm text-slate-700"
-                        v-html="letter.content ?? '—'"
+                        v-html="sanitizeHtml(letter.content)"
                     />
                 </div>
             </div>

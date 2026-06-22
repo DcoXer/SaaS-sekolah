@@ -68,21 +68,25 @@ class LetterService
         // Replace placeholders dengan data siswa
         $content = $this->replacePlaceholders($template->content, $student, $classroom, $activeYear);
 
-        return Letter::create([
+        $letter = new Letter([
             'letter_template_id' => $template->id,
             'category'           => 'keterangan',
             'requested_by'       => $requestedBy->id,
             'student_id'         => $student->id,
-            'status'             => 'draft',
             'content'            => $content,
         ]);
+        $letter->status = 'draft';
+        $letter->save();
+
+        return $letter;
     }
 
     public function submitForApproval(Letter $letter): void
     {
         abort_if(!$letter->isDraft(), 400, 'Surat tidak dalam status draft.');
 
-        $letter->update(['status' => 'waiting_approval']);
+        $letter->status = 'waiting_approval';
+        $letter->save();
     }
 
     public function approve(Letter $letter, User $kamad): void
@@ -91,23 +95,21 @@ class LetterService
 
         $barcodeCode = Str::uuid()->toString();
 
-        $letter->update([
-            'status'       => 'approved',
-            'approved_by'  => $kamad->id,
-            'approved_at'  => now(),
-            'barcode_code' => $barcodeCode,
-        ]);
+        $letter->status       = 'approved';
+        $letter->approved_by  = $kamad->id;
+        $letter->approved_at  = now();
+        $letter->barcode_code = $barcodeCode;
+        $letter->save();
     }
 
     public function reject(Letter $letter, User $kamad, string $rejectionNote): void
     {
         abort_if(!$letter->isWaitingApproval(), 400, 'Surat tidak dalam status menunggu persetujuan.');
 
-        $letter->update([
-            'status'         => 'rejected',
-            'approved_by'    => $kamad->id,
-            'rejection_note' => $rejectionNote,
-        ]);
+        $letter->status         = 'rejected';
+        $letter->approved_by    = $kamad->id;
+        $letter->rejection_note = $rejectionNote;
+        $letter->save();
     }
 
     public function createNotification(
@@ -115,15 +117,16 @@ class LetterService
         User $operator,
         array $data
     ): Letter {
-        $letter = Letter::create([
+        $letter = new Letter([
             'letter_template_id' => $template->id,
             'category'           => 'pemberitahuan',
             'requested_by'       => $operator->id,
             'target_grade'       => $data['target_grade'] ?? null,
-            'status'             => 'published',
             'content'            => $this->sanitizeHtml($data['content']),
-            'published_at'       => now(),
         ]);
+        $letter->status       = 'published';
+        $letter->published_at = now();
+        $letter->save();
 
         // Generate recipients
         $this->generateRecipients($letter);

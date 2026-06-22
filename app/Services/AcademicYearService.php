@@ -112,9 +112,8 @@ class AcademicYearService
                 $student->update(['status' => 'alumni']);
 
                 if ($student->user) {
-                    $student->user->update([
-                        'alumni_expires_at' => now()->addYears(5),
-                    ]);
+                    $student->user->alumni_expires_at = now()->addYears(5);
+                    $student->user->save();
                 }
             }
 

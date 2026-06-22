@@ -14,7 +14,7 @@ class RecordCashPaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'amount'     => ['required', 'integer', 'min:1000'],
+            'amount'     => ['required', 'integer', 'min:1000', 'max:999999999'],
             'proof_file' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:2048'],
             'note'       => ['nullable', 'string', 'max:500'],
         ];

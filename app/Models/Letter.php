@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 #[Fillable([
     'letter_template_id', 'category', 'requested_by', 'student_id',
-    'target_grade', 'status', 'rejection_note', 'content',
-    'barcode_code', 'approved_by', 'approved_at', 'published_at'
+    'target_grade', 'rejection_note', 'content',
 ])]
 class Letter extends Model
 {

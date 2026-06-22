@@ -60,7 +60,7 @@ class InvoiceService
             $students = $query->get();
 
             foreach ($students as $student) {
-                Invoice::firstOrCreate(
+                $invoice = Invoice::firstOrCreate(
                     [
                         'student_id'      => $student->id,
                         'payment_type_id' => $paymentType->id,
@@ -68,10 +68,13 @@ class InvoiceService
                     [
                         'academic_year_id' => $academicYear->id,
                         'amount'           => $paymentType->amount,
-                        'status'           => 'unpaid',
                         'due_date'         => $paymentType->due_date,
                     ]
                 );
+                if ($invoice->wasRecentlyCreated && !$invoice->status) {
+                    $invoice->status = 'unpaid';
+                    $invoice->save();
+                }
             }
         });
     }
@@ -89,7 +92,8 @@ class InvoiceService
                 default                       => 'paid',
             };
 
-            $locked->update(['status' => $status]);
+            $locked->status = $status;
+            $locked->save();
         });
     }
 

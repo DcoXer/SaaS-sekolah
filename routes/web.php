@@ -374,7 +374,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Notifications (semua role)
-    Route::get('notifications/poll', [NotificationController::class, 'poll'])->name('notifications.poll');
+    Route::get('notifications/poll', [NotificationController::class, 'poll'])->middleware('throttle:60,1')->name('notifications.poll');
     Route::patch('notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
     Route::patch('notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
 

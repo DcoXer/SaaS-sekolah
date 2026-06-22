@@ -89,7 +89,8 @@
       "Bash(xargs cat:*)",
       "Bash(sed -n '9p' \"C:\\\\laragon\\\\www\\\\school-management\\\\resources\\\\js\\\\Pages\\\\Operator\\\\Student\\\\Index.vue\")",
       "Bash(sed -n '9p' \"C:\\\\laragon\\\\www\\\\school-management\\\\resources\\\\js\\\\Pages\\\\Operator\\\\Student\\\\Show.vue\")",
-      "Bash(sed -n '9p' \"C:\\\\laragon\\\\www\\\\school-management\\\\resources\\\\js\\\\Pages\\\\Operator\\\\Teacher\\\\Show.vue\")"
+      "Bash(sed -n '9p' \"C:\\\\laragon\\\\www\\\\school-management\\\\resources\\\\js\\\\Pages\\\\Operator\\\\Teacher\\\\Show.vue\")",
+      "Bash(dir:*)"
     ]
   }
 }

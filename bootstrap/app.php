@@ -12,7 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->trustProxies(at: '*');
+        // Hanya percaya proxy dari localhost (Nginx/Apache lokal).
+        // Ganti dengan IP proxy spesifik jika pakai load balancer/Cloudflare.
+        $middleware->trustProxies(at: ['127.0.0.1', '::1']);
 
         // Midtrans callback tidak bisa kirim CSRF token — signature verification sudah cukup
         $middleware->validateCsrfTokens(except: [

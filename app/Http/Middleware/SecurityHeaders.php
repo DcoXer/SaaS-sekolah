@@ -17,6 +17,17 @@ class SecurityHeaders
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('Permissions-Policy', 'geolocation=(self), camera=(), microphone=()');
         $response->headers->set('X-XSS-Protection', '1; mode=block');
+        $response->headers->set('Content-Security-Policy',
+            "default-src 'self'; " .
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.sandbox.midtrans.com https://app.midtrans.com; " .
+            "style-src 'self' 'unsafe-inline'; " .
+            "img-src 'self' data: blob:; " .
+            "font-src 'self' data:; " .
+            "connect-src 'self'; " .
+            "frame-src https://app.sandbox.midtrans.com https://app.midtrans.com; " .
+            "object-src 'none'; " .
+            "base-uri 'self';"
+        );
 
         return $response;
     }

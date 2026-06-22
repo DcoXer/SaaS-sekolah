@@ -19,6 +19,7 @@ class FinancialReportExport implements WithMultipleSheets
         // Load all invoices for this academic year, with student + classroom for this year
         $invoices = Invoice::with([
                 'paymentType',
+                'payments',
                 'student',
                 'student.classrooms' => fn ($q) => $q->where('academic_year_id', $this->academicYear->id),
             ])
@@ -38,7 +39,7 @@ class FinancialReportExport implements WithMultipleSheets
         foreach ($grouped as $paymentTypeId => $group) {
             $type        = $group->first()->paymentType;
             $totalAmount = $group->sum('amount');
-            $totalPaid   = $group->sum(fn ($inv) => $inv->payments()->sum('amount'));
+            $totalPaid   = $group->sum(fn ($inv) => $inv->payments->sum('amount'));
             $totalSisa   = $totalAmount - $totalPaid;
             $pct         = $totalAmount > 0 ? round($totalPaid / $totalAmount * 100, 1) : 0;
 
@@ -77,7 +78,7 @@ class FinancialReportExport implements WithMultipleSheets
 
             // Re-load payments per invoice efficiently
             $invoiceRows = $group->sortBy('student.name')->values()->map(function ($inv, $i) {
-                $paid      = $inv->payments()->sum('amount');
+                $paid      = $inv->payments->sum('amount');
                 $classroom = $inv->student->classrooms->first()?->name ?? '-';
 
                 return [

@@ -67,7 +67,8 @@ class PaymentService
             // Generate receipt code on first payment
             $invoice->refresh();
             if (!$invoice->receipt_code) {
-                $invoice->update(['receipt_code' => Str::uuid()->toString()]);
+                $invoice->receipt_code = Str::uuid()->toString();
+                $invoice->save();
             }
 
             return $payment;
@@ -86,7 +87,6 @@ class PaymentService
         \Illuminate\Support\Facades\Log::info('Midtrans initiate', [
             'order_id'      => $orderId,
             'is_production' => \Midtrans\Config::$isProduction,
-            'server_key'    => substr(\Midtrans\Config::$serverKey, 0, 12) . '...',
         ]);
 
         $params = [
@@ -127,7 +127,6 @@ class PaymentService
         \Illuminate\Support\Facades\Log::info('Midtrans Transaction::status query', [
             'order_id'      => $orderId,
             'is_production' => \Midtrans\Config::$isProduction,
-            'server_key'    => substr(\Midtrans\Config::$serverKey, 0, 12) . '...',
         ]);
 
         $status = \Midtrans\Transaction::status($orderId);
@@ -163,7 +162,8 @@ class PaymentService
                 $this->invoiceService->recalculateStatus($invoice);
 
                 if (!$invoice->receipt_code) {
-                    $invoice->update(['receipt_code' => \Illuminate\Support\Str::uuid()->toString()]);
+                    $invoice->receipt_code = \Illuminate\Support\Str::uuid()->toString();
+                    $invoice->save();
                 }
             });
         }
@@ -205,7 +205,8 @@ class PaymentService
 
             $invoice->refresh();
             if (!$invoice->receipt_code) {
-                $invoice->update(['receipt_code' => Str::uuid()->toString()]);
+                $invoice->receipt_code = Str::uuid()->toString();
+                $invoice->save();
             }
         });
     }
@@ -311,7 +312,8 @@ class PaymentService
 
         // Generate receipt_code lazily jika invoice sudah ada pembayaran tapi belum punya kode
         if (!$invoice->receipt_code && $invoice->payments->isNotEmpty()) {
-            $invoice->update(['receipt_code' => Str::uuid()->toString()]);
+            $invoice->receipt_code = Str::uuid()->toString();
+            $invoice->save();
         }
 
         $lastCashPayment = $invoice->payments

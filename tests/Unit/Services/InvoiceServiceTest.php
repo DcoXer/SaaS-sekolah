@@ -190,14 +190,15 @@ class InvoiceServiceTest extends TestCase
             'is_active'        => true,
         ]);
 
-        $invoice = Invoice::create([
+        $invoice = new Invoice([
             'student_id'       => $this->student->id,
             'payment_type_id'  => $examPaymentType->id,
             'academic_year_id' => $this->academicYear->id,
             'amount'           => 300000,
-            'status'           => 'paid',
             'due_date'         => '2024-12-01',
         ]);
+        $invoice->status = 'paid';
+        $invoice->save();
 
         $hasAccess = $this->service->hasExamAccess($this->student, $this->academicYear);
 
